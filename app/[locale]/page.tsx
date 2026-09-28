@@ -18,8 +18,9 @@ export default async function Home() {
       <HotSection products={specialVintageProducts} />
       <MostPopularSection products={mostPopularProducts} />
       <NewArrivalsSection products={newArrivalProducts} />
-      <CustomerVoiceSection testimonials={customerVoices} />
       <BlogSection />
+      <CustomerVoiceSection testimonials={customerVoices} />
+
     </div>
   );
 }

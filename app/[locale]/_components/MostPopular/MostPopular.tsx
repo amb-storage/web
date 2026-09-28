@@ -12,7 +12,7 @@ interface PopularProduct {
   price: string;
   image: string | StaticImageData;
   href: string;
-  isSoldOut?: boolean;
+  stock?: "available" | "low" | "soldOut";
 }
 
 interface MostPopularSectionProps {
@@ -68,8 +68,8 @@ export default function MostPopularSection({ products }: MostPopularSectionProps
               price={product.price}
               image={product.image}
               href={product.href}
-              isSoldOut={product.isSoldOut}
-              soldOutLabel={tCard("soldOut")}
+              stock={product.stock}
+              stockLabel={tCard(product.stock === "low" ? "lowStock" : "soldOut")}
               viewDetailsLabel={tCard("viewDetails")}
               addToCartLabel={tCard("addToCart")}
             />

@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from "next-intl";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/Footer/Footer";
 import SplashScreen from "@/components/SplashScreen/SplashScreen";
+import SmoothScroll from "@/components/SmoothScroll/SmoothScroll";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,11 +33,15 @@ export default async function RootLayout({ children }: LayoutProps<"/[locale]">)
      
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider locale={locale}>
-           <SplashScreen />
-           <Header />
-        {children}
-          <Footer />
-          </NextIntlClientProvider>
+          <SmoothScroll>
+            <SplashScreen />
+            <Header/>
+          <main className=" mt-20">
+              {children}
+          </main>
+            <Footer />
+          </SmoothScroll>
+        </NextIntlClientProvider>
         </body>
     </html>
   );

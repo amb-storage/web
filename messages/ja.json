@@ -57,7 +57,8 @@
     "productCard": {
       "viewDetails": "詳細を見る",
       "addToCart": "カートに追加",
-      "soldOut": "在庫切れ"
+      "soldOut": "在庫切れ",
+      "lowStock": "在庫わずか"
     },
     "customerVoice": {
       "title": "Customer's Voice",
@@ -95,5 +96,18 @@
       },
       "copyright": "© {year} Amb:STORAGE"
     }
+  },
+  "productDetail": {
+    "allProducts": "すべての商品",
+    "previous": "前へ",
+    "next": "次へ",
+    "description": "説明",
+    "shippingReturns": "発送と返品",
+    "relatedProducts": "類似商品"
+  },
+  "blog": {
+    "pageTitle": "MILI TALKS",
+    "readMore": "続きを読む",
+    "backToBlog": "ブログ一覧に戻る"
   }
 }

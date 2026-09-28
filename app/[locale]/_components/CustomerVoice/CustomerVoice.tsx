@@ -6,7 +6,8 @@ interface CustomerVoiceItem {
   id: string | number;
   name: string;
   quote: string;
-  products: { image: string | StaticImageData; href: string }[];
+  image: string | StaticImageData;
+  href: string;
 }
 
 interface CustomerVoiceSectionProps {
@@ -31,7 +32,8 @@ export default function CustomerVoiceSection({
               key={item.id}
               name={item.name}
               quote={item.quote}
-              products={item.products}
+              image={item.image}
+              href={item.href}
               viewProductLabel={t("viewProduct")}
               index={index}
             />

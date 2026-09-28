@@ -2,6 +2,7 @@
 
 import Image, { StaticImageData } from "next/image";
 import { Link } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 import { useProductCardAnimation } from "./useProductCardAnimation";
 
 interface ProductCardProps {
@@ -9,8 +10,9 @@ interface ProductCardProps {
   price: string;
   image: string | StaticImageData;
   href: string;
-  isSoldOut?: boolean;
-  soldOutLabel?: string;
+  /** "available" (mặc định, không hiện badge) | "low" (sắp hết hàng, badge xanh) | "soldOut" (hết hàng, badge đỏ). */
+  stock?: "available" | "low" | "soldOut";
+  stockLabel?: string;
   viewDetailsLabel: string;
   addToCartLabel: string;
   onAddToCart?: () => void;
@@ -21,8 +23,8 @@ export default function ProductCard({
   price,
   image,
   href,
-  isSoldOut = false,
-  soldOutLabel,
+  stock = "available",
+  stockLabel,
   viewDetailsLabel,
   addToCartLabel,
   onAddToCart,
@@ -39,10 +41,15 @@ export default function ProductCard({
       <Link href={href} className="block">
         {/* Khung ảnh sản phẩm: Trong suốt hoàn toàn, không shadow, nằm trọn trên nền trắng */}
         <div className="relative h-90 flex items-center justify-center p-4">
-          {/* Badge "在庫切れ" (Hết hàng) */}
-          {isSoldOut && soldOutLabel && (
-            <span className="absolute top-2 left-2 z-20 bg-red-600 text-white text-xs font-semibold px-2.5 py-1 rounded">
-              {soldOutLabel}
+          {/* Badge tồn kho: đỏ "在庫切れ" (Hết hàng) / xanh "在庫わずか" (Sắp hết hàng) */}
+          {stock !== "available" && stockLabel && (
+            <span
+              className={cn(
+                "absolute top-2 left-2 z-20 rounded px-2.5 py-1 text-xs font-semibold text-white",
+                stock === "soldOut" ? "bg-red-600" : "bg-emerald-700"
+              )}
+            >
+              {stockLabel}
             </span>
           )}
 

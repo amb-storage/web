@@ -13,7 +13,7 @@ export const specialVintageProducts = [
     price: "110.000 ¥",
     image: jacket1,
     href: "/shop-now/40s-usaaf-b15a",
-    isSoldOut: false,
+    stock: "available" as const,
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ export const specialVintageProducts = [
     price: "143.000 ¥",
     image: jacket2,
     href: "/shop-now/40s-us-navy-n1",
-    isSoldOut: false,
+    stock: "low" as const,
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ export const specialVintageProducts = [
     price: "484.000 ¥",
     image: jacket3,
     href: "/shop-now/50s-usaf-l2a",
-    isSoldOut: false,
+    stock: "available" as const,
   },
   {
     id: 4,
@@ -37,7 +37,7 @@ export const specialVintageProducts = [
     price: "132.000 ¥",
     image: jacket4,
     href: "/shop-now/50s-us-navy-g1",
-    isSoldOut: false,
+    stock: "available" as const,
   },
   {
     id: 5,
@@ -45,7 +45,7 @@ export const specialVintageProducts = [
     price: "440.000 ¥",
     image: jacket5,
     href: "/shop-now/50s-levis-507xx",
-    isSoldOut: true, // Đã có sẵn nhãn "在庫切れ" (Hết hàng)
+    stock: "soldOut" as const, // Đã có sẵn nhãn "在庫切れ" (Hết hàng)
   },
   {
     id: 6,
@@ -53,7 +53,7 @@ export const specialVintageProducts = [
     price: "88.000 ¥",
     image: jacket6,
     href: "/shop-now/60s-us-navy-a2",
-    isSoldOut: false,
+    stock: "available" as const,
   },
 ];
 
@@ -64,6 +64,7 @@ export const newArrivalProducts = [
     price: "98.000 ¥",
     image: jacket7,
     href: "/shop-now/70s-levis-type3-trucker",
+    stock: "available" as const,
   },
   {
     id: 2,
@@ -71,6 +72,7 @@ export const newArrivalProducts = [
     price: "155.000 ¥",
     image: jacket4,
     href: "/shop-now/60s-us-army-m65",
+    stock: "low" as const,
   },
   {
     id: 3,
@@ -78,6 +80,7 @@ export const newArrivalProducts = [
     price: "76.000 ¥",
     image: jacket2,
     href: "/shop-now/80s-wrangler-11mj",
+    stock: "available" as const,
   },
   {
     id: 4,
@@ -85,6 +88,7 @@ export const newArrivalProducts = [
     price: "210.000 ¥",
     image: jacket1,
     href: "/shop-now/70s-usaf-cwu45p",
+    stock: "available" as const,
   },
 ];
 
@@ -95,7 +99,7 @@ export const mostPopularProducts = [
     price: "440.000 ¥",
     image: jacket5,
     href: "/shop-now/50s-levis-507xx-40",
-    isSoldOut: false,
+    stock: "available" as const,
   },
   {
     id: 2,
@@ -103,7 +107,7 @@ export const mostPopularProducts = [
     price: "118.000 ¥",
     image: jacket1,
     href: "/shop-now/40s-usaaf-b15a-38",
-    isSoldOut: false,
+    stock: "low" as const,
   },
   {
     id: 3,
@@ -111,7 +115,7 @@ export const mostPopularProducts = [
     price: "92.000 ¥",
     image: jacket6,
     href: "/shop-now/60s-us-navy-a2-40",
-    isSoldOut: false,
+    stock: "available" as const,
   },
   {
     id: 4,
@@ -119,15 +123,15 @@ export const mostPopularProducts = [
     price: "104.000 ¥",
     image: jacket7,
     href: "/shop-now/70s-levis-type3-trucker-40",
-    isSoldOut: true,
+    stock: "soldOut" as const,
   },
   {
     id: 5,
     title: "50s US NAVY G-1 Flight Jacket 40",
-    price: "137.000 ¥",
+    price: "82.500 ¥",
     image: jacket4,
     href: "/shop-now/50s-us-navy-g1-40",
-    isSoldOut: false,
+    stock: "soldOut" as const,
   },
 ];
 
@@ -137,23 +141,23 @@ export const customerVoices = [
     name: "大阪府のF様",
     quote:
       "この度はお取引ありがとうございます。こちらの都合に合わせて頂き、迅速な対応に写真以上の非常に良い商品でした。大切にさせていただきます。また機会がありましたらよろしくお願いいします。",
-    products: [{ image: jacket3, href: "/shop-now/50s-usaf-l2a" }],
+    image: jacket3,
+    href: "/shop-now/50s-usaf-l2a",
   },
   {
     id: 2,
     name: "横浜市のD様",
     quote:
       "終始スムーズなお取引をありがとうございました。梱包もとても丁寧で、発送も早く大変助かりました。手元に届いたお品物は想像以上に素晴らしく、大満足です！また機会があればよろしくお願いいたします。",
-    products: [{ image: jacket6, href: "/shop-now/60s-us-navy-a2" }],
+    image: jacket6,
+    href: "/shop-now/60s-us-navy-a2",
   },
   {
     id: 3,
     name: "Texas, B.A様",
     quote:
-      "Been following Amb:STORAGE on IG for quite some time, and I finally made it to Osaka to meet up and check out this piece in person. So glad the shop agreed to the meet-up and was patient enough to wait for me for such a long time. The jackets were too good to pass up, so I bought both and the shop was kind enough to give me a discount right then and there. Highly recommended!",
-    products: [
-      { image: jacket5, href: "/shop-now/50s-levis-507xx" },
-      { image: jacket2, href: "/shop-now/40s-us-navy-n1" },
-    ],
+      "Been following Amb:STORAGE on IG for quite some time, and I finally made it to Osaka to meet up and check out this piece in person. So glad the shop agreed to the meet-up and was patient enough to wait for me for such a long time. The jacket was too good to pass up, and the shop was kind enough to give me a discount right then and there. Highly recommended!",
+    image: jacket5,
+    href: "/shop-now/50s-levis-507xx",
   },
 ];
