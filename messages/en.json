@@ -41,10 +41,59 @@
     },
     "hotSection": {
       "title": "Special VINTAGE",
-      "quickShop": "Quick Shop",
-      "soldOut": "Sold Out",
       "previous": "Previous slide",
       "next": "Next slide"
+    },
+    "mostPopular": {
+      "title": "Most Popular",
+      "previous": "Previous slide",
+      "next": "Next slide"
+    },
+    "newArrivals": {
+      "title": "New Arrivals",
+      "previous": "Previous slide",
+      "next": "Next slide"
+    },
+    "productCard": {
+      "viewDetails": "View Details",
+      "addToCart": "Add to cart",
+      "soldOut": "Sold Out"
+    },
+    "customerVoice": {
+      "title": "Customer's Voice",
+      "viewProduct": "View product"
+    },
+    "blog": {
+      "title": "MILI TALKS",
+      "lead": "<b>Mili Talks</b> is a blog where we share our vintage know-how, hands-on experience, and the real, on-the-ground perspective we've built up over the years.",
+      "description": "Diving into the background, details, and stories behind vintage pieces — military and denim above all — to make the world of vintage clothing approachable for newcomers too.",
+      "readMore": "Read More",
+      "featuredPost": {
+        "title": "U.S NAVY N-1 Deck Jacket",
+        "subtitle": "Unlocking the Details of a Hidden Masterpiece"
+      }
+    },
+    "footer": {
+      "tagline": "The specialty shop for buying and selling original vintage clothing.",
+      "newsletter": {
+        "placeholder": "theambitionent@gmail.com",
+        "cta": "Get the latest",
+        "submitted": "Thanks for subscribing",
+        "disclaimer": "This form is protected by reCAPTCHA and the Google <privacy>Privacy Policy</privacy> and <terms>Terms of Service</terms> apply."
+      },
+      "nav": {
+        "home": "Home",
+        "shopAll": "Shop All",
+        "miliTalks": "Mili Talks",
+        "aboutUs": "ABOUT US",
+        "privacyPolicy": "Privacy Policy"
+      },
+      "social": {
+        "email": "Email",
+        "instagram": "Instagram",
+        "tiktok": "TikTok"
+      },
+      "copyright": "© {year} Amb:STORAGE"
     }
   }
 }

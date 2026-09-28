@@ -5,6 +5,8 @@ import { getLocale } from "next-intl/server";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import Header from "@/components/layout/header";
+import Footer from "@/components/layout/Footer/Footer";
+import SplashScreen from "@/components/SplashScreen/SplashScreen";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,9 +32,11 @@ export default async function RootLayout({ children }: LayoutProps<"/[locale]">)
      
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider locale={locale}>
+           <SplashScreen />
            <Header />
         {children}
-          </NextIntlClientProvider> 
+          <Footer />
+          </NextIntlClientProvider>
         </body>
     </html>
   );

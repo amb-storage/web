@@ -40,11 +40,60 @@
       }
     },
     "hotSection": {
-      "title": "Special VINTAGE",
-      "quickShop": "クイックショップ",
-      "soldOut": "在庫切れ",
+      "title": "ホットな商品",
       "previous": "前へ",
       "next": "次へ"
+    },
+    "mostPopular": {
+      "title": "人気の商品",
+      "previous": "前へ",
+      "next": "次へ"
+    },
+    "newArrivals": {
+      "title": "新着アイテム",
+      "previous": "前へ",
+      "next": "次へ"
+    },
+    "productCard": {
+      "viewDetails": "詳細を見る",
+      "addToCart": "カートに追加",
+      "soldOut": "在庫切れ"
+    },
+    "customerVoice": {
+      "title": "Customer's Voice",
+      "viewProduct": "商品を見る"
+    },
+    "blog": {
+      "title": "MILI TALKS",
+      "lead": "<b>Mili Talks</b> は、ヴィンテージに関する知識や経験、そして私たちが現場で培ってきたリアルな視点を共有するためのブログです。",
+      "description": "ミリタリーやデニムをはじめとするヴィンテージアイテムの背景やディテール、ストーリーを掘り下げながら、これからヴィンテージの世界に触れる方にも分かりやすく情報を届けていきます。",
+      "readMore": "Read More",
+      "featuredPost": {
+        "title": "U.S NAVY N-1 Deck Jacket",
+        "subtitle": "Unlocking the Details of a Hidden Masterpiece"
+      }
+    },
+    "footer": {
+      "tagline": "オリジナルなヴィンテージ古着の買取・販売専門店",
+      "newsletter": {
+        "placeholder": "theambitionent@gmail.com",
+        "cta": "最新情報をお届け",
+        "submitted": "ご登録ありがとうございます",
+        "disclaimer": "このフォームはreCAPTCHAによって保護されており、Googleの<privacy>個人情報保護方針</privacy>および<terms>利用規約</terms>が適用されます。"
+      },
+      "nav": {
+        "home": "Home",
+        "shopAll": "Shop All",
+        "miliTalks": "Mili Talks",
+        "aboutUs": "ABOUT US",
+        "privacyPolicy": "Privacy Policy"
+      },
+      "social": {
+        "email": "メール",
+        "instagram": "Instagram",
+        "tiktok": "TikTok"
+      },
+      "copyright": "© {year} Amb:STORAGE"
     }
   }
 }
