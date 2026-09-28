@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { Link } from "@/i18n/navigation";
 import logo from "@/assets/logo.png";
 import {
   FaApplePay,
@@ -15,14 +14,7 @@ import {
   FaTiktok,
 } from "react-icons/fa";
 import NewsletterForm from "./NewsletterForm";
-
-const navLinks = [
-  { key: "home", href: "/" },
-  { key: "shopAll", href: "/shop-now" },
-  { key: "miliTalks", href: "/blog" },
-  { key: "aboutUs", href: "/about-us" },
-  { key: "privacyPolicy", href: "/privacy-policy" },
-] as const;
+import FooterNav from "./FooterNav";
 
 const paymentIcons = [
   FaGooglePay,
@@ -59,17 +51,7 @@ export default function Footer() {
               />
             </div>
 
-            <nav className="flex flex-wrap gap-x-6 gap-y-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.key}
-                  href={link.href}
-                  className="text-sm font-medium text-white/90 transition-colors hover:text-white"
-                >
-                  {t(`nav.${link.key}`)}
-                </Link>
-              ))}
-            </nav>
+            <FooterNav />
           </div>
 
           <div className="flex flex-col gap-4 md:items-end md:text-right">

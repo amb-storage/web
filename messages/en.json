@@ -9,6 +9,9 @@
       "search": "Search",
       "account": "User Account",
       "cart": "Cart",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "toggleSubmenu": "Toggle {label} submenu",
       "home": {
         "label": "Home",
         "items": {

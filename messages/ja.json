@@ -9,6 +9,9 @@
       "search": "検索",
       "account": "アカウント",
       "cart": "カート",
+      "openMenu": "メニューを開く",
+      "closeMenu": "メニューを閉じる",
+      "toggleSubmenu": "{label}のサブメニューを切り替える",
       "home": {
         "label": "ホーム",
         "items": {
@@ -83,11 +86,11 @@
         "disclaimer": "このフォームはreCAPTCHAによって保護されており、Googleの<privacy>個人情報保護方針</privacy>および<terms>利用規約</terms>が適用されます。"
       },
       "nav": {
-        "home": "Home",
-        "shopAll": "Shop All",
+        "home": "ホーム",
+        "shopAll": "すべての商品",
         "miliTalks": "Mili Talks",
-        "aboutUs": "ABOUT US",
-        "privacyPolicy": "Privacy Policy"
+        "aboutUs": "私たちについて",
+        "privacyPolicy": "プライバシーポリシー"
       },
       "social": {
         "email": "メール",

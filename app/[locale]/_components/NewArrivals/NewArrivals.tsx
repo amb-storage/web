@@ -27,7 +27,7 @@ export default function NewArrivalsSection({ products }: NewArrivalsSectionProps
 
   return (
     <section className="w-full py-12 bg-white select-none">
-      <div className="mx-auto md:px-20">
+      <div className="mx-auto px-5 md:px-20">
         {/* Header của Section & Nút điều hướng */}
         <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
           <h2 className="text-2xl md:text-3xl font-bold text-[#1B3B2B] tracking-tight">
