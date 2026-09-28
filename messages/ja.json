@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "title": "AMB Vintage",
+    "description": "ミリタリー・デニムを中心としたヴィンテージウェアのセレクトショップ。"
+  },
+  "homepage": {
+    "header": {
+      "logoAlt": "ロゴ",
+      "search": "検索",
+      "account": "アカウント",
+      "cart": "カート",
+      "home": {
+        "label": "ホーム",
+        "items": {
+          "about-us": "私たちについて"
+        }
+      },
+      "shopnow": {
+        "label": "今すぐ購入",
+        "items": {
+          "vintage": "ヴィンテージ",
+          "modern": "モダン"
+        }
+      },
+      "blog": {
+        "label": "ブログ",
+        "items": {
+          "interior-design": "インテリアデザイン",
+          "furniture-care": "家具の手入れ"
+        }
+      }
+    },
+    "hero": {
+      "title": "アンティークとヴィンテージの家具",
+      "description": "私たちは、ユニークで高品質なアンティークとヴィンテージの家具を提供しています。私たちのコレクションは、歴史的な価値と美しさを兼ね備えたアイテムで構成されています。",
+      "cta": "今すぐ購入",
+      "categories": {
+        "military": "VINTAGE MILITARY",
+        "denim": "VINTAGE DENIM"
+      }
+    },
+    "hotSection": {
+      "title": "Special VINTAGE",
+      "quickShop": "クイックショップ",
+      "soldOut": "在庫切れ",
+      "previous": "前へ",
+      "next": "次へ"
+    }
+  }
+}
