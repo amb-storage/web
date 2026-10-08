@@ -221,7 +221,14 @@
   "blog": {
     "pageTitle": "MILI TALKS",
     "readMore": "Read more",
-    "backToBlog": "Back to all posts"
+    "backToBlog": "Back to all posts",
+    "intro": "Mili Talks is a blog where we share our vintage know-how, hands-on experience, and the real perspective we have built through years in the field.\n\nWe explore the background, details, and stories behind vintage pieces — especially military and denim — to make the world of vintage approachable for newcomers too.\n\nWe also hope to grow a community where collectors and people who share the same values can connect.",
+    "references": {
+      "intro": "Much of the information presented here is based on various documents, references, and knowledge shared by the websites, dealers, brands, shops, and collectors listed below.\n\nAmb:STORAGE conducts its own research and verification, then selects, supplements, and edits those materials into each piece of content.\n\nBecause vintage is a culture with many interpretations, the same subject may have different theories. We hope these articles become a starting point for discovering vintage from a deeper perspective.",
+      "specialThanks": "Special Thanks",
+      "brandShop": "Brand, Shop",
+      "collector": "Collector"
+    }
   },
   "contentPages": {
     "about": {

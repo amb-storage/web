@@ -24,6 +24,25 @@ export type DescriptionBlock =
   | { type: "paragraph"; text: string }
   | { type: "divider" };
 
+export type StoryContentSection =
+  | {
+      type: "richText";
+      contentHtml: LocalizedText;
+      tone?: "white" | "muted";
+    }
+  | {
+      type: "imageText";
+      image: ProductImage;
+      contentHtml: LocalizedText;
+      reverse?: boolean;
+      tone?: "white" | "muted";
+    }
+  | {
+      type: "contact";
+      title: LocalizedText;
+      description: LocalizedText;
+    };
+
 export interface Product {
   id: string;
   slug: string;
@@ -59,6 +78,7 @@ export interface Story {
   coverImage: ProductImage;
   excerpt: LocalizedText;
   contentHtml: LocalizedText;
+  contentSections?: StoryContentSection[];
 }
 
 export interface StorefrontTaxonomy {
