@@ -1,95 +1,120 @@
 "use client";
 
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
+import { useState } from "react";
 import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
+import { formatMoney, getProductBadges } from "@/lib/storefront";
+import type { Product } from "@/lib/storefront";
+import { useCart } from "@/components/Cart/useCart";
+import { AddToCartDialog } from "@/components/Cart/AddToCartDialog";
 import { cn } from "@/lib/utils";
-import { useProductCardAnimation } from "./useProductCardAnimation";
+import ProductBadge from "@/components/ProductBadge/ProductBadge";
 
 interface ProductCardProps {
-  title: string;
-  price: string;
-  image: string | StaticImageData;
-  href: string;
-  /** "available" (mặc định, không hiện badge) | "low" (sắp hết hàng, badge xanh) | "soldOut" (hết hàng, badge đỏ). */
-  stock?: "available" | "low" | "soldOut";
-  stockLabel?: string;
-  viewDetailsLabel: string;
-  addToCartLabel: string;
-  onAddToCart?: () => void;
+    product: Product;
+    viewDetailsLabel: string;
+    addToCartLabel: string;
+    inCartLabel: string;
+    soldLabel: string;
+    taxInLabel: string;
+    className?: string;
 }
 
 export default function ProductCard({
-  title,
-  price,
-  image,
-  href,
-  stock = "available",
-  stockLabel,
-  viewDetailsLabel,
-  addToCartLabel,
-  onAddToCart,
+    product,
+    viewDetailsLabel,
+    addToCartLabel,
+    soldLabel,
+    taxInLabel,
+    className,
 }: ProductCardProps) {
-  const { imgRef, actionsRef, infoRef, handleMouseEnter, handleMouseLeave, handleAddToCartClick } =
-    useProductCardAnimation({ onAddToCart });
+    const locale = useLocale() as "ja" | "en";
+    const { add } = useCart();
+    const [addToCartOpen, setAddToCartOpen] = useState(false);
+    const name = product.name[locale];
+    const displayName = `${name} ${product.size}`;
+    const isSold = product.availability === "SOLD_OUT";
+    const badges = getProductBadges(product, locale).filter(
+        (badge) => badge.variant !== "sold",
+    );
 
-  return (
-    <div
-      className="product-card min-w-65 md:min-w-70 shrink-0 cursor-pointer group"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <Link href={href} className="block">
-        {/* Khung ảnh sản phẩm: Trong suốt hoàn toàn, không shadow, nằm trọn trên nền trắng */}
-        <div className="relative h-90 flex items-center justify-center p-4">
-          {/* Badge tồn kho: đỏ "在庫切れ" (Hết hàng) / xanh "在庫わずか" (Sắp hết hàng) */}
-          {stock !== "available" && stockLabel && (
-            <span
-              className={cn(
-                "absolute top-2 left-2 z-20 rounded px-2.5 py-1 text-xs font-semibold text-white",
-                stock === "soldOut" ? "bg-red-600" : "bg-emerald-700"
-              )}
-            >
-              {stockLabel}
-            </span>
-          )}
+    return (
+        <article
+            className={cn(
+                "product-card group w-[230px] p-2 min-w-[230px] shrink-0 cursor-pointer bg-white",
+                className,
+            )}
+        >
+            <div className="relative aspect-square w-full overflow-hidden bg-[#ebedef]">
+                {badges.length > 0 && (
+                    <div className="absolute bottom-4 left-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap gap-2">
+                        {badges.map((badge) => (
+                            <ProductBadge key={badge.id} badge={badge} />
+                        ))}
+                    </div>
+                )}
 
-          {/* Ảnh sản phẩm tách nền */}
-          <div className="w-full h-full relative">
-            <Image
-              ref={imgRef}
-              src={image}
-              alt={title}
-              fill
-              className="product-card-img object-contain transition-transform"
+                <Link
+                    href={`/shop/${product.slug}`}
+                    className="absolute inset-0 block"
+                    aria-label={displayName}
+                >
+                    <Image
+                        src={product.images[0]}
+                        alt={displayName}
+                        fill
+                        sizes="(min-width: 768px) 230px, 80vw"
+                        className="product-card-img [transform:scale(1)] object-cover transition-transform duration-500 ease-out group-hover:[transform:scale(1.08)]"
+                    />
+                </Link>
+
+                {isSold && (
+                    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-[#ebedef]/75">
+                        <span className="text-sm font-semibold uppercase tracking-[0.18em] text-(--brand-green)"></span>
+                    </div>
+                )}
+
+                <div className="product-card-actions absolute bottom-5 left-1/2 z-20 flex w-[calc(100%-2rem)] -translate-x-1/2 translate-y-4 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                    <button
+                        type="button"
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            setAddToCartOpen(true);
+                        }}
+                        disabled={isSold}
+                        className="flex h-10 w-full items-center justify-center bg-(--brand-green) px-3 text-xs font-medium tracking-wide text-white shadow-lg transition-colors hover:bg-(--brand-green-dark) disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        {isSold ? soldLabel : addToCartLabel}
+                    </button>
+                </div>
+            </div>
+
+            <AddToCartDialog
+                open={addToCartOpen}
+                product={product}
+                addToCartLabel={addToCartLabel}
+                viewDetailsLabel={viewDetailsLabel}
+                onAddToCart={(quantity) => add(product.id, quantity)}
+                onClose={() => setAddToCartOpen(false)}
             />
-          </div>
 
-          {/* Cặp nút Xem chi tiết / Thêm vào giỏ, chạy hiệu ứng GSAP trượt lên khi hover */}
-          <div
-            ref={actionsRef}
-            className="product-card-actions absolute bottom-4 left-1/2 z-20 flex w-[90%] -translate-x-1/2 translate-y-6 gap-2 opacity-0"
-          >
-            <span className="flex-1 rounded-md bg-[#1B3B2B] py-2.5 text-center text-xs font-medium tracking-wide text-white shadow-xl transition-colors hover:bg-[#12271d]">
-              {viewDetailsLabel}
-            </span>
-            <button
-              type="button"
-              onClick={handleAddToCartClick}
-              className="flex-1 rounded-md border border-gray-200 bg-white/95 py-2.5 text-center text-xs font-medium tracking-wide text-[#1B3B2B] shadow-xl transition-colors hover:bg-white"
-            >
-              {addToCartLabel}
-            </button>
-          </div>
-        </div>
-
-        {/* Thông tin sản phẩm (Tiêu đề & Giá) */}
-        <div ref={infoRef} className="product-card-info mt-3 px-1">
-          <h3 className="text-sm font-normal text-gray-700 line-clamp-2 min-h-[40px] group-hover:text-black transition-colors">
-            {title}
-          </h3>
-          <p className="mt-1.5 font-bold text-gray-900 text-base">{price}</p>
-        </div>
-      </Link>
-    </div>
-  );
+            <div className="product-card-info mt-4 px-0.5">
+                <Link
+                    href={`/shop/${product.slug}`}
+                    className="flex flex-col items-start justify-between gap-0"
+                >
+                    <h3 className="line-clamp-2 text-sm font-semibold leading-[1.3] tracking-[0.13em] text-(--brand-green) transition-colors group-hover:text-(--brand-green-dark)">
+                        {name} {product.size}
+                    </h3>
+                    <p className="mt-1 text-sm italic font-semibold leading-[1.3] tracking-[0.08em] text-black">
+                        {isSold
+                            ? soldLabel
+                            : `${formatMoney(product.price)} ${taxInLabel}`}
+                    </p>
+                </Link>
+            </div>
+        </article>
+    );
 }

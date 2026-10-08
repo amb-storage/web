@@ -4,10 +4,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { getLocale } from "next-intl/server";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/Footer/Footer";
+import Header from "@/components/Layout/Header";
+import Footer from "@/components/Layout/Footer/Footer";
 import SplashScreen from "@/components/SplashScreen/SplashScreen";
 import SmoothScroll from "@/components/SmoothScroll/SmoothScroll";
+import { CartProvider } from "@/components/Cart/CartProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,14 +34,16 @@ export default async function RootLayout({ children }: LayoutProps<"/[locale]">)
      
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider locale={locale}>
-          <SmoothScroll>
+          <CartProvider>
+            <SmoothScroll>
             <SplashScreen />
             <Header/>
-          <main className=" mt-20">
+          <main className="mt-15 w-full min-w-0 max-w-full overflow-x-clip md:mt-28">
               {children}
           </main>
             <Footer />
-          </SmoothScroll>
+            </SmoothScroll>
+          </CartProvider>
         </NextIntlClientProvider>
         </body>
     </html>
