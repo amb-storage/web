@@ -17,14 +17,14 @@ export default function FooterNav() {
     const { handleMouseEnter, handleMouseLeave } = useFooterNavAnimation();
 
     return (
-        <nav className="grid grid-cols-[max-content_max-content_max-content] items-start gap-x-8 gap-y-1 md:flex md:flex-wrap md:gap-8">
+        <nav className="grid w-full min-w-0 grid-cols-3 items-start gap-x-4 gap-y-1 md:flex md:flex-wrap md:gap-8">
             {navLinks.map((link) => (
                 <Link
                     key={link.key}
                     href={link.href}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
-                    className="relative py-1 text-sm font-semibold text-white/90 transition-colors hover:text-white"
+                    className="relative min-w-0 whitespace-nowrap py-1 text-sm font-semibold text-white/90 transition-colors hover:text-white"
                 >
                     {t(`nav.${link.key}`)}
                     {/* <span className="footer-nav-indicator absolute -bottom-0.5 left-0 h-[1.5px] w-full origin-left scale-x-0 bg-white" /> */}

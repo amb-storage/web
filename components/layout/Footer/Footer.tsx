@@ -55,9 +55,9 @@ export default function Footer() {
 
     return (
         <footer className="w-full bg-(--brand-green) text-white">
-            <div className="mx-auto px-5 py-8 md:px-20 md:py-12">
-                <div className="grid gap-8 md:grid-cols-[1fr_1fr] md:gap-20">
-                    <div className="flex flex-col items-start gap-5">
+            <div className="mx-auto min-w-0 max-w-full px-5 py-8 md:px-20 md:py-12">
+                <div className="grid min-w-0 gap-8 md:grid-cols-[1fr_1fr] md:gap-20">
+                    <div className="flex min-w-0 flex-col items-start gap-5">
                         <Link
                             href="/"
                             aria-label="Amb:STORAGE"
@@ -75,8 +75,8 @@ export default function Footer() {
                         <FooterNav />
                     </div>
 
-                    <div className="flex flex-1 flex-col gap-4">
-                        <p className="text-xl leading-relaxed tracking-[0.13em]">
+                    <div className="flex min-w-0 flex-1 flex-col gap-4">
+                        <p className="max-w-full break-words text-xl leading-relaxed tracking-[0.1em] md:tracking-[0.13em]">
                             {t("tagline")}
                         </p>
                         <NewsletterForm />
