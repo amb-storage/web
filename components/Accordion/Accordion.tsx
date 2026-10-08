@@ -24,12 +24,12 @@ export default function Accordion({
         type="button"
         onClick={toggle}
         aria-expanded={isOpen}
-        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-[#1B3B2B]"
+        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-(--brand-green)"
       >
         {title}
         <ChevronDown
           ref={chevronRef}
-          className="h-4 w-4 shrink-0 text-[#1B3B2B]"
+        className="h-4 w-4 shrink-0 text-(--brand-green)"
         />
       </button>
 

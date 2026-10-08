@@ -6,36 +6,90 @@
   "homepage": {
     "header": {
       "logoAlt": "ロゴ",
+      "navigation": "メインナビゲーション",
       "search": "検索",
-      "account": "アカウント",
       "cart": "カート",
+      "searchPlaceholder": "検索",
+      "clearSearch": "検索をクリア",
+      "closeSearch": "検索を閉じる",
+      "searchSubmit": "検索",
+      "navigationLabels": {
+        "home": "ホーム",
+        "about": "私たちについて",
+        "about-us": "私たちについて",
+        "shop-now": "ショップ",
+        "vintage-military": "ヴィンテージ ミリタリー",
+        "vintage-denim": "ヴィンテージ デニム",
+        "other-vtg-items": "その他のヴィンテージ",
+        "jackets": "ジャケット",
+        "shirts": "シャツ",
+        "t-shirts": "Tシャツ",
+        "pants": "パンツ",
+        "mili-talks": "Mili Talks",
+        "ma-1": "MA-1 ボンバーフライトジャケット",
+        "l-2": "L-2 シリーズジャケット",
+        "cwu": "CWU フライトジャケット",
+        "levis-507xx": "オリジナル LEVI'S 507XX",
+        "usmc-hbt": "USMC HBT’s シリーズ P1",
+        "usn-n-1": "USN N-1 デッキジャケット"
+      },
+      "account": {
+        "open": "アカウントを開く",
+        "mobileLabel": "ログイン",
+        "close": "アカウントダイアログを閉じる",
+        "title": "電話番号だけを使用してログインかアカウントを作成しましょう",
+        "benefits": {
+          "status": "注文ステータスの通知を受け取る",
+          "history": "注文履歴を表示し、素早く再注文する",
+          "payment": "支払い情報を管理して、会計を迅速に行う"
+        },
+        "cta": "ログインまたはアカウントの作成",
+        "phone": {
+          "title": "電話番号を入力してください",
+          "description": "SMSで確認コードをお送りします。",
+          "countryCode": "国番号",
+          "number": "電話番号",
+          "invalid": "有効な電話番号を入力してください。",
+          "next": "次へ",
+          "cancel": "キャンセル"
+        }
+      },
       "openMenu": "メニューを開く",
       "closeMenu": "メニューを閉じる",
       "toggleSubmenu": "{label}のサブメニューを切り替える",
       "home": {
-        "label": "ホーム",
+        "label": "HOME",
         "items": {
-          "about-us": "私たちについて"
+          "aboutUs": "ABOUT US"
         }
       },
       "shopnow": {
-        "label": "今すぐ購入",
+        "label": "SHOP NOW",
         "items": {
-          "vintage": "ヴィンテージ",
-          "modern": "モダン"
+          "military": "Vintage MILITARY",
+          "denim": "Vintage DENIM",
+          "other": "Other VTG Items",
+          "jackets": "Jackets",
+          "shirts": "Shirts",
+          "tshirts": "T-Shirts",
+          "pants": "Pants"
         }
       },
-      "blog": {
-        "label": "ブログ",
+      "miliTalks": {
+        "label": "MILI TALKS",
         "items": {
-          "interior-design": "インテリアデザイン",
-          "furniture-care": "家具の手入れ"
+          "ma1": "MA-1 Bomber Flight Jacket",
+          "l2": "L-2 Series Jacket",
+          "cwu": "CWU Flight Jacket",
+          "levis": "Original LEVI'S 507XX",
+          "usmc": "USMC HBT’s Series P1",
+          "n1": "USN N-1 Deck Jacket"
         }
       }
     },
     "hero": {
-      "title": "アンティークとヴィンテージの家具",
-      "description": "私たちは、ユニークで高品質なアンティークとヴィンテージの家具を提供しています。私たちのコレクションは、歴史的な価値と美しさを兼ね備えたアイテムで構成されています。",
+      "title": "オリジナルヴィンテージウェア",
+      "description": "ミリタリーとデニムを中心に、歴史と個性を持つヴィンテージウェアをセレクトしています。",
       "cta": "今すぐ購入",
       "categories": {
         "military": "VINTAGE MILITARY",
@@ -57,9 +111,31 @@
       "previous": "前へ",
       "next": "次へ"
     },
-    "productCard": {
-      "viewDetails": "詳細を見る",
+    "recentlyViewed": {
+      "title": "閲覧履歴",
+      "previous": "前へ",
+      "next": "次へ"
+    },
+      "productCard": {
+        "quickShop": "クイックショップ",
+        "addedToCart": "カートに追加しました",
+        "productDetails": "商品詳細",
+        "condition": "状態",
+        "conditionNote": "（*状態は弊社独自の基準となります。ご理解の上ご注文よろしくお願いいたします。）",
+        "size": "サイズ",
+        "shippingFree": "全国送料無料",
+        "shippingTime": "発送までの日数：1-2日で発送",
+        "detailsBlog": "Details Blog",
+        "detailsBlogText": "詳細ブログはこちらからご確認いただけます。",
+        "quantity": "数量",
+        "decreaseQuantity": "数量を減らす",
+        "increaseQuantity": "数量を増やす",
+        "close": "閉じる",
+        "viewDetails": "詳細を見る",
       "addToCart": "カートに追加",
+      "inCart": "カート内",
+      "sold": "SOLD",
+      "taxIn": "(tax-in)",
       "soldOut": "在庫切れ",
       "lowStock": "在庫わずか"
     },
@@ -90,7 +166,8 @@
         "shopAll": "すべての商品",
         "miliTalks": "Mili Talks",
         "aboutUs": "私たちについて",
-        "privacyPolicy": "プライバシーポリシー"
+        "privacyPolicy": "プライバシーポリシー",
+        "commercialTransactions": "特定商取引法に基づく表記"
       },
       "social": {
         "email": "メール",
@@ -100,10 +177,43 @@
       "copyright": "© {year} Amb:STORAGE"
     }
   },
+  "shop": {
+    "eyebrow": "オンラインストア",
+    "title": "ONLINE STORE",
+    "all": "すべて",
+    "clear": "フィルターをクリア",
+    "search": "商品を検索",
+    "searchPlaceholder": "商品名、カテゴリ、年代、サイズで検索",
+    "empty": "条件に一致する商品がありません。",
+    "filters": {
+      "category": "カテゴリ",
+      "periods": "年代",
+      "prices": "価格",
+      "size": "サイズ"
+    },
+    "categories": {
+      "military": "ミリタリー",
+      "denim": "デニム"
+    },
+    "priceRanges": {
+      "under": "¥100,000未満",
+      "middle": "¥100,000〜¥200,000",
+      "over": "¥200,000超"
+    },
+    "sort": {
+      "label": "並び替え",
+      "newest": "新着順",
+      "priceLow": "価格の安い順",
+      "priceHigh": "価格の高い順"
+    }
+  },
   "productDetail": {
     "allProducts": "すべての商品",
     "previous": "前へ",
     "next": "次へ",
+    "imageCount": "{current} / {total}",
+    "viewAllImages": "すべての画像を見る",
+    "closeAllImages": "閉じる",
     "description": "説明",
     "shippingReturns": "発送と返品",
     "relatedProducts": "類似商品"
@@ -112,5 +222,32 @@
     "pageTitle": "MILI TALKS",
     "readMore": "続きを読む",
     "backToBlog": "ブログ一覧に戻る"
+  },
+  "contentPages": {
+    "about": {
+      "title": "ABOUT US",
+      "intro": "Amb:STORAGEは、ミリタリーとデニムを中心にオリジナルヴィンテージウェアをセレクトしています。ブランドや会社に関する詳細は、確認済みのクライアント原稿が届き次第掲載します。"
+    },
+    "privacy": {
+      "title": "プライバシーポリシー",
+      "intro": "プライバシーポリシーの全文は、確認済みのクライアント・法務原稿が届き次第掲載します。"
+    },
+    "commercialTransactions": {
+      "title": "特定商取引法に基づく表記",
+      "intro": "特定商取引法に基づく表記の全文は、確認済みのクライアント・法務原稿が届き次第掲載します。"
+    }
+  },
+  "cart": {
+    "title": "カート",
+    "titleWithCount": "カート（{count}）",
+    "regular": "Regular",
+    "decreaseQuantity": "数量を減らす",
+    "increaseQuantity": "数量を増やす",
+    "loading": "カートを読み込んでいます…",
+    "empty": "カートは空です。",
+    "continueShopping": "ショッピングを続ける",
+    "remove": "削除",
+    "total": "合計",
+    "checkout": "お会計に進む {amount}"
   }
 }

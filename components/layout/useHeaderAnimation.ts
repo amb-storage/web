@@ -85,79 +85,18 @@ export function useMobileMenu() {
   const panelRef = useRef<HTMLDivElement>(null);
 
   const open = () => {
-    const overlay = overlayRef.current;
-    const panel = panelRef.current;
-    if (!panel) return;
-
     setIsOpen(true);
-    // Khóa scroll nền khi menu mobile đang mở
     document.body.style.overflow = "hidden";
-
-    const items = panel.querySelectorAll(".mobile-nav-item");
-
-    gsap.killTweensOf([overlay, panel, items].filter(Boolean) as gsap.TweenTarget[]);
-
-    if (overlay) {
-      gsap.set(overlay, { display: "block" });
-      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" });
-    }
-
-    gsap.set(panel, { display: "block" });
-    const tl = gsap.timeline();
-    tl.fromTo(
-      panel,
-      { opacity: 0, y: -16 },
-      { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }
-    );
-
-    if (items.length > 0) {
-      tl.fromTo(
-        items,
-        { opacity: 0, x: -12 },
-        { opacity: 1, x: 0, duration: 0.3, stagger: 0.06, ease: "power2.out" },
-        "-=0.2"
-      );
-    }
   };
 
   const close = () => {
-    const overlay = overlayRef.current;
-    const panel = panelRef.current;
-
     document.body.style.overflow = "";
-
-    if (!panel) {
-      setIsOpen(false);
-      return;
-    }
-
-    gsap.killTweensOf([overlay, panel].filter(Boolean) as gsap.TweenTarget[]);
-
-    if (overlay) {
-      gsap.to(overlay, {
-        opacity: 0,
-        duration: 0.2,
-        ease: "power2.in",
-        onComplete: () => gsap.set(overlay, { display: "none" }),
-      });
-    }
-
-    gsap.to(panel, {
-      opacity: 0,
-      y: -16,
-      duration: 0.25,
-      ease: "power2.in",
-      onComplete: () => {
-        gsap.set(panel, { display: "none" });
-        setIsOpen(false);
-      },
-    });
+    setIsOpen(false);
   };
 
   const toggle = () => (isOpen ? close() : open());
 
-  // Tự đóng menu mobile nếu resize lên desktop trong lúc đang mở, tránh panel bị kẹt display:block
-  // (gsap set inline style nên đè cả class `md:hidden`).
+  // Tự đóng menu mobile nếu resize lên desktop trong lúc đang mở.
   useEffect(() => {
     if (!isOpen) return;
 

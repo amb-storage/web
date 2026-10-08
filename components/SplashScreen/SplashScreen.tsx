@@ -28,7 +28,7 @@ export default function SplashScreen() {
         <div className="mt-6 h-[3px] w-40 overflow-hidden rounded-full bg-gray-200">
           <div
             ref={barFillRef}
-            className="h-full w-full origin-left scale-x-0 bg-[#1B3B2B]"
+            className="h-full w-full origin-left scale-x-0 bg-(--brand-green)"
           />
         </div>
       </div>

@@ -6,36 +6,90 @@
   "homepage": {
     "header": {
       "logoAlt": "Logo",
+      "navigation": "Primary navigation",
       "search": "Search",
-      "account": "User Account",
       "cart": "Cart",
+      "searchPlaceholder": "Search",
+      "clearSearch": "Clear search",
+      "closeSearch": "Close search",
+      "searchSubmit": "Search",
+      "navigationLabels": {
+        "home": "Home",
+        "about": "About Us",
+        "about-us": "About Us",
+        "shop-now": "Shop Now",
+        "vintage-military": "Vintage MILITARY",
+        "vintage-denim": "Vintage DENIM",
+        "other-vtg-items": "Other VTG Items",
+        "jackets": "Jackets",
+        "shirts": "Shirts",
+        "t-shirts": "T-Shirts",
+        "pants": "Pants",
+        "mili-talks": "Mili Talks",
+        "ma-1": "MA-1 Bomber Flight Jacket",
+        "l-2": "L-2 Series Jacket",
+        "cwu": "CWU Flight Jacket",
+        "levis-507xx": "Original LEVI'S 507XX",
+        "usmc-hbt": "USMC HBT’s Series P1",
+        "usn-n-1": "USN N-1 Deck Jacket"
+      },
+      "account": {
+        "open": "Open account",
+        "mobileLabel": "Log in",
+        "close": "Close account dialog",
+        "title": "Log in or create an account using only your phone number",
+        "benefits": {
+          "status": "Receive notifications about your order status",
+          "history": "View your order history and reorder quickly",
+          "payment": "Manage your payment details for faster checkout"
+        },
+        "cta": "Log in or create an account",
+        "phone": {
+          "title": "Enter your phone number",
+          "description": "We will send you a verification code by SMS.",
+          "countryCode": "Country code",
+          "number": "Phone number",
+          "invalid": "Please enter a valid phone number.",
+          "next": "Next",
+          "cancel": "Cancel"
+        }
+      },
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
       "toggleSubmenu": "Toggle {label} submenu",
       "home": {
-        "label": "Home",
+        "label": "HOME",
         "items": {
-          "about-us": "About Us"
+          "aboutUs": "ABOUT US"
         }
       },
       "shopnow": {
-        "label": "Shop Now",
+        "label": "SHOP NOW",
         "items": {
-          "vintage": "Vintage",
-          "modern": "Modern"
+          "military": "Vintage MILITARY",
+          "denim": "Vintage DENIM",
+          "other": "Other VTG Items",
+          "jackets": "Jackets",
+          "shirts": "Shirts",
+          "tshirts": "T-Shirts",
+          "pants": "Pants"
         }
       },
-      "blog": {
-        "label": "Blog",
+      "miliTalks": {
+        "label": "MILI TALKS",
         "items": {
-          "interior-design": "Interior Design",
-          "furniture-care": "Furniture Care"
+          "ma1": "MA-1 Bomber Flight Jacket",
+          "l2": "L-2 Series Jacket",
+          "cwu": "CWU Flight Jacket",
+          "levis": "Original LEVI'S 507XX",
+          "usmc": "USMC HBT’s Series P1",
+          "n1": "USN N-1 Deck Jacket"
         }
       }
     },
     "hero": {
-      "title": "Antique and Vintage Furniture",
-      "description": "We offer unique and high-quality antique and vintage furniture. Our collection consists of items that combine historical value and beauty.",
+      "title": "Original vintage clothing",
+      "description": "A considered collection of military and denim pieces with history, character, and a life of their own.",
       "cta": "Shop Now",
       "categories": {
         "military": "VINTAGE MILITARY",
@@ -57,9 +111,31 @@
       "previous": "Previous slide",
       "next": "Next slide"
     },
-    "productCard": {
-      "viewDetails": "View Details",
+    "recentlyViewed": {
+      "title": "Browsing History",
+      "previous": "Previous slide",
+      "next": "Next slide"
+    },
+      "productCard": {
+        "quickShop": "Quick shop",
+        "addedToCart": "Added to cart",
+        "productDetails": "Product details",
+        "condition": "Condition",
+        "conditionNote": "(*Condition is based on our original grading standards. Please review it before placing your order.)",
+        "size": "Size",
+        "shippingFree": "Free shipping nationwide",
+        "shippingTime": "Ships within 1–2 days",
+        "detailsBlog": "Details Blog",
+        "detailsBlogText": "View the detailed blog post here.",
+        "quantity": "Quantity",
+        "decreaseQuantity": "Decrease quantity",
+        "increaseQuantity": "Increase quantity",
+        "close": "Close",
+        "viewDetails": "View Details",
       "addToCart": "Add to cart",
+      "inCart": "In cart",
+      "sold": "SOLD",
+      "taxIn": "(tax-in)",
       "soldOut": "Sold Out",
       "lowStock": "Low Stock"
     },
@@ -90,7 +166,8 @@
         "shopAll": "Shop All",
         "miliTalks": "Mili Talks",
         "aboutUs": "ABOUT US",
-        "privacyPolicy": "Privacy Policy"
+        "privacyPolicy": "Privacy Policy",
+        "commercialTransactions": "Commercial Transactions"
       },
       "social": {
         "email": "Email",
@@ -100,10 +177,43 @@
       "copyright": "© {year} Amb:STORAGE"
     }
   },
+  "shop": {
+    "eyebrow": "Online store",
+    "title": "ONLINE STORE",
+    "all": "All",
+    "clear": "Clear filters",
+    "search": "Search products",
+    "searchPlaceholder": "Search by name, category, period, or size",
+    "empty": "No products match these selections.",
+    "filters": {
+      "category": "Category",
+      "periods": "Periods",
+      "prices": "Prices",
+      "size": "Size"
+    },
+    "categories": {
+      "military": "Military",
+      "denim": "Denim"
+    },
+    "priceRanges": {
+      "under": "Under ¥100,000",
+      "middle": "¥100,000–¥200,000",
+      "over": "Over ¥200,000"
+    },
+    "sort": {
+      "label": "Sort",
+      "newest": "Newest",
+      "priceLow": "Price low → high",
+      "priceHigh": "Price high → low"
+    }
+  },
   "productDetail": {
     "allProducts": "All Products",
     "previous": "Previous",
     "next": "Next",
+    "imageCount": "{current} / {total}",
+    "viewAllImages": "View all images",
+    "closeAllImages": "Close",
     "description": "Description",
     "shippingReturns": "Shipping & Returns",
     "relatedProducts": "You May Also Like"
@@ -112,5 +222,32 @@
     "pageTitle": "MILI TALKS",
     "readMore": "Read more",
     "backToBlog": "Back to all posts"
+  },
+  "contentPages": {
+    "about": {
+      "title": "ABOUT US",
+      "intro": "Amb:STORAGE curates original vintage clothing, with a focus on military and denim. Further brand and company details will be published here once the verified client copy is available."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "intro": "The complete privacy policy will be published here once the verified client and legal copy is available."
+    },
+    "commercialTransactions": {
+      "title": "Commercial Transactions",
+      "intro": "The required commercial transaction disclosure will be published here once the verified client and legal copy is available."
+    }
+  },
+  "cart": {
+    "title": "Cart",
+    "titleWithCount": "Cart ({count})",
+    "regular": "Regular",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "loading": "Loading cart…",
+    "empty": "Your cart is empty.",
+    "continueShopping": "Continue shopping",
+    "remove": "Remove",
+    "total": "Total",
+    "checkout": "Proceed to checkout {amount}"
   }
 }
