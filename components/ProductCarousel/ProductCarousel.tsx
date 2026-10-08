@@ -24,7 +24,7 @@ export default function ProductCarousel({
 }: ProductCarouselProps) {
     const tCard = useTranslations("homepage.productCard");
     const { sliderRef, canScrollLeft, canScrollRight, scroll, resetAllHovers } =
-        useCarousel(products.length);
+        useCarousel(products.length, { scrollByItem: true });
 
     return (
         <section
@@ -64,13 +64,14 @@ export default function ProductCarousel({
                     ref={sliderRef}
                     onScroll={resetAllHovers}
                     onMouseLeave={resetAllHovers}
-                    className="flex min-w-0 max-w-full gap-[2.5vw] overflow-x-auto pb-4 pt-2 no-scrollbar scroll-smooth md:pb-8"
+                    className="grid min-w-0 max-w-full grid-flow-col auto-cols-[100%] gap-[2.5vw] overflow-x-auto pb-4 pt-2 no-scrollbar scroll-smooth sm:auto-cols-[calc((100%-2.5vw)/2)] md:auto-cols-[calc((100%-5vw)/3)] md:pb-8 lg:auto-cols-[calc((100%-7.5vw)/4)] xl:auto-cols-[calc((100%-10vw)/5)]"
                     style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                     {products.map((product) => (
                         <ProductCard
                             key={product.id}
                             product={product}
+                            className="!w-full !min-w-0"
                             viewDetailsLabel={tCard("viewDetails")}
                             addToCartLabel={tCard("addToCart")}
                             inCartLabel={tCard("inCart")}

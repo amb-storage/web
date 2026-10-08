@@ -75,7 +75,7 @@ export default function ProductCard({
                     </div>
                 )}
 
-                <div className="product-card-actions absolute bottom-5 left-1/2 z-20 flex w-[calc(100%-2rem)] -translate-x-1/2 translate-y-4 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                <div className="product-card-actions pointer-events-none absolute bottom-5 left-1/2 z-20 flex w-[calc(100%-2rem)] -translate-x-1/2 translate-y-3 scale-[0.98] opacity-0 will-change-[opacity,transform] transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
                     <button
                         type="button"
                         onClick={(event) => {
@@ -84,7 +84,7 @@ export default function ProductCard({
                             setAddToCartOpen(true);
                         }}
                         disabled={isSold}
-                        className="flex h-10 w-full items-center justify-center bg-(--brand-green) px-3 text-xs font-medium tracking-wide text-white shadow-lg transition-colors hover:bg-(--brand-green-dark) disabled:cursor-not-allowed disabled:opacity-60"
+                        className="flex h-10 w-full items-center justify-center bg-(--brand-green) px-3 text-xs font-medium tracking-wide text-white shadow-lg transition-[background-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-0.5 hover:bg-(--brand-green-dark) hover:shadow-xl active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {isSold ? soldLabel : addToCartLabel}
                     </button>

@@ -10,7 +10,10 @@ import gsap from "gsap";
  * trường hợp này mouseleave của từng card không kịp bắn nên ảnh/nút hành động có thể bị kẹt
  * lại ở trạng thái đang hover.
  */
-export function useCarousel(itemCount: number) {
+export function useCarousel(
+  itemCount: number,
+  { scrollByItem = false }: { scrollByItem?: boolean } = {},
+) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -43,7 +46,13 @@ export function useCarousel(itemCount: number) {
     const slider = sliderRef.current;
     if (!slider) return;
 
-    const scrollAmount = direction === "left" ? -350 : 350;
+    const firstItem = slider.firstElementChild as HTMLElement | null;
+    const gap = Number.parseFloat(window.getComputedStyle(slider).columnGap) || 0;
+    const itemScrollAmount = firstItem
+      ? firstItem.getBoundingClientRect().width + gap
+      : 350;
+    const scrollAmount = (scrollByItem ? itemScrollAmount : 350) *
+      (direction === "left" ? -1 : 1);
     slider.scrollBy({
       left: scrollAmount,
       behavior: "smooth",
