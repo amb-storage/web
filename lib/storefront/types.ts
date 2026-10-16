@@ -67,7 +67,10 @@ export interface ProductQuery {
   category?: string;
   period?: string;
   price?: string;
+  priceMin?: number;
+  priceMax?: number;
   size?: string;
+  inStock?: boolean;
   sort?: ProductSort;
 }
 

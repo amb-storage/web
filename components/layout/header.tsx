@@ -29,20 +29,10 @@ import {
 } from "@/lib/storefront";
 import { useMobileMenu, useMobileSubmenu } from "./useHeaderAnimation";
 
-function localizeNavigation(
-    items: readonly HeaderNavigationItem[],
-    translate: (key: string) => string,
-): HeaderNavigationItem[] {
-    return items.map((item) => ({
-        ...item,
-        label: translate(`navigationLabels.${item.id}`),
-        children: localizeNavigation(item.children, translate),
-    }));
-}
-
 export default function Header() {
     const t = useTranslations("homepage.header");
-    const navigation = localizeNavigation(headerNavigation, (key) => t(key));
+    // Khách muốn menu luôn hiện tiếng Anh ở cả ja và en, nên dùng thẳng label trong headerNavigation
+    const navigation: readonly HeaderNavigationItem[] = headerNavigation;
     const router = useRouter();
     const { count, hydrated } = useCart();
     const [searchOpen, setSearchOpen] = useState(false);
@@ -236,7 +226,7 @@ export default function Header() {
 
                 <Link
                     href="/"
-                    className={`relative col-start-2 row-start-1 h-12 w-39 justify-self-center transition-[height,width,opacity] duration-500 ease-out md:absolute md:left-1/2 md:-translate-x-1/2 ${isCompact ? "md:hidden" : "md:h-16 md:w-80"} ${searchOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}
+                    className={`relative col-start-2 row-start-1 justify-self-center transition-[height,width,opacity] duration-500 ease-out md:absolute md:left-1/2 md:-translate-x-1/2 ${isCompact ? "h-9 w-29 md:h-10 md:w-50" : "h-12 w-39 md:h-16 md:w-80"} ${searchOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}
                     aria-label={t("logoAlt")}
                 >
                     <Image

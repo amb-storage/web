@@ -48,8 +48,8 @@ export const products: Product[] = [
     },
     condition: { ja: "GOOD USED", en: "Good used" },
     measurements: {
-      ja: "肩幅--46cm\n身幅--55cm\n袖丈--61cm\n着丈--67cm\n※素人寸法のため誤差はご了承下さい。",
-      en: "Shoulder--46cm\nChest--55cm\nSleeve--61cm\nLength--67cm\nMeasurements are approximate.",
+      ja: "肩幅--46cm\n身幅--55cm\n袖丈--61cm\n着丈--67cm",
+      en: "Shoulder--46cm\nChest--55cm\nSleeve--61cm\nLength--67cm",
     },
   },
   {

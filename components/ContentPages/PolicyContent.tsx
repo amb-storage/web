@@ -294,7 +294,7 @@ export default function PolicyContent({ locale }: { locale: string }) {
     const content = policyContent[locale === "ja" ? "ja" : "en"];
 
     return (
-        <div className="mx-auto w-full max-w-5xl px-4 pb-20 md:px-8 md:pb-28 mt-5">
+        <div className="mx-auto w-full max-w-5xl px-4 pb-20 md:px-10 md:pb-28 mt-5">
             <section
                 className="bg-[#eef5f0] px-5 py-8 md:px-10"
                 aria-labelledby="policy-menu-title"

@@ -1,11 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import AboutUsTabs from "@/components/ContentPages/AboutUsTabs";
 
-type AboutUsHeaderProps = {
-  activeTab?: "about" | "policy";
-};
-
-export default async function AboutUsHeader({ activeTab }: AboutUsHeaderProps) {
+export default async function AboutUsHeader() {
   const tAbout = await getTranslations("contentPages.about");
   const tFooter = await getTranslations("homepage.footer");
   return (
@@ -20,7 +16,6 @@ export default async function AboutUsHeader({ activeTab }: AboutUsHeaderProps) {
       </header>
 
       <AboutUsTabs
-        initialActiveTab={activeTab ?? "about"}
         labels={{
           aboutUs: tFooter("nav.commercialTransactions"),
           privacyPolicy: tFooter("nav.privacyPolicy"),

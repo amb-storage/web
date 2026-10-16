@@ -1,5 +1,3 @@
-import { Link } from "@/i18n/navigation";
-
 type AboutSection = {
   id: string;
   title: string;
@@ -149,17 +147,18 @@ export default function AboutContent({ locale }: { locale: string }) {
   const sections = content[locale === "ja" ? "ja" : "en"];
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 pb-20 md:px-8 md:pb-28">
+    <div className="mx-auto w-full max-w-5xl px-4 pb-20 md:px-10 md:pb-28">
       <div className="divide-y divide-gray-200 border-t border-gray-200">
         {sections.map((section) => (
           <section key={section.id} className="scroll-mt-24 py-10 md:py-14">
             <h2 className="text-2xl font-bold text-(--brand-green) md:text-3xl">{section.title}</h2>
             {section.details && (
-              <dl className="mt-6 space-y-5 text-sm leading-8 text-gray-700 md:text-base">
+              // Bảng 会社概要: desktop chia 2 cột nhãn | nội dung cho thẳng hàng, mobile xếp dọc
+              <dl className="mt-6 divide-y divide-gray-100 border-y border-gray-100 text-sm leading-7 text-gray-700 md:text-base md:leading-8">
                 {section.details.map((detail) => (
-                  <div key={detail.label}>
+                  <div key={detail.label} className="py-4 md:grid md:grid-cols-[12rem_1fr] md:gap-x-8">
                     <dt className="font-semibold text-black">{detail.label}</dt>
-                    <dd className="whitespace-pre-line">{detail.value}</dd>
+                    <dd className="mt-1 whitespace-pre-line md:mt-0">{detail.value}</dd>
                   </div>
                 ))}
               </dl>
@@ -174,17 +173,11 @@ export default function AboutContent({ locale }: { locale: string }) {
                 {section.values.map((value) => (
                   <div key={value.title}>
                     <h3 className="font-semibold text-black">{value.title}</h3>
-                    <p>{value.description}</p>
+                    {/* Thụt vào thẳng với chữ sau số thứ tự "1. " */}
+                    <p className="pl-[1.25em]">{value.description}</p>
                   </div>
                 ))}
               </div>
-            )}
-            {section.id === "company" && (
-              <p className="mt-5 text-sm leading-8 text-gray-700 md:text-base">
-                <Link href="/policy" className="text-(--brand-green) underline underline-offset-4">
-                  {locale === "ja" ? "特定商取引法に基づく表記 / ご利用ガイドはこちら。" : "View the specified commercial transactions and user guide here."}
-                </Link>
-              </p>
             )}
           </section>
         ))}

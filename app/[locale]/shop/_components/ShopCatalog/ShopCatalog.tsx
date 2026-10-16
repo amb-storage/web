@@ -2,9 +2,18 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Check, SlidersHorizontal, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import { filterAndSortProducts } from "@/lib/storefront";
-import type { Product, ProductQuery, ProductSort } from "@/lib/storefront";
+import type { Product, ProductSort } from "@/lib/storefront";
+import RefineDrawer from "../RefineDrawer/RefineDrawer";
+import {
+    emptyRefineFilters,
+    hasRefineFilters,
+    type RefineFilters,
+} from "../RefineDrawer/useRefineDrawer";
+import SortDropdown from "../SortDropdown/SortDropdown";
 
 interface ShopCatalogProps {
     products: Product[];
@@ -12,12 +21,12 @@ interface ShopCatalogProps {
     initialCategory: string;
 }
 
-const initialFilters = {
-    category: "all",
-    period: "all",
-    price: "all",
-    size: "all",
-};
+// Ô giá trống hoặc không phải số thì bỏ qua điều kiện đó
+function toPrice(value: string) {
+    if (value.trim() === "") return undefined;
+    const amount = Number(value);
+    return Number.isFinite(amount) ? amount : undefined;
+}
 
 export default function ShopCatalog({
     products,
@@ -26,165 +35,116 @@ export default function ShopCatalog({
 }: ShopCatalogProps) {
     const t = useTranslations("shop");
     const tCard = useTranslations("homepage.productCard");
-    const [filters, setFilters] = useState({
-        ...initialFilters,
+    const [filters, setFilters] = useState<RefineFilters>({
+        ...emptyRefineFilters,
         category: initialCategory,
     });
     const [search, setSearch] = useState(initialSearch);
+    const [inStock, setInStock] = useState(false);
     const [sort, setSort] = useState<ProductSort>("newest");
+    const [isRefineOpen, setIsRefineOpen] = useState(false);
+    // Đổi key mỗi lần mở để drawer mount lại với bản nháp = bộ lọc hiện tại
+    const [refineKey, setRefineKey] = useState(0);
 
     const options = useMemo(
         () => ({
-            categories: [
-                ...new Set(products.map((product) => product.category)),
-            ],
-            periods: [
-                ...new Set(products.map((product) => product.period)),
-            ].sort(),
-            sizes: [...new Set(products.map((product) => product.size))].sort(),
+            categories: [...new Set(products.map((product) => product.category))].map(
+                (category) => ({
+                    value: category,
+                    label: t(`categories.${category}`).toUpperCase(),
+                }),
+            ),
+            periods: [...new Set(products.map((product) => product.period))]
+                .sort()
+                .map((period) => ({ value: period, label: period })),
+            sizes: [...new Set(products.map((product) => product.size))]
+                .sort()
+                .map((size) => ({ value: size, label: size })),
         }),
-        [products],
+        [products, t],
     );
 
-    const visibleProducts = useMemo(() => {
-        const query: ProductQuery = { ...filters, search, sort };
-        return filterAndSortProducts(products, query);
-    }, [filters, products, search, sort]);
+    const visibleProducts = useMemo(
+        () =>
+            filterAndSortProducts(products, {
+                search,
+                sort,
+                inStock,
+                category: filters.category,
+                period: filters.period,
+                size: filters.size,
+                priceMin: toPrice(filters.priceMin),
+                priceMax: toPrice(filters.priceMax),
+            }),
+        [filters, inStock, products, search, sort],
+    );
 
-    const setFilter = (key: keyof typeof filters, value: string) => {
-        setFilters((current) => ({ ...current, [key]: value }));
-    };
-
-    const clearFilters = () => {
-        setFilters(initialFilters);
-        setSearch("");
-        setSort("newest");
+    const openRefine = () => {
+        setRefineKey((key) => key + 1);
+        setIsRefineOpen(true);
     };
 
     return (
-        <section className="bg-(--surface-muted) px-4 py-8 md:px-8 md:py-12">
+        <section className="bg-white px-4 py-8 md:px-8 md:py-12">
             <div className="mx-auto max-w-7xl">
-                <div className="flex flex-col gap-4 border-b border-gray-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                        <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                            {t("filters.category")}
-                            <select
-                                value={filters.category}
-                                onChange={(event) =>
-                                    setFilter("category", event.target.value)
-                                }
-                                className="mt-2 block w-full rounded border border-gray-200 bg-white px-3 py-2.5 text-sm font-normal normal-case tracking-normal text-gray-800 outline-none focus:border-(--brand-green)"
+                {/* Thanh lọc: In Stock bên trái, nút lọc + sắp xếp bên phải */}
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2">
+                        <label className="flex cursor-pointer select-none items-center gap-3 text-xs font-medium leading-4">
+                            <input
+                                type="checkbox"
+                                checked={inStock}
+                                onChange={(event) => setInStock(event.target.checked)}
+                                className="peer sr-only"
+                            />
+                            <span
+                                aria-hidden
+                                className={cn(
+                                    "grid h-6 w-6 place-content-center rounded-md transition-colors duration-300 peer-focus-visible:ring-2 peer-focus-visible:ring-black/40",
+                                    inStock ? "bg-black text-white" : "bg-black/6 text-[#e2e2e2]",
+                                )}
                             >
-                                <option value="all">{t("all")}</option>
-                                {options.categories.map((category) => (
-                                    <option key={category} value={category}>
-                                        {t(`categories.${category}`)}
-                                    </option>
-                                ))}
-                            </select>
+                                <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                            </span>
+                            {t("inStock")}
                         </label>
-                        <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                            {t("filters.periods")}
-                            <select
-                                value={filters.period}
-                                onChange={(event) =>
-                                    setFilter("period", event.target.value)
-                                }
-                                className="mt-2 block w-full rounded border border-gray-200 bg-white px-3 py-2.5 text-sm font-normal normal-case tracking-normal text-gray-800 outline-none focus:border-(--brand-green)"
-                            >
-                                <option value="all">{t("all")}</option>
-                                {options.periods.map((period) => (
-                                    <option key={period} value={period}>
-                                        {period}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-                        <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                            {t("filters.prices")}
-                            <select
-                                value={filters.price}
-                                onChange={(event) =>
-                                    setFilter("price", event.target.value)
-                                }
-                                className="mt-2 block w-full rounded border border-gray-200 bg-white px-3 py-2.5 text-sm font-normal normal-case tracking-normal text-gray-800 outline-none focus:border-(--brand-green)"
-                            >
-                                <option value="all">{t("all")}</option>
-                                <option value="under-100000">
-                                    {t("priceRanges.under")}
-                                </option>
-                                <option value="100000-200000">
-                                    {t("priceRanges.middle")}
-                                </option>
-                                <option value="over-200000">
-                                    {t("priceRanges.over")}
-                                </option>
-                            </select>
-                        </label>
-                        <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                            {t("filters.size")}
-                            <select
-                                value={filters.size}
-                                onChange={(event) =>
-                                    setFilter("size", event.target.value)
-                                }
-                                className="mt-2 block w-full rounded border border-gray-200 bg-white px-3 py-2.5 text-sm font-normal normal-case tracking-normal text-gray-800 outline-none focus:border-(--brand-green)"
-                            >
-                                <option value="all">{t("all")}</option>
-                                {options.sizes.map((size) => (
-                                    <option key={size} value={size}>
-                                        {size}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
+
+                        <p className="text-xs font-medium leading-[1.33] text-black/55">
+                            {t("itemCount", { count: visibleProducts.length })}
+                        </p>
+
+                        {search && (
+                            <span className="flex items-center gap-1 rounded-full bg-black/4 py-1 pl-3 pr-1.5 text-xs">
+                                “{search}”
+                                <button
+                                    type="button"
+                                    onClick={() => setSearch("")}
+                                    aria-label={t("clearSearch")}
+                                    className="grid h-5 w-5 place-content-center rounded-full hover:bg-black/6"
+                                >
+                                    <X className="h-3 w-3" />
+                                </button>
+                            </span>
+                        )}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
-                        <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                            {t("sort.label")}
-                            <select
-                                value={sort}
-                                onChange={(event) =>
-                                    setSort(event.target.value as ProductSort)
-                                }
-                                className="ml-2 rounded border border-gray-200 bg-white px-3 py-2.5 text-sm font-normal normal-case tracking-normal text-gray-800 outline-none focus:border-(--brand-green)"
-                            >
-                                <option value="newest">
-                                    {t("sort.newest")}
-                                </option>
-                                <option value="price-low">
-                                    {t("sort.priceLow")}
-                                </option>
-                                <option value="price-high">
-                                    {t("sort.priceHigh")}
-                                </option>
-                            </select>
-                        </label>
+                    <div className="flex shrink-0 gap-2">
                         <button
                             type="button"
-                            onClick={clearFilters}
-                            className="text-sm font-semibold text-(--brand-green) underline underline-offset-4"
+                            onClick={openRefine}
+                            aria-label={t("refine.open")}
+                            className="relative grid h-10 w-10 place-content-center rounded-full border border-[#222] transition-colors duration-500 hover:bg-black hover:text-white"
                         >
-                            {t("clear")}
+                            <SlidersHorizontal className="h-3.5 w-3.5" strokeWidth={1.5} />
+                            {hasRefineFilters(filters) && (
+                                <span
+                                    aria-hidden
+                                    className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-(--brand-green)"
+                                />
+                            )}
                         </button>
+                        <SortDropdown value={sort} onChange={setSort} />
                     </div>
-                </div>
-
-                <div className="mt-5 flex gap-3">
-                    <label htmlFor="catalog-search" className="sr-only">
-                        {t("search")}
-                    </label>
-                    <input
-                        id="catalog-search"
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                        placeholder={t("searchPlaceholder")}
-                        className="min-w-0 flex-1 rounded border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-(--brand-green)"
-                    />
-                    <span className="self-center text-sm text-gray-500">
-                        {visibleProducts.length} / {products.length}
-                    </span>
                 </div>
 
                 {visibleProducts.length === 0 ? (
@@ -208,6 +168,17 @@ export default function ShopCatalog({
                     </div>
                 )}
             </div>
+
+            <RefineDrawer
+                key={refineKey}
+                open={isRefineOpen}
+                applied={filters}
+                categories={options.categories}
+                periods={options.periods}
+                sizes={options.sizes}
+                onClose={() => setIsRefineOpen(false)}
+                onApply={setFilters}
+            />
         </section>
     );
 }

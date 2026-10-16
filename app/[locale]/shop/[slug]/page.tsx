@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import ProductGallery from "./_components/ProductGallery/ProductGallery";
 import ProductInfo from "./_components/ProductInfo/ProductInfo";
@@ -19,72 +18,51 @@ export default async function ProductDetailPage({
     const locale = (await getLocale()) as "ja" | "en";
     const productTitle = product.name[locale];
     const t = await getTranslations("productDetail");
-    const tCard = await getTranslations("homepage.productCard");
 
-    const [allProducts, settings] = await Promise.all([
-        storefrontRepository.getProducts({ sort: "newest" }),
-        storefrontRepository.getStoreSettings(),
-    ]);
+    const allProducts = await storefrontRepository.getProducts({
+        sort: "newest",
+    });
     const relatedProducts = allProducts
         .filter((item) => item.slug !== slug)
         .slice(0, 6);
-    const descriptionBlocks = [
-        { type: "paragraph" as const, text: product.description[locale] },
-        ...(product.condition
-            ? [
-                  { type: "divider" as const },
-                  {
-                      type: "heading" as const,
-                      text: locale === "ja" ? "コンディション" : "Condition",
-                  },
-                  {
-                      type: "paragraph" as const,
-                      text: product.condition[locale],
-                  },
-              ]
-            : []),
-    ];
 
     return (
-        <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8">
+        <div className="w-full">
             <RecentlyViewedTracker productId={product.id} />
             {/* Breadcrumb */}
-            <nav className="mb-6 flex items-center gap-1.5 text-sm text-gray-500">
-                <Link
-                    href="/shop"
-                    className="transition-colors hover:text-black"
-                >
+            <nav className="flex gap-2 whitespace-nowrap px-6 py-4 text-xs leading-4 tracking-[0.24px] text-black/80 md:mx-2 md:my-4">
+                <Link href="/" className="underline">
+                    {t("top")}
+                </Link>
+                <span>/</span>
+                <Link href="/shop" className="underline">
                     {t("allProducts")}
                 </Link>
-                <ChevronRight className="h-3.5 w-3.5" />
-                <span className="text-gray-900">{productTitle}</span>
+                <span>/</span>
+                <span className="overflow-hidden text-ellipsis text-black">
+                    {productTitle}
+                </span>
             </nav>
 
-            <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-14">
-                <ProductGallery
-                    images={product.images}
-                    title={productTitle}
-                    previousLabel={t("previous")}
-                    nextLabel={t("next")}
-                />
+            <div className="mt-6 flex flex-col md:flex-row md:items-start">
+                <section className="w-full md:w-1/2">
+                    <ProductGallery
+                        images={product.images}
+                        title={productTitle}
+                        previousLabel={t("previous")}
+                        nextLabel={t("next")}
+                    />
+                </section>
 
-                <ProductInfo
-                    product={product}
-                    addToCartLabel={tCard("addToCart")}
-                    inCartLabel={tCard("inCart")}
-                    soldLabel={tCard("soldOut")}
-                    taxInLabel={tCard("taxIn")}
-                    descriptionTitle={t("description")}
-                    descriptionBlocks={descriptionBlocks}
-                    shippingReturnsTitle={t("shippingReturns")}
-                    shippingReturnsBlocks={settings.shippingReturns[locale]}
-                />
+                <ProductInfo product={product} />
             </div>
 
-            <RelatedProducts
-                title={t("relatedProducts")}
-                products={relatedProducts}
-            />
+            <div className="px-4 md:px-8">
+                <RelatedProducts
+                    title={t("relatedProducts")}
+                    products={relatedProducts}
+                />
+            </div>
         </div>
     );
 }

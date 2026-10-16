@@ -20,63 +20,44 @@ function finishSplash() {
 export function useSplashScreenAnimation() {
   const [isVisible, setIsVisible] = useState(true);
   const panelRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const barFillRef = useRef<HTMLDivElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
 
   // useLayoutEffect: nếu splash đã chạy trong phiên này rồi thì ẩn ngay trước khi browser
   // kịp paint, tránh bị "chớp" lại splash mỗi lần chuyển trang/đổi locale.
   useIsomorphicLayoutEffect(() => {
-    if (hasSplashPlayed()) {
-      finishSplash();
-      setIsVisible(false);
-      return;
-    }
-
-    if (!panelRef.current || !contentRef.current || !barFillRef.current) {
+    if (hasSplashPlayed() || !panelRef.current || !leftRef.current || !rightRef.current) {
       finishSplash();
       setIsVisible(false);
       return;
     }
 
     document.body.style.overflow = "hidden";
+    const left = leftRef.current;
+    const right = rightRef.current;
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        document.body.style.overflow = "";
-        finishSplash();
-        setIsVisible(false);
-      },
-    });
-
-    tl.to(contentRef.current, {
-      opacity: 1,
-      scale: 1,
-      duration: 0.6,
-      ease: "power3.out",
-    })
-      .to(
-        barFillRef.current,
-        { scaleX: 1, duration: 0.7, ease: "power2.inOut" },
-        "-=0.2"
-      )
-      .to(contentRef.current, {
-        opacity: 0,
-        y: -12,
-        duration: 0.3,
-        ease: "power2.in",
-        delay: 0.3,
-      })
-      .to(
-        panelRef.current,
-        { yPercent: -100, duration: 0.7, ease: "power4.inOut" },
-        "-=0.1"
-      );
+    // Selector chỉ tìm trong splash; 2 bản nội dung (2 nửa) chạy cùng 1 timeline nên luôn khớp nhau
+    const ctx = gsap.context(() => {
+      gsap
+        .timeline({
+          onComplete: () => {
+            document.body.style.overflow = "";
+            finishSplash();
+            setIsVisible(false);
+          },
+        })
+        // 1. Logo hiện lên, giữ một nhịp
+        .to(".splash-logo", { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" })
+        // 2. Tách đôi màn hình ngay giữa logo, hai nửa trượt sang hai bên
+        .to(left, { xPercent: -100, duration: 0.9, ease: "power4.inOut" }, "+=0.5")
+        .to(right, { xPercent: 100, duration: 0.9, ease: "power4.inOut" }, "<");
+    }, panelRef);
 
     return () => {
       document.body.style.overflow = "";
-      tl.kill();
+      ctx.revert();
     };
   }, []);
 
-  return { isVisible, panelRef, contentRef, barFillRef };
+  return { isVisible, panelRef, leftRef, rightRef };
 }

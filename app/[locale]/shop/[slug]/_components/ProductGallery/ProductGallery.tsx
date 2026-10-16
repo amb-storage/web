@@ -1,25 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image, { StaticImageData } from "next/image";
-import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
-import Lightbox from "yet-another-react-lightbox";
-import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
-import { cn } from "@/lib/utils";
-import { useCarousel } from "@/hooks/useCarousel";
-import { useProductGalleryAnimation } from "./useProductGalleryAnimation";
+import { ArrowLeft, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useProductGallery } from "./useProductGallery";
 
 interface ProductGalleryProps {
   images: (string | StaticImageData)[];
   title: string;
   previousLabel: string;
   nextLabel: string;
-}
-
-function toSrc(image: string | StaticImageData) {
-  return typeof image === "string" ? image : image.src;
 }
 
 export default function ProductGallery({
@@ -29,167 +19,187 @@ export default function ProductGallery({
   nextLabel,
 }: ProductGalleryProps) {
   const t = useTranslations("productDetail");
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [isAllImagesOpen, setIsAllImagesOpen] = useState(false);
-  const allImagesDialogRef = useRef<HTMLDialogElement>(null);
-  const { mainImageRef, playImageChange } = useProductGalleryAnimation();
-  // Dùng lại hook carousel chung cho dải thumbnail (chỉ cần sliderRef/scroll/canScroll, không cần
-  // resetAllHovers ở đây vì thumbnail không có hover-actions kiểu ProductCard)
-  const { sliderRef, canScrollLeft, canScrollRight, scroll } = useCarousel(
-    images.length
-  );
-
-  useEffect(() => {
-    const dialog = allImagesDialogRef.current;
-    if (!dialog) return;
-    if (isAllImagesOpen && !dialog.open) dialog.showModal();
-    if (!isAllImagesOpen && dialog.open) dialog.close();
-  }, [isAllImagesOpen]);
-
-  const goTo = (index: number) => {
-    setActiveIndex(index);
-    playImageChange();
-  };
-
-  const goToDelta = (delta: number) => {
-    goTo((activeIndex + delta + images.length) % images.length);
-  };
+  const {
+    trackRef,
+    panelRef,
+    backdropRef,
+    panelScrollRef,
+    triggerRef,
+    closeButtonRef,
+    activeIndex,
+    panelView,
+    handleTrackScroll,
+    goToDelta,
+    openGrid,
+    openImage,
+    backToGrid,
+    closePanel,
+  } = useProductGallery(images.length);
+  const total = images.length;
 
   return (
-    <div className="flex min-w-0 max-w-full flex-col gap-4">
-      {/* Ảnh chính */}
-      <div className="relative aspect-square w-full overflow-hidden bg-zinc-50">
-        <button
-          type="button"
-          onClick={() => setIsLightboxOpen(true)}
-          className="group absolute inset-0 cursor-zoom-in"
-          aria-label={title}
-        >
-          <div ref={mainImageRef} className="absolute inset-0">
-            <Image
-              src={images[activeIndex]}
-              alt={`${title} ${activeIndex + 1}`}
-              fill
-              priority
-              className="object-contain"
-            />
+    <div className="relative w-full">
+      {/* Slider ảnh chính: mỗi slide là 1 ô vuông nền gradient xám, ảnh blend multiply */}
+      <div
+        ref={trackRef}
+        onScroll={handleTrackScroll}
+        className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {images.map((image, index) => (
+          <div
+            key={index}
+            className="grid aspect-square w-full shrink-0 snap-center place-items-center bg-linear-135 from-[#e2e0e0] to-[#f8f8f7]"
+          >
+            <div className="relative aspect-square w-[96.768%] mix-blend-multiply">
+              <Image
+                src={image}
+                alt={`${title} ${index + 1}`}
+                fill
+                priority={index === 0}
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-contain"
+              />
+            </div>
           </div>
-
-          {/* Icon phóng to, gợi ý bấm để xem full màn hình */}
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-(--brand-green) shadow-md">
-            {t("imageCount", { current: activeIndex + 1, total: images.length })}
-          </span>
-          <span className="absolute bottom-3 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-(--brand-green) opacity-0 shadow-md transition-opacity group-hover:opacity-100">
-            <Maximize2 className="h-4 w-4" />
-          </span>
-        </button>
-
-        {images.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={() => goToDelta(-1)}
-              aria-label={previousLabel}
-              className="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-(--brand-green) shadow-md transition-colors hover:bg-white"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => goToDelta(1)}
-              aria-label={nextLabel}
-              className="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-(--brand-green) shadow-md transition-colors hover:bg-white"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </>
-        )}
+        ))}
       </div>
 
-      {/* Dải thumbnail */}
-      {images.length > 1 && (
-        <div className="flex min-w-0 max-w-full items-center gap-2">
+      {total > 1 && (
+        <>
           <button
             type="button"
-            onClick={() => scroll("left")}
-            disabled={!canScrollLeft}
+            onClick={() => goToDelta(-1)}
+            disabled={activeIndex === 0}
             aria-label={previousLabel}
-            className="hidden shrink-0 items-center justify-center rounded-full border border-gray-200 p-1.5 text-(--brand-green) transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-30 md:flex"
+            className="absolute left-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center text-black/70 transition-opacity hover:text-black disabled:opacity-0 md:flex"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-6 w-6" strokeWidth={1} />
           </button>
-
-          <div
-            ref={sliderRef}
-            className="no-scrollbar flex min-w-0 max-w-full flex-1 gap-2 overflow-x-auto scroll-smooth"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {images.map((image, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => goTo(index)}
-                aria-label={`${title} ${index + 1}`}
-                className={cn(
-                  "relative h-18 w-18 shrink-0 overflow-hidden rounded border-2 transition-colors",
-                  index === activeIndex
-                    ? "border-(--brand-green)"
-                    : "border-transparent"
-                )}
-              >
-                <Image src={image} alt="" fill className="object-cover" />
-              </button>
-            ))}
-          </div>
-
           <button
             type="button"
-            onClick={() => scroll("right")}
-            disabled={!canScrollRight}
+            onClick={() => goToDelta(1)}
+            disabled={activeIndex === total - 1}
             aria-label={nextLabel}
-            className="hidden shrink-0 items-center justify-center rounded-full border border-gray-200 p-1.5 text-(--brand-green) transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-30 md:flex"
+            className="absolute right-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center text-black/70 transition-opacity hover:text-black disabled:opacity-0 md:flex"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-6 w-6" strokeWidth={1} />
           </button>
-        </div>
+        </>
       )}
 
-      <button type="button" onClick={() => setIsAllImagesOpen(true)} className="self-start text-sm font-semibold text-(--brand-green) underline underline-offset-4">
-        {t("viewAllImages")}
+      {/* Nút đếm ảnh, bấm để mở lưới tất cả ảnh */}
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={openGrid}
+        aria-label={t("viewAllImages")}
+        className="absolute bottom-4 right-4 z-10 flex h-6 min-w-[63px] items-center justify-center gap-1 rounded-full bg-black/55 px-3 text-[11px] font-medium leading-4 text-white/55 md:bottom-8 md:right-8"
+      >
+        {/* Icon lưới 4 ô sát nhau, lấy theo trang tham khảo */}
+        <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4 fill-white">
+          <path d="M2 7.33V2h5.33v5.33H2Zm0 6.67V8.67h5.33V14H2Zm6.67-6.67V2H14v5.33H8.67Zm0 6.67V8.67H14V14H8.67Z" />
+        </svg>
+        <span className="text-white">{activeIndex + 1}</span>/
+        <span className="text-white">{total}</span>
       </button>
 
-      <Lightbox
-        open={isLightboxOpen}
-        close={() => setIsLightboxOpen(false)}
-        index={activeIndex}
-        on={{ view: ({ index }) => setActiveIndex(index) }}
-        slides={images.map((image) => ({ src: toSrc(image), alt: title }))}
-        plugins={[Zoom, Thumbnails]}
-        zoom={{ scrollToZoom: true }}
+      {/* Nền tối phía sau panel */}
+      <div
+        ref={backdropRef}
+        onClick={closePanel}
+        aria-hidden
+        className="fixed inset-0 z-250 hidden touch-none bg-black/80 opacity-0"
       />
 
-      <dialog
-        ref={allImagesDialogRef}
-        onCancel={(event) => { event.preventDefault(); setIsAllImagesOpen(false); }}
-        onClick={(event) => { if (event.target === event.currentTarget) setIsAllImagesOpen(false); }}
-        className="max-h-[92svh] w-[min(1100px,calc(100vw-2rem))] max-w-none overflow-y-auto bg-white p-4 shadow-2xl backdrop:bg-black/60 md:p-8"
+      {/* Panel nửa trái màn hình (full màn hình trên mobile) */}
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={t("viewAllImages")}
+        className="fixed left-0 top-0 z-300 hidden h-full w-full bg-white md:w-1/2"
       >
-        <div className="mb-5 flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-gray-900">{t("viewAllImages")}</h2>
-          <button type="button" autoFocus onClick={() => setIsAllImagesOpen(false)} className="rounded-full border border-gray-200 px-3 py-1.5 text-sm text-gray-700 hover:border-black hover:text-black">
-            {t("closeAllImages")}
-          </button>
+        <div
+          ref={panelScrollRef}
+          data-lenis-prevent
+          className="no-scrollbar h-full overflow-y-auto overscroll-contain"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {typeof panelView === "number" ? (
+            <>
+              <div className="flex items-center justify-between p-6 md:p-12">
+                <button
+                  type="button"
+                  onClick={backToGrid}
+                  aria-label={t("backToAllImages")}
+                  className="-m-2 p-2"
+                >
+                  <ArrowLeft className="h-5 w-5" strokeWidth={1.25} />
+                </button>
+                <p className="text-[11px] font-medium leading-[1.45] text-black/55">
+                  <span className="text-black">{panelView + 1}</span>/
+                  <span className="text-black">{total}</span>
+                </p>
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  onClick={closePanel}
+                  aria-label={t("closeAllImages")}
+                  className="-m-2 p-2"
+                >
+                  <X className="h-5 w-5" strokeWidth={1.25} />
+                </button>
+              </div>
+              <div className="relative aspect-square w-full">
+                <Image
+                  src={images[panelView]}
+                  alt={`${title} ${panelView + 1}`}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-contain"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between p-6 md:p-12">
+                <p className="text-sm font-light leading-6">
+                  {t("viewAllImages")}
+                </p>
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  onClick={closePanel}
+                  aria-label={t("closeAllImages")}
+                  className="-m-2 p-2"
+                >
+                  <X className="h-5 w-5" strokeWidth={1.25} />
+                </button>
+              </div>
+              <div className="grid grid-cols-4 gap-px">
+                {images.map((image, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => openImage(index)}
+                    aria-label={`${title} ${index + 1}`}
+                    className="relative aspect-square w-full bg-linear-135 from-[#e2e0e0] to-[#f8f8f7]"
+                  >
+                    <Image
+                      src={image}
+                      alt=""
+                      fill
+                      sizes="(min-width: 768px) 12.5vw, 25vw"
+                      className="object-contain mix-blend-multiply"
+                    />
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          {images.map((image, index) => (
-            <button key={index} type="button" onClick={() => { goTo(index); setIsAllImagesOpen(false); }} className="relative aspect-square overflow-hidden bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-(--brand-green)">
-              <Image src={image} alt={`${title} ${index + 1}`} fill className="object-contain" />
-              <span className="absolute bottom-2 left-2 rounded bg-white/90 px-2 py-1 text-xs text-gray-700">{index + 1}</span>
-            </button>
-          ))}
-        </div>
-      </dialog>
+      </div>
     </div>
   );
 }

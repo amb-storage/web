@@ -65,7 +65,7 @@ export default function ProductCard({
                         alt={displayName}
                         fill
                         sizes="(min-width: 768px) 230px, 80vw"
-                        className="product-card-img [transform:scale(1)] object-cover transition-transform duration-500 ease-out group-hover:[transform:scale(1.08)]"
+                        className="product-card-img transform-[scale(1)] object-cover transition-transform duration-500 ease-out group-hover:[transform:scale(1.08)]"
                     />
                 </Link>
 

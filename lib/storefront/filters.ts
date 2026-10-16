@@ -28,7 +28,10 @@ export function filterAndSortProducts(products: readonly Product[], query: Produ
       (!query.category || query.category === "all" || product.category === query.category) &&
       (!query.period || query.period === "all" || product.period === query.period) &&
       (!query.size || query.size === "all" || product.size === query.size) &&
-      matchesPrice(product, query.price)
+      matchesPrice(product, query.price) &&
+      (query.priceMin === undefined || product.price.amount >= query.priceMin) &&
+      (query.priceMax === undefined || product.price.amount <= query.priceMax) &&
+      (!query.inStock || product.availability !== "SOLD_OUT")
     );
   });
 
