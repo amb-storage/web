@@ -19,15 +19,21 @@ import {
     X,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { cn } from "@/lib/utils";
 import { AccountDialog } from "@/components/Account/AccountDialog";
 import { useCart } from "@/components/Cart/useCart";
 import { CartPreview } from "@/components/Cart/CartPreview";
+import LanguageSwitcher from "@/components/LanguageSwitcher/LanguageSwitcher";
 import {
     getHeaderScrollState,
     headerNavigation,
     type HeaderNavigationItem,
 } from "@/lib/storefront";
-import { useMobileMenu, useMobileSubmenu } from "./useHeaderAnimation";
+import {
+    useDesktopDropdown,
+    useMobileMenu,
+    useMobileSubmenu,
+} from "./useHeaderAnimation";
 
 export default function Header() {
     const t = useTranslations("homepage.header");
@@ -57,6 +63,7 @@ export default function Header() {
         toggleSubmenu,
         resetSubmenus,
     } = useMobileSubmenu();
+    const { setPanelRef } = useDesktopDropdown(openDropdown);
     const accountButtonRef = useRef<HTMLButtonElement>(null);
     const isCompact = scrollState === "compact";
 
@@ -145,7 +152,7 @@ export default function Header() {
                 </button>
 
                 <nav
-                    className={`hidden items-center gap-4 transition-opacity duration-500 ease-out md:flex lg:gap-8 ${searchOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}
+                    className={`hidden items-center gap-4 self-stretch transition-opacity duration-500 ease-out md:flex lg:gap-8 ${searchOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}
                     aria-label={t("navigation")}
                 >
                     {navigation.map((item) => {
@@ -155,7 +162,7 @@ export default function Header() {
                         return (
                             <div
                                 key={item.id}
-                                className="relative flex items-center gap-1 py-2"
+                                className="flex items-center gap-1 self-stretch"
                                 onMouseEnter={() =>
                                     hasDropdown && setOpenDropdown(item.id)
                                 }
@@ -193,15 +200,24 @@ export default function Header() {
                                     </button>
                                 )}
                                 {hasDropdown && (
+                                    // Dropdown dạng thanh ngang trải hết chiều rộng màn hình, neo theo đáy header (GSAP lo phần mở/đóng)
                                     <div
-                                        className={`absolute left-0 top-full min-w-60 w-max border border-gray-100 bg-white py-2 shadow-xl transition-[opacity,transform] duration-150 ${isOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-1 opacity-0"}`}
+                                        ref={setPanelRef(item.id)}
+                                        style={{ visibility: "hidden" }}
+                                        className="absolute left-1/2 top-full w-screen -translate-x-1/2 border-y border-gray-100 bg-white"
                                     >
-                                        {item.children.map((subItem) => (
-                                            <div
-                                                className=" px-4 py-1"
-                                                key={subItem.id}
-                                            >
+                                        <div
+                                            className={cn(
+                                                "mx-auto flex max-w-[1440px] px-10 py-8",
+                                                item.dropdownLayout ===
+                                                    "vertical"
+                                                    ? "flex-col items-start gap-4"
+                                                    : "flex-wrap items-center gap-x-10 gap-y-4 lg:gap-x-14",
+                                            )}
+                                        >
+                                            {item.children.map((subItem) => (
                                                 <Link
+                                                    key={subItem.id}
                                                     href={
                                                         subItem.href ??
                                                         item.href ??
@@ -210,13 +226,13 @@ export default function Header() {
                                                     onClick={() =>
                                                         setOpenDropdown(null)
                                                     }
-                                                    className="group relative inline-block font-semibold text-sm text-gray-600 transition-colors "
+                                                    className="dropdown-item group relative inline-block text-base font-semibold text-gray-700 opacity-0 transition-colors hover:text-(--brand-green)"
                                                 >
                                                     {subItem.label}
                                                     <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-(--brand-green) transition-transform duration-300 group-hover:scale-x-100" />
                                                 </Link>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -241,6 +257,7 @@ export default function Header() {
                 <div
                     className={`col-start-3 row-start-1 ml-0 flex items-center gap-1 justify-self-end text-gray-800 transition-opacity duration-500 ease-out md:ml-auto md:gap-2 ${searchOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}
                 >
+                    <LanguageSwitcher className="mr-2 hidden md:flex" />
                     <button
                         type="button"
                         onClick={openSearch}
@@ -387,6 +404,13 @@ export default function Header() {
                         <UserRound className="h-5 w-5" />
                         <span>{t("account.mobileLabel")}</span>
                     </button>
+                    <div className="mobile-nav-item flex min-h-[70px] items-center border-b border-gray-100 px-6">
+                        <LanguageSwitcher
+                            onSwitch={handleCloseMobileMenu}
+                            className="gap-4"
+                            flagClassName="h-5 w-8"
+                        />
+                    </div>
                 </div>
             </div>
 

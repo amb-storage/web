@@ -5,77 +5,55 @@ import gsap from "gsap";
 
 const DESKTOP_BREAKPOINT = 768; // Tailwind `md` — khớp với breakpoint ẩn/hiện hamburger
 
-// Hiệu ứng GSAP Hover ĐỈnh Cao (dropdown desktop khi hover vào từng mục menu)
-export function useDesktopDropdown() {
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    const indicator = e.currentTarget.querySelector(".menu-indicator");
-    const dropdown = e.currentTarget.querySelector(".dropdown-menu");
-    const items = e.currentTarget.querySelectorAll(".dropdown-item");
-    const chevron = e.currentTarget.querySelector(".chevron-icon");
+// Dropdown desktop dạng thanh ngang full màn hình: panel "kéo dài" từ đáy header xuống, các mục con trượt lên so le
+export function useDesktopDropdown(openKey: string | null) {
+  const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
-    // 1. Chạy gạch chân underline
-    if (indicator) {
-      gsap.to(indicator, { scaleX: 1, duration: 0.4, ease: "power3.out" });
-    }
+  const setPanelRef = (key: string) => (el: HTMLDivElement | null) => {
+    if (el) panelRefs.current.set(key, el);
+    else panelRefs.current.delete(key);
+  };
 
-    // 2. Xoay icon mũi tên xuống
-    if (chevron) {
-      gsap.to(chevron, { rotate: 180, duration: 0.3, ease: "power2.out" });
-    }
+  useEffect(() => {
+    panelRefs.current.forEach((panel, key) => {
+      const items = panel.querySelectorAll(".dropdown-item");
+      const isOpening = key === openKey;
+      const isVisible = panel.style.visibility === "visible";
 
-    // 3. Dropdown hiện lên với hiệu ứng mượt (Scale từ nhỏ + Fade in)
-    if (dropdown) {
-      gsap.killTweensOf(dropdown); // Xóa các animation cũ đang chạy dở để tránh giật
-      gsap.set(dropdown, { display: "block" });
+      if (isOpening && !isVisible) {
+        gsap.killTweensOf([panel, ...items]);
+        gsap.set(panel, { visibility: "visible", opacity: 1 });
 
-      const tl = gsap.timeline();
-      tl.fromTo(
-        dropdown,
-        { opacity: 0, y: 15, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power3.out" }
-      );
-
-      // Hiệu ứng Stagger: Các mục con trượt ra lần lượt từng cái cực kỳ sang trọng
-      if (items.length > 0) {
+        const tl = gsap.timeline();
+        // Panel mở rộng từ trên xuống (clip-path) để cảm giác menu dài ra
         tl.fromTo(
-          items,
-          { opacity: 0, x: -10 },
-          { opacity: 1, x: 0, duration: 0.25, stagger: 0.05, ease: "power2.out" },
-          "-=0.2" // Chạy lướt sóng cùng lúc với dropdown mở ra
+          panel,
+          { clipPath: "inset(0% 0% 100% 0%)" },
+          { clipPath: "inset(0% 0% 0% 0%)", duration: 0.45, ease: "power3.out" }
         );
+        if (items.length > 0) {
+          tl.fromTo(
+            items,
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.3, stagger: 0.05, ease: "power2.out" },
+            "-=0.3"
+          );
+        }
+      } else if (!isOpening && isVisible) {
+        gsap.killTweensOf([panel, ...items]);
+        gsap.to(panel, {
+          clipPath: "inset(0% 0% 100% 0%)",
+          duration: 0.25,
+          ease: "power2.in",
+          onComplete: () => {
+            gsap.set(panel, { visibility: "hidden" });
+          },
+        });
       }
-    }
-  };
+    });
+  }, [openKey]);
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    const indicator = e.currentTarget.querySelector(".menu-indicator");
-    const dropdown = e.currentTarget.querySelector(".dropdown-menu");
-    const chevron = e.currentTarget.querySelector(".chevron-icon");
-
-    if (indicator) {
-      gsap.to(indicator, { scaleX: 0, duration: 0.3, ease: "power3.in" });
-    }
-
-    if (chevron) {
-      gsap.to(chevron, { rotate: 0, duration: 0.3, ease: "power2.out" });
-    }
-
-    if (dropdown) {
-      gsap.killTweensOf(dropdown);
-      gsap.to(dropdown, {
-        opacity: 0,
-        y: 10,
-        scale: 0.95,
-        duration: 0.2,
-        ease: "power2.in",
-        onComplete: () => {
-          gsap.set(dropdown, { display: "none" });
-        },
-      });
-    }
-  };
-
-  return { handleMouseEnter, handleMouseLeave };
+  return { setPanelRef };
 }
 
 // Menu mobile: overlay + panel trượt xuống dưới header, các mục con so le (stagger) khi mở.

@@ -65,6 +65,11 @@
           "usmc": "USMC HBT’s Series P1",
           "n1": "USN N-1 Deck Jacket"
         }
+      },
+      "language": {
+        "switch": "言語を切り替える（現在: {current}）",
+        "ja": "日本語",
+        "en": "English"
       }
     },
     "hero": {
@@ -209,7 +214,6 @@
   },
   "blog": {
     "pageTitle": "MILI TALKS",
-    "readMore": "続きを読む",
     "backToBlog": "ブログ一覧に戻る",
     "intro": "Mili Talks は、ヴィンテージに関する知識や経験、そして私たちが現場で培ってきたリアルな視点を共有するためのブログです。\n\nミリタリーやデニムをはじめとするヴィンテージアイテムの背景やディテール、ストーリーを掘り下げながら、これからヴィンテージの世界に触れる方にも分かりやすく情報を届けていきます。\n\nまた、長年ヴィンテージを愛してきたコレクターや、同じ価値観を持つ人たちがつながる場所として、コミュニティを広げていくことも私たちの大切な目的の一つです。",
     "references": {
@@ -245,5 +249,12 @@
     "remove": "削除",
     "total": "合計",
     "checkout": "お会計に進む {amount}"
+  },
+  "notFound": {
+    "eyebrow": "PAGE NOT FOUND",
+    "title": "お探しのページが見つかりません",
+    "description": "ページが移動または削除されたか、URLが間違っている可能性があります。",
+    "backHome": "ホームへ戻る",
+    "shopNow": "ショップを見る"
   }
 }

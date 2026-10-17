@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import { getLocale } from "next-intl/server";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
@@ -7,11 +7,7 @@ import Footer from "@/components/layout/Footer/Footer";
 import SplashScreen from "@/components/SplashScreen/SplashScreen";
 import SmoothScroll from "@/components/SmoothScroll/SmoothScroll";
 import { CartProvider } from "@/components/Cart/CartProvider";
-
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
+import { leagueSpartan, poppins, stencilGothic } from "@/lib/fonts";
 
 const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
@@ -29,7 +25,7 @@ export default async function RootLayout({
             lang={locale}
             // Extension trình duyệt (vd. Trancy) chèn attribute vào <html> gây hydration mismatch
             suppressHydrationWarning
-            className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+            className={`${poppins.variable} ${leagueSpartan.variable} ${stencilGothic.variable} ${geistMono.variable} h-full antialiased`}
         >
             <body className="min-h-screen flex flex-col">
                 <NextIntlClientProvider locale={locale}>
