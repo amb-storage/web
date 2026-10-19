@@ -58,7 +58,7 @@ export default function CategoryCard({
                     ref={contentRef}
                     className="relative z-10 flex translate-y-6 flex-col items-center justify-center px-6 text-center opacity-0"
                 >
-                    <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-wider uppercase mb-5 drop-shadow-md">
+                    <h2 className="text-white text-3xl md:text-4xl font-bold uppercase mb-5 drop-shadow-md">
                         {title}
                     </h2>
 

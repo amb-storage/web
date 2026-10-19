@@ -35,7 +35,7 @@ export default function ProductCarousel({
         >
             <div className="min-w-0 max-w-full space-y-4 px-3 md:px-10">
                 <div className="flex items-center justify-between border-b border-gray-100 px-3 pb-1.5 md:px-10 md:pb-4">
-                    <h2 className="text-2xl font-bold tracking-tight text-(--brand-green) md:text-3xl">
+                    <h2 className="text-2xl font-bold text-(--brand-green) md:text-3xl">
                         {title}
                     </h2>
                     <div className="flex items-center gap-2">

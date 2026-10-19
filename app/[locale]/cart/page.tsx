@@ -22,7 +22,7 @@ export default function CartPage() {
 
     return (
         <div className="mx-auto w-full max-w-5xl px-4 py-12 md:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-(--brand-green)">
+            <h1 className="text-3xl font-bold text-(--brand-green)">
                 {t("title")}
             </h1>
 

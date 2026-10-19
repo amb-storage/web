@@ -33,7 +33,7 @@ export default function NotFoundContent() {
                 <p className="not-found-reveal mt-4 translate-y-6 text-xs font-semibold tracking-[0.3em] text-gray-500 opacity-0">
                     {t("eyebrow")}
                 </p>
-                <h1 className="not-found-reveal mt-3 translate-y-6 text-2xl font-bold tracking-tight text-[#1B3B2B] opacity-0 md:text-3xl">
+                <h1 className="not-found-reveal mt-3 translate-y-6 text-2xl font-bold text-[#1B3B2B] opacity-0 md:text-3xl">
                     {t("title")}
                 </h1>
                 <p className="not-found-reveal mt-4 translate-y-6 text-sm leading-7 text-gray-700 opacity-0 md:text-base">

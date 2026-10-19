@@ -105,10 +105,10 @@ export default function ProductCard({
                     href={`/shop/${product.slug}`}
                     className="flex flex-col items-start justify-between gap-0"
                 >
-                    <h3 className="line-clamp-2 text-sm font-semibold leading-[1.3] tracking-[0.13em] text-(--brand-green) transition-colors group-hover:text-(--brand-green-dark)">
+                    <h3 className="line-clamp-2 text-sm font-medium leading-[1.3] tracking-[0.13em] text-(--brand-green) transition-colors group-hover:text-(--brand-green-dark)">
                         {name} {product.size}
                     </h3>
-                    <p className="mt-1 text-sm italic font-semibold leading-[1.3] tracking-[0.08em] text-black">
+                    <p className="mt-1 text-sm italic font-medium leading-[1.3] tracking-[0.08em] text-black">
                         {isSold
                             ? soldLabel
                             : `${formatMoney(product.price)} ${taxInLabel}`}

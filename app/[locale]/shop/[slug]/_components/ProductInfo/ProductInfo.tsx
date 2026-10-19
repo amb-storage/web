@@ -16,7 +16,7 @@ function InfoSection({ title, children }: { title: string; children: ReactNode }
   return (
     <section>
       <div className="mb-4 flex w-full items-center gap-4">
-        <h2 className="whitespace-nowrap text-sm leading-[21px] tracking-[0.56px]">
+        <h2 className="whitespace-nowrap font-sans text-sm font-medium leading-[21px] tracking-[0.56px]">
           {title}
         </h2>
         <span aria-hidden className="h-px w-full bg-black" />
@@ -37,7 +37,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
   return (
     <div className="flex w-full flex-col items-center px-6 py-6 md:w-1/2 md:px-[6.35vw] md:py-12">
-      <h1 className="w-full text-sm font-light leading-6">{product.name[locale]}</h1>
+      <h1 className="w-full font-sans text-sm font-light leading-6 tracking-normal">{product.name[locale]}</h1>
       <p className="mt-1.5 w-full text-[11.2px] leading-[1.51] text-black/55">
         {product.size}
       </p>

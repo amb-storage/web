@@ -327,7 +327,7 @@ export default function PolicyContent({ locale }: { locale: string }) {
                         id={section.id}
                         className="scroll-mt-24 py-5 md:py-8"
                     >
-                        <h2 className="text-2xl font-bold tracking-tight text-(--brand-green) md:text-3xl">
+                        <h2 className="text-2xl font-bold text-(--brand-green) md:text-3xl">
                             {section.title}
                         </h2>
                         <div className="mt-5 space-y-4 text-sm leading-8 text-gray-700 md:text-base">

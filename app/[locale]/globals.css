@@ -136,6 +136,18 @@
   html {
     @apply font-sans;
   }
+
+  /* Web gốc: body dùng Poppins Medium */
+  body {
+    font-weight: 500;
+  }
+
+  /* Web gốc: h1/h2 dùng title font (League Spartan Bold, letter-spacing 0.05em) */
+  h1,
+  h2 {
+    @apply font-heading;
+    letter-spacing: 0.05em;
+  }
 }
 
 @media (max-width: 767px) {

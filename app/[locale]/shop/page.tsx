@@ -17,11 +17,7 @@ export default async function ShopPage({
         <div className="w-full bg-white">
             <header className="flex min-h-[200px] flex-col items-center justify-center bg-[#eef5f0] px-4 py-12 text-center">
                 <h1
-                    className="text-center text-5xl font-black uppercase tracking-[0.02em] text-(--brand-green) sm:text-6xl md:text-7xl"
-                    style={{
-                        fontFamily:
-                            'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
-                    }}
+                    className="text-center font-stencil text-5xl font-bold uppercase leading-none tracking-[0.03em] text-(--brand-green) sm:text-6xl md:text-7xl"
                 >
                     {t("title")}
                 </h1>

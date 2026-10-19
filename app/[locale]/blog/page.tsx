@@ -51,7 +51,7 @@ export default async function BlogIndexPage() {
         <div className="w-full bg-(--surface-muted)">
             <section className="mx-auto w-full max-w-[1280px] px-5 py-10 md:px-18 md:py-12">
                 <div className="max-w-4xl">
-                    <h1 className="text-2xl font-bold uppercase tracking-[0.05em] text-(--brand-green) md:text-[40px]">
+                    <h1 className="text-2xl font-bold uppercase text-(--brand-green) md:text-[40px]">
                         {t("pageTitle")}
                     </h1>
                     <p className="mt-4 whitespace-pre-line text-sm leading-7 tracking-[0.08em] text-black md:text-base">

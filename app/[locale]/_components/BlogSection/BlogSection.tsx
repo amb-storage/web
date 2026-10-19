@@ -10,7 +10,7 @@ export default function BlogSection() {
             <div className="mx-auto px-4 md:px-12">
                 <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] md:items-center md:gap-16">
                     <div className="flex flex-col gap-4 md:pr-4">
-                        <h2 className="text-3xl font-extrabold uppercase tracking-wider text-(--brand-green) md:text-4xl">
+                        <h2 className="text-3xl font-bold uppercase text-(--brand-green) md:text-4xl">
                             {t("title")}
                         </h2>
 

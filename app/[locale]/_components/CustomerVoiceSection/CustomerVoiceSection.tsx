@@ -22,7 +22,7 @@ export default function CustomerVoiceSection({
   return (
     <section className="w-full bg-[#ebedef] py-8 md:py-10">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
-        <h2 className="mb-8 text-center text-3xl font-bold tracking-tight text-(--brand-green) md:text-4xl">
+        <h2 className="mb-8 text-center text-3xl font-bold text-(--brand-green) md:text-4xl">
           {t("title")}
         </h2>
 
