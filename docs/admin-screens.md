@@ -4,7 +4,7 @@ Cập nhật: 2026-10-21 · Dựa trên storefront `amp-web` hiện tại (Next.
 
 Đầu vào cho bước thiết kế DB → backend API. Admin là app riêng; storefront đọc dữ liệu qua `StorefrontRepository` (`lib/storefront/repository.ts`).
 
-**Nguyên tắc:** hàng vintage mỗi món chỉ có 1 cái. Không có biến thể, không có tồn kho. Ngoài **Category**, mọi thông tin sản phẩm (giá, size, period, condition, số đo…) admin nhập thẳng trên sản phẩm, không cần bảng danh mục riêng.
+**Nguyên tắc:** hàng vintage mỗi món chỉ có 1 cái. Không có biến thể, không có tồn kho. Ngoài **Category**, mọi thông tin sản phẩm (giá, size, condition…) admin nhập thẳng trên sản phẩm, không cần bảng danh mục riêng.
 
 ---
 
@@ -53,7 +53,7 @@ Admin
 ## 2. Sản phẩm
 
 ### 2.1 Danh sách
-- **Cột:** ảnh đầu, tên, category, size, giá, Còn hàng / Đã bán, status, ngày đăng.
+- **Cột:** ảnh đầu, tên, các category (dạng chip), size, giá, Còn hàng / Đã bán, status, ngày đăng.
 - **Tìm** theo tên. **Lọc** theo category, Còn hàng / Đã bán, status.
 - **Trên từng dòng:** sửa, nhân bản, xoá, **bật/tắt Đã bán ngay trên dòng**.
 
@@ -63,13 +63,11 @@ Admin
 | --- | --- | --- | --- |
 | name \* | text (ja/en) | | Tiêu đề, card |
 | slug \* | text | tự sinh từ name en | `/shop/<slug>` |
-| category \* | chọn 1 từ màn 3 | bảng duy nhất được tham chiếu | Bộ lọc Category |
+| categories \* | chọn nhiều từ màn 3 (tick), ≥ 1 | ví dụ Vintage MILITARY + Jackets | Hiện ở mọi bộ lọc / mục menu của các category đã chọn |
 | price \* | số nguyên, JPY | > 0 | Giá (đã gồm thuế), lọc giá |
 | size \* | text tự do | gợi ý từ các size đã nhập (`36`, `M`…) | Dòng size, bộ lọc Size |
-| period | text tự do | gợi ý từ các giá trị đã nhập (`1940s`…) | Bộ lọc Period |
 | condition | text (ja/en) | ví dụ `USED（中古）`, `GOOD USED` | Khối Condition |
 | description \* | text nhiều dòng (ja/en) | | Khối Product Details |
-| measurements | text nhiều dòng (ja/en) | mỗi số đo một dòng, `肩幅--46cm` | Khối Sizes |
 | images \* | nhiều ảnh, kéo thả thứ tự | ảnh 1 là ảnh card | Slider + lưới ảnh |
 | is_sold \* | bool | mặc định false | Hiện SOLD thay cho giá, khoá nút giỏ hàng |
 | published_at \* | datetime | mặc định lúc đăng | Sắp xếp Newest, New Arrivals |
@@ -89,7 +87,7 @@ Bảng sửa trực tiếp trên dòng, kéo thả thứ tự.
 | name \* (ja/en) | |
 | position | |
 
-Không cho xoá category còn sản phẩm; hiện số sản phẩm ở mỗi dòng.
+Hiện số sản phẩm ở mỗi dòng. Xoá category đang có sản phẩm → cảnh báo, gỡ category đó khỏi các sản phẩm; nếu sản phẩm nào chỉ còn đúng category này thì không cho xoá (sản phẩm phải có ≥ 1 category).
 
 ---
 
@@ -259,7 +257,8 @@ Chọn category thì link tạo ra là `/shop?category=<slug>`. Menu Shop Now hi
 | --- | --- |
 | admin_user | email, password_hash, name |
 | category | slug, name (ja/en), position |
-| product | slug, name (ja/en), category_id, price_jpy, size, period, condition (ja/en), description (ja/en), measurements (ja/en), is_sold, reserved_until, published_at, status |
+| product_category | product_id, category_id (khoá chính gồm cả 2) |
+| product | slug, name (ja/en), price_jpy, size, condition (ja/en), description (ja/en), is_sold, reserved_until, published_at, status |
 | product_image | product_id, url, position |
 | home_rail | key (`special-vintage` / `new-arrivals` / `most-popular`), mode (`MANUAL` / `AUTO_NEWEST`), limit |
 | home_rail_item | rail_key, product_id, position |
@@ -277,7 +276,8 @@ Chọn category thì link tạo ra là `/shop?category=<slug>`. Menu Shop Now hi
 
 ```mermaid
 erDiagram
-    CATEGORY ||--o{ PRODUCT : "có"
+    CATEGORY ||--o{ PRODUCT_CATEGORY : "gán cho"
+    PRODUCT ||--|{ PRODUCT_CATEGORY : "thuộc"
     PRODUCT ||--|{ PRODUCT_IMAGE : "ảnh"
     CATEGORY ||--o{ HERO_BANNER : "link tới"
     HOME_RAIL ||--o{ HOME_RAIL_ITEM : "chứa"
@@ -293,7 +293,6 @@ erDiagram
         json name
         int price_jpy
         string size
-        string period
         bool is_sold
         datetime reserved_until
         string status
@@ -313,14 +312,15 @@ erDiagram
 
 Đứng riêng, không nối bảng nào: `admin_user`, `social_link`, `page_section`, `setting`, `stripe_event`. `menu_item.link_target` trỏ tới category / trang theo `link_type`, không phải khoá ngoại.
 
-Bộ lọc Size / Period ở `/shop` lấy bằng `SELECT DISTINCT size / period` từ sản phẩm đã đăng, không cần bảng riêng.
+Bộ lọc Size ở `/shop` lấy bằng `SELECT DISTINCT size` từ sản phẩm đã đăng, không cần bảng riêng.
 
 ---
 
 ## 9. Frontend cần sửa theo docs này
 - `Availability` (`AVAILABLE` / `LOW_STOCK` / `SOLD_OUT`) → `isSold: boolean`.
 - Bỏ `tags` khỏi `Product` (chưa sản phẩm nào dùng).
-- `Product.category` từ `"military" | "denim"` → `string` (category do admin thêm).
+- Bỏ `period` và `measurements` khỏi `Product`: bỏ bộ lọc Period ở `/shop` (`ShopCatalog`, `RefineDrawer`), bỏ dòng số đo trong khối Sizes (`ProductInfo`) và trong `AddToCartDialog`.
+- `Product.category: "military" | "denim"` → `categories: string[]` (slug, do admin thêm). Bộ lọc `/shop?category=x` lấy sản phẩm có `x` trong `categories` (`lib/storefront/filters.ts`).
 - Giỏ hàng: số lượng mỗi sản phẩm tối đa 1.
 - Nút checkout gọi API tạo Stripe Checkout Session rồi redirect; thêm trang `/checkout/success` và `/checkout/cancel`.
 - Header / footer / social / payment icon đọc từ API thay vì hard-code (`header-navigation.ts`, `Footer.tsx`).
