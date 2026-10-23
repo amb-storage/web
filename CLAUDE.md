@@ -104,6 +104,7 @@ All storefront data comes from the backend `/api/v1` (`amb/api`), mapped per `do
 - API response types live in `lib/api/types.ts`; mapping API → UI models in `lib/storefront/api-mappers.ts`.
 - Price is `Money` (`{ amount, currency: "JPY" }`) formatted with `formatMoney`; purchasable = `isPurchasable(product)` (`availability === "AVAILABLE"`). Category filters use category slugs (`/shop?category=vintage-military`).
 - Media URLs are relative `/api/v1/media/:id` and work with `next/image` via `images.localPatterns`.
+- CMS `sections` (Story detail, Pages) render through `components/CmsSections/CmsSections.tsx`, rich text through `components/RichText/RichText.tsx` — never `dangerouslySetInnerHTML`. CMS Pages (`GET /pages/:slug`) are served by the catch-all `app/[locale]/[...rest]/page.tsx`, which falls back to `notFound()`.
 
 ## Known gotchas
 

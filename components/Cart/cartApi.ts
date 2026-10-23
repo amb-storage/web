@@ -31,6 +31,11 @@ export function removeCartItem(locale: ApiLocale, productId: string) {
     return mutate<ApiCart>(locale, `/cart/items/${productId}`, "DELETE");
 }
 
+// Xoá toàn bộ dòng trong giỏ (dùng sau khi thanh toán thành công)
+export function clearCartItems(locale: ApiLocale) {
+    return mutate<ApiCart>(locale, "/cart/items", "DELETE");
+}
+
 export function mergeGuestCart(locale: ApiLocale) {
     return mutate<ApiCart>(locale, "/cart/merge", "POST");
 }

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 export interface ProductCarouselProps {
     products: Product[];
-    title: string;
+    title?: string;
     previousLabel: string;
     nextLabel: string;
     surfaceClassName?: string;
@@ -17,7 +17,7 @@ export interface ProductCarouselProps {
 
 export default function ProductCarousel({
     products,
-    title,
+    title = "",
     previousLabel,
     nextLabel,
     surfaceClassName = "bg-white",
@@ -37,10 +37,18 @@ export default function ProductCarousel({
             )}
         >
             <div className="min-w-0 max-w-full space-y-4 px-3 md:px-10">
-                <div className="flex items-center justify-between border-b border-gray-100 px-3 pb-1.5 md:px-10 md:pb-4">
-                    <h2 className="text-2xl font-bold text-(--brand-green) md:text-3xl">
-                        {title}
-                    </h2>
+                <div
+                    className={cn(
+                        "flex items-center justify-between border-b border-gray-100 px-3 pb-1.5 md:px-10 md:pb-4",
+                        // Section CMS (PRODUCT_CAROUSEL) không có tiêu đề → đẩy nút điều hướng sang phải
+                        !title && "justify-end",
+                    )}
+                >
+                    {title && (
+                        <h2 className="text-2xl font-bold text-(--brand-green) md:text-3xl">
+                            {title}
+                        </h2>
+                    )}
                     <div className="flex items-center gap-2">
                         <button
                             type="button"

@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import type { Locale } from "@/lib/storefront";
-import BlogPostGrid from "./_components/BlogPostGrid/BlogPostGrid";
+import BlogPostGrid from "@/components/BlogPostGrid/BlogPostGrid";
 import BlogReferences from "./_components/BlogReferences/BlogReferences";
 
 export default async function BlogIndexPage() {

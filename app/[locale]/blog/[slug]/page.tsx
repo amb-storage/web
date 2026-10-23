@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import { formatDate, type Locale } from "@/lib/storefront";
-import { BlogPostContent } from "./_components/BlogPostContent";
+import CmsSections from "@/components/CmsSections/CmsSections";
 
 // generateMetadata và page dùng chung 1 lần gọi API trong cùng request
 const getStory = cache((locale: Locale, slug: string) =>
@@ -65,7 +65,7 @@ export default async function BlogPostPage({
                 </p>
             </div>
 
-            <BlogPostContent sections={post.sections} />
+            <CmsSections sections={post.sections} />
         </div>
     );
 }

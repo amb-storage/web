@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { Homepage } from "@/lib/storefront";
-import FeaturedPostImage from "./FeaturedPostImage";
+import FeaturedPostImage from "@/components/FeaturedPostImage/FeaturedPostImage";
 
 interface BlogSectionProps {
     // `miliTalksIntro` / `featuredMiliTalk` của `GET /home`; thiếu thì dùng nội dung mặc định trong messages

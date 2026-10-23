@@ -1,6 +1,7 @@
 import { apiGet, apiGetOrNull } from "@/lib/api/server";
 import type {
     ApiAbout,
+    ApiCmsPage,
     ApiHome,
     ApiNavigationItem,
     ApiPage,
@@ -110,6 +111,10 @@ export const storefrontRepository: StorefrontRepository = {
     async getStoreSettings(locale) {
         const settings = await apiGet<ApiStoreSettings>("/settings", { locale });
         return toStoreSettings(settings);
+    },
+
+    async getPage(locale, slug) {
+        return apiGetOrNull<ApiCmsPage>(`/pages/${encodeURIComponent(slug)}`, { locale });
     },
 
     async getAbout(locale) {

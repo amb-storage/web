@@ -8,11 +8,7 @@ import { useCart } from "@/components/Cart/useCart";
 import { cartErrorKey } from "@/components/Cart/cartApi";
 import { useCartCheckout } from "./useCartCheckout";
 
-interface CartViewProps {
-    checkoutStatus?: "success" | "cancel" | null;
-}
-
-export default function CartView({ checkoutStatus = null }: CartViewProps) {
+export default function CartView() {
     const t = useTranslations("cart");
     const { items, subtotal, remove, hydrated, pending, errorCode } = useCart();
     const { email, setEmail, handleSubmit } = useCartCheckout();
@@ -23,15 +19,6 @@ export default function CartView({ checkoutStatus = null }: CartViewProps) {
             <h1 className="text-3xl font-bold text-(--brand-green)">
                 {t("title")}
             </h1>
-
-            {checkoutStatus && (
-                <p
-                    role="status"
-                    className="mt-6 border border-gray-200 bg-[#eef5f0] px-4 py-3 text-sm text-gray-700"
-                >
-                    {t(`checkoutStatus.${checkoutStatus}`)}
-                </p>
-            )}
 
             {!hydrated ? (
                 <p className="mt-10 text-gray-500">{t("loading")}</p>

@@ -130,6 +130,13 @@ export interface StoreSettings {
     socialLinks: Array<{ label: string; href: string }>;
 }
 
+export interface CmsPage {
+    slug: string;
+    title: string | null;
+    seo: ApiSeo | null;
+    sections: ApiSection[];
+}
+
 export type AboutContent = ApiAbout;
 
 export interface PolicyContent {

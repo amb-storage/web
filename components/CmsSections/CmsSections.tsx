@@ -2,8 +2,12 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import RichText from "@/components/RichText/RichText";
-import type { StorySection } from "@/lib/storefront/types";
-import type { ApiCta, ApiMediaSummary } from "@/lib/api/types";
+import ProductCard from "@/components/ProductCard/ProductCard";
+import ProductCarousel from "@/components/ProductCarousel/ProductCarousel";
+import BlogPostGrid from "@/components/BlogPostGrid/BlogPostGrid";
+import FeaturedPostImage from "@/components/FeaturedPostImage/FeaturedPostImage";
+import { toProduct, toStoryCard } from "@/lib/storefront/api-mappers";
+import type { ApiCta, ApiMediaSummary, ApiProductSummary, ApiSection } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
 
 const richTextClassName =
@@ -53,12 +57,60 @@ function CtaLink({ cta }: { cta: ApiCta }) {
     );
 }
 
+const heroBackgroundClass = {
+    WHITE: "bg-white",
+    LIGHT_GRAY: "bg-[#ebedef]",
+    BRAND_GREEN: "bg-(--brand-green)",
+} as const;
+
+const alignmentClass = {
+    LEFT: "justify-start",
+    CENTER: "justify-center",
+    RIGHT: "justify-end",
+} as const;
+
+// Lưới sản phẩm dùng lại ProductCard như trang Shop
+function ProductGrid({ products }: { products: ApiProductSummary[] }) {
+    const tCard = useTranslations("homepage.productCard");
+
+    return (
+        <section className="bg-white px-4 py-8 md:px-8 md:py-12">
+            <div className="mx-auto grid max-w-7xl grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+                {products.map(toProduct).map((product) => (
+                    <ProductCard
+                        key={product.id}
+                        product={product}
+                        className="min-w-0 w-full"
+                        viewDetailsLabel={tCard("viewDetails")}
+                        addToCartLabel={tCard("addToCart")}
+                        inCartLabel={tCard("inCart")}
+                        soldLabel={tCard("sold")}
+                        taxInLabel={tCard("taxIn")}
+                    />
+                ))}
+            </div>
+        </section>
+    );
+}
+
+function ProductRail({ products }: { products: ApiProductSummary[] }) {
+    const t = useTranslations("cmsSections");
+
+    return (
+        <ProductCarousel
+            products={products.map(toProduct)}
+            previousLabel={t("previous")}
+            nextLabel={t("next")}
+        />
+    );
+}
+
 function ContactSection({
     section,
 }: {
-    section: Extract<StorySection, { type: "CONTACT" }>;
+    section: Extract<ApiSection, { type: "CONTACT" }>;
 }) {
-    const t = useTranslations("blog.contact");
+    const t = useTranslations("cmsSections.contact");
 
     return (
         <section className="bg-white px-5 py-10 md:px-8 md:py-12">
@@ -122,12 +174,97 @@ function ContactSection({
     );
 }
 
-// Render các section CMS của Story (`GET /stories/:slug`); loại section chỉ dành cho page khác thì bỏ qua
-export function BlogPostContent({ sections }: { sections: StorySection[] }) {
+interface CmsSectionsProps {
+    // `sections` của `GET /stories/:slug` hoặc `GET /pages/:slug`
+    sections: ApiSection[];
+}
+
+// Render toàn bộ loại section CMS (dùng chung cho Story và Page)
+export default function CmsSections({ sections }: CmsSectionsProps) {
     return (
         <div className="overflow-hidden">
             {sections.map((section) => {
                 switch (section.type) {
+                    case "HERO":
+                        return (
+                            <section
+                                key={section.id}
+                                className={cn(
+                                    "px-5",
+                                    heroBackgroundClass[section.background],
+                                    spacingClass[section.spacing],
+                                )}
+                            >
+                                <div
+                                    className={cn(
+                                        "mx-auto flex max-w-4xl flex-wrap gap-4",
+                                        alignmentClass[section.alignment],
+                                    )}
+                                >
+                                    {section.actions.map((cta) => (
+                                        <CtaLink key={`${cta.href}-${cta.label}`} cta={cta} />
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    case "PRODUCT_GRID":
+                        return <ProductGrid key={section.id} products={section.products} />;
+                    case "PRODUCT_CAROUSEL":
+                        return <ProductRail key={section.id} products={section.products} />;
+                    case "FEATURED_PRODUCT":
+                        return <ProductGrid key={section.id} products={[section.product]} />;
+                    case "COLLECTION_GRID":
+                        return (
+                            <section key={section.id} className="bg-white px-5 py-8 md:py-12">
+                                <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
+                                    {section.collections.map((collection) => (
+                                        <div
+                                            key={collection.id}
+                                            className="border border-gray-200 p-5"
+                                        >
+                                            <h3 className="text-lg font-bold text-(--brand-green)">
+                                                {collection.title}
+                                            </h3>
+                                            {collection.description && (
+                                                <p className="mt-2 text-sm text-gray-700">
+                                                    {collection.description}
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    case "TALK_HEADER":
+                        return (
+                            <section key={section.id} className="bg-[#eff5f0] px-5 py-8 md:py-12">
+                                <div className="mx-auto max-w-2xl">
+                                    <SectionImage media={section.coverMedia} />
+                                    <p className="mt-4 text-sm leading-7 tracking-[0.08em] text-gray-900">
+                                        {section.excerpt}
+                                    </p>
+                                </div>
+                            </section>
+                        );
+                    case "MILI_TALK_GRID":
+                        return (
+                            <section
+                                key={section.id}
+                                className="mx-auto w-full max-w-[1280px] px-5 py-10 md:px-18 md:py-12"
+                            >
+                                <BlogPostGrid posts={section.talks.map(toStoryCard)} />
+                            </section>
+                        );
+                    case "FEATURED_MILI_TALK":
+                        return (
+                            <section key={section.id} className="flex justify-center bg-white px-5 py-8 md:py-12">
+                                <FeaturedPostImage
+                                    image={section.talk.coverMedia.url}
+                                    title={section.talk.title}
+                                    href={`/blog/${section.talk.slug}`}
+                                />
+                            </section>
+                        );
                     case "CONTACT":
                         return <ContactSection key={section.id} section={section} />;
                     case "RICH_TEXT":
@@ -217,8 +354,6 @@ export function BlogPostContent({ sections }: { sections: StorySection[] }) {
                         );
                     case "SPACER":
                         return <div key={section.id} className={cn("bg-white", spacingClass[section.spacing])} />;
-                    default:
-                        return null;
                 }
             })}
         </div>

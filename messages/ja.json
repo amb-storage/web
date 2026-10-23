@@ -234,15 +234,6 @@
       "specialThanks": "Special Thanks",
       "brandShop": "Brand, Shop",
       "collector": "Collector"
-    },
-    "contact": {
-      "name": "氏名",
-      "email": "メールアドレス",
-      "title": "タイトル",
-      "message": "メッセージ",
-      "messagePlaceholder": "その他、重要と思われる情報がございましたら、ご教示いただけますと幸いです。 *",
-      "recaptcha": "このフォームはreCAPTCHAによって保護されており、Googleの個人情報保護方針および利用規約が適用されます。",
-      "send": "送信"
     }
   },
   "contentPages": {
@@ -290,10 +281,6 @@
     "removeUnavailable": "購入できない商品をカートから削除してください。",
     "email": "メールアドレス",
     "emailPlaceholder": "example@email.com",
-    "checkoutStatus": {
-      "success": "ご注文ありがとうございます。お支払いの確認後、確認メールをお送りします。",
-      "cancel": "お支払いはキャンセルされました。カートの内容はそのまま保存されています。"
-    },
     "errors": {
       "generic": "処理に失敗しました。もう一度お試しください。",
       "stock": "在庫数を超えているため追加できません。",
@@ -308,5 +295,35 @@
     "description": "ページが移動または削除されたか、URLが間違っている可能性があります。",
     "backHome": "ホームへ戻る",
     "shopNow": "ショップを見る"
+  },
+  "cmsSections": {
+    "previous": "前へ",
+    "next": "次へ",
+    "contact": {
+      "name": "氏名",
+      "email": "メールアドレス",
+      "title": "タイトル",
+      "message": "メッセージ",
+      "messagePlaceholder": "その他、重要と思われる情報がございましたら、ご教示いただけますと幸いです。 *",
+      "recaptcha": "このフォームはreCAPTCHAによって保護されており、Googleの個人情報保護方針および利用規約が適用されます。",
+      "send": "送信"
+    }
+  },
+  "checkout": {
+    "success": {
+      "title": "ご注文ありがとうございます",
+      "description": "お支払いが完了しました。カートは空になりました。",
+      "orderNumber": "注文番号",
+      "email": "確認メール送信先",
+      "note": "お支払いの確認後、注文確認メールをお送りします。お問い合わせの際は注文番号をお伝えください。",
+      "primaryAction": "ショッピングを続ける",
+      "secondaryAction": "トップに戻る"
+    },
+    "cancel": {
+      "title": "お支払いが完了しませんでした",
+      "description": "お支払いはキャンセルされたか、処理できませんでした。料金は発生していません。カートの商品はそのまま保存されています。",
+      "primaryAction": "カートに戻る",
+      "secondaryAction": "ショッピングを続ける"
+    }
   }
 }

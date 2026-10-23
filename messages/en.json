@@ -234,15 +234,6 @@
       "specialThanks": "Special Thanks",
       "brandShop": "Brand, Shop",
       "collector": "Collector"
-    },
-    "contact": {
-      "name": "Name",
-      "email": "Email",
-      "title": "Title",
-      "message": "Message",
-      "messagePlaceholder": "Please share any other important information. *",
-      "recaptcha": "This form is protected by reCAPTCHA and Google's Privacy Policy and Terms of Service apply.",
-      "send": "Send"
     }
   },
   "contentPages": {
@@ -290,10 +281,6 @@
     "removeUnavailable": "Please remove unavailable items from your cart.",
     "email": "Email",
     "emailPlaceholder": "example@email.com",
-    "checkoutStatus": {
-      "success": "Thank you for your order. We will email you a confirmation once payment is confirmed.",
-      "cancel": "Payment was cancelled. Your cart has been kept."
-    },
     "errors": {
       "generic": "Something went wrong. Please try again.",
       "stock": "Not enough stock for this quantity.",
@@ -308,5 +295,35 @@
     "description": "The page may have moved or been removed, or the URL might be wrong.",
     "backHome": "Back to home",
     "shopNow": "Browse the shop"
+  },
+  "cmsSections": {
+    "previous": "Previous",
+    "next": "Next",
+    "contact": {
+      "name": "Name",
+      "email": "Email",
+      "title": "Title",
+      "message": "Message",
+      "messagePlaceholder": "Please share any other important information. *",
+      "recaptcha": "This form is protected by reCAPTCHA and Google's Privacy Policy and Terms of Service apply.",
+      "send": "Send"
+    }
+  },
+  "checkout": {
+    "success": {
+      "title": "Thank you for your order",
+      "description": "Your payment is complete and your cart has been cleared.",
+      "orderNumber": "Order number",
+      "email": "Confirmation email",
+      "note": "We will email your order confirmation once payment is confirmed. Please quote your order number if you contact us.",
+      "primaryAction": "Continue shopping",
+      "secondaryAction": "Back to home"
+    },
+    "cancel": {
+      "title": "Payment was not completed",
+      "description": "Your payment was cancelled or could not be processed. You have not been charged, and the items in your cart have been kept.",
+      "primaryAction": "Back to cart",
+      "secondaryAction": "Continue shopping"
+    }
   }
 }

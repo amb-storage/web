@@ -8,12 +8,14 @@ import { ApiClientError } from "@/lib/api/client";
 import type { Availability, Money } from "@/lib/storefront/types";
 import {
   addCartItem,
+  clearCartItems,
   createCheckoutSession,
   fetchCart,
   fetchProductImage,
   removeCartItem,
   updateCartItem,
 } from "./cartApi";
+import { savePendingCheckout } from "./checkoutStorage";
 
 export interface CartLine {
   productId: string;
@@ -41,6 +43,7 @@ interface CartContextValue {
   add: (productId: string, quantity?: number) => Promise<void>;
   remove: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  clear: () => Promise<void>;
   checkout: (input: { email: string; successUrl: string; cancelUrl: string }) => Promise<void>;
   refresh: () => Promise<void>;
   setCart: (cart: ApiCart) => void;
@@ -143,11 +146,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
         quantity < 1
           ? run(() => removeCartItem(locale, productId))
           : run(() => updateCartItem(locale, productId, quantity)),
+      clear: async () => {
+        setPending(true);
+        setErrorCode(null);
+        try {
+          setCart(await clearCartItems(locale));
+        } catch {
+          // Webhook có thể đã expire giỏ cũ → lấy lại giỏ hiện tại (trống) thay vì báo lỗi
+          await refresh();
+        } finally {
+          setPending(false);
+        }
+      },
       checkout: async (input) => {
         setPending(true);
         setErrorCode(null);
         try {
           const session = await createCheckoutSession(locale, input);
+          // Lưu lại để trang /checkout/success hiện mã đơn và xoá giỏ
+          savePendingCheckout({ orderId: session.orderId, email: input.email });
           // Chuyển sang trang thanh toán Stripe; kết quả thanh toán do webhook xác nhận
           window.location.assign(session.checkoutUrl);
         } catch (error) {

@@ -1,5 +1,6 @@
 import type {
     AboutContent,
+    CmsPage,
     Homepage,
     Locale,
     NavigationItem,
@@ -22,6 +23,7 @@ export interface StorefrontRepository {
     getHeaderNavigation(locale: Locale): Promise<NavigationItem[]>;
     getFooterNavigation(locale: Locale): Promise<NavigationItem[]>;
     getStoreSettings(locale: Locale): Promise<StoreSettings>;
+    getPage(locale: Locale, slug: string): Promise<CmsPage | null>;
     getAbout(locale: Locale): Promise<AboutContent | null>;
     getPolicies(locale: Locale): Promise<PolicyContent[]>;
 }

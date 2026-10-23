@@ -54,7 +54,7 @@ messages/               Translation files (en.json, ja.json)
 lib/                    Shared utilities
 ```
 
-Route URLs remain `/`, `/shop`, `/shop/[slug]`, `/about`, `/policy`, `/cart`, and `/blog`; English uses the `/en` prefix through next-intl.
+Route URLs remain `/`, `/shop`, `/shop/[slug]`, `/about`, `/policy`, `/cart`, and `/blog`; any other one-segment URL (`/[slug]`) renders a published CMS Page from `GET /api/v1/pages/:slug` or 404s. English uses the `/en` prefix through next-intl.
 
 ## Internationalization
 
