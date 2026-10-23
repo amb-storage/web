@@ -6,7 +6,7 @@ import { Check, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import { filterAndSortProducts } from "@/lib/storefront";
-import type { Product, ProductSort } from "@/lib/storefront";
+import type { Product, ProductFacets, ProductSort } from "@/lib/storefront";
 import RefineDrawer from "../RefineDrawer/RefineDrawer";
 import {
     emptyRefineFilters,
@@ -17,6 +17,7 @@ import SortDropdown from "../SortDropdown/SortDropdown";
 
 interface ShopCatalogProps {
     products: Product[];
+    facets: ProductFacets;
     initialSearch: string;
     initialCategory: string;
 }
@@ -30,6 +31,7 @@ function toPrice(value: string) {
 
 export default function ShopCatalog({
     products,
+    facets,
     initialSearch,
     initialCategory,
 }: ShopCatalogProps) {
@@ -46,22 +48,17 @@ export default function ShopCatalog({
     // Đổi key mỗi lần mở để drawer mount lại với bản nháp = bộ lọc hiện tại
     const [refineKey, setRefineKey] = useState(0);
 
+    // Danh mục / size lấy từ `GET /products/facets` (backend đã tính sẵn theo sản phẩm đang bán)
     const options = useMemo(
         () => ({
-            categories: [...new Set(products.map((product) => product.category))].map(
-                (category) => ({
-                    value: category,
-                    label: t(`categories.${category}`).toUpperCase(),
-                }),
-            ),
-            periods: [...new Set(products.map((product) => product.period))]
-                .sort()
-                .map((period) => ({ value: period, label: period })),
-            sizes: [...new Set(products.map((product) => product.size))]
-                .sort()
-                .map((size) => ({ value: size, label: size })),
+            categories: facets.categories.map((category) => ({
+                value: category.slug,
+                label: category.label.toUpperCase(),
+            })),
+            // Lọc theo size hiển thị của sản phẩm (vd. "40R"), không theo slug đã lowercase
+            sizes: facets.sizes.map((size) => ({ value: size.label, label: size.label })),
         }),
-        [products, t],
+        [facets],
     );
 
     const visibleProducts = useMemo(
@@ -71,7 +68,6 @@ export default function ShopCatalog({
                 sort,
                 inStock,
                 category: filters.category,
-                period: filters.period,
                 size: filters.size,
                 priceMin: toPrice(filters.priceMin),
                 priceMax: toPrice(filters.priceMax),
@@ -174,7 +170,6 @@ export default function ShopCatalog({
                 open={isRefineOpen}
                 applied={filters}
                 categories={options.categories}
-                periods={options.periods}
                 sizes={options.sizes}
                 onClose={() => setIsRefineOpen(false)}
                 onApply={setFilters}

@@ -1,12 +1,17 @@
-import { getTranslations } from "next-intl/server";
-import { storefrontRepository } from "@/lib/storefront";
+import { getLocale, getTranslations } from "next-intl/server";
+import { storefrontRepository } from "@/lib/storefront/api-storefront";
+import type { Locale } from "@/lib/storefront";
 import ShopCatalog from "./_components/ShopCatalog/ShopCatalog";
 
 export default async function ShopPage({
     searchParams,
 }: PageProps<"/[locale]/shop">) {
     const t = await getTranslations("shop");
-    const products = await storefrontRepository.getProducts({ sort: "newest" });
+    const locale = (await getLocale()) as Locale;
+    const [products, facets] = await Promise.all([
+        storefrontRepository.getAllProducts(locale),
+        storefrontRepository.getProductFacets(locale),
+    ]);
     const params = await searchParams;
     const initialSearch =
         typeof params.search === "string" ? params.search : "";
@@ -29,7 +34,10 @@ export default async function ShopPage({
                 </p>
             </header>
             <ShopCatalog
+                // Đổi search / category trên URL (vd. bấm menu header) thì mount lại để nhận bộ lọc mới
+                key={`${initialSearch}|${initialCategory}`}
                 products={products}
+                facets={facets}
                 initialSearch={initialSearch}
                 initialCategory={initialCategory}
             />

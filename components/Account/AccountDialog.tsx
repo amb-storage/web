@@ -4,9 +4,7 @@ import {
     useCallback,
     useEffect,
     useRef,
-    useState,
     useSyncExternalStore,
-    type FormEvent,
     type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
@@ -14,20 +12,13 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import {
     CheckCircle2,
-    ChevronDown,
     History,
     Square,
     UserRound,
     X,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
-
-type AccountDialogStep = "INTRO" | "PHONE";
-
-interface PhoneLoginForm {
-    countryCode: string;
-    phoneNumber: string;
-}
+import { useCustomerAuth, type AccountDialogStep } from "./useCustomerAuth";
 
 interface AccountDialogProps {
     open: boolean;
@@ -35,16 +26,20 @@ interface AccountDialogProps {
     triggerRef: RefObject<HTMLButtonElement | null>;
 }
 
-const initialPhoneLoginForm: PhoneLoginForm = {
-    countryCode: "+81",
-    phoneNumber: "",
-};
-
 const focusableSelector =
     'button:not([disabled]), input:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
 const subscribeToClient = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
+
+// Mã lỗi backend → key message; mã lạ thì hiện lỗi chung
+function errorKey(step: AccountDialogStep, code: string) {
+    if (code === "OTP_FORMAT") return "account.otp.invalidFormat";
+    if (code.includes("RATE_LIMIT") || code.includes("COOLDOWN")) return "account.errors.rateLimited";
+    if (step === "OTP" && (code.includes("OTP") || code.includes("CHALLENGE")))
+        return "account.otp.invalid";
+    return "account.errors.generic";
+}
 
 export function AccountDialog({
     open,
@@ -59,20 +54,31 @@ export function AccountDialog({
         getClientSnapshot,
         getServerSnapshot,
     );
-    const [step, setStep] = useState<AccountDialogStep>("INTRO");
-    const [phoneLoginForm, setPhoneLoginForm] = useState<PhoneLoginForm>(
-        initialPhoneLoginForm,
-    );
-    const [phoneError, setPhoneError] = useState("");
-    const resetDialog = useCallback(() => {
-        setStep("INTRO");
-        setPhoneLoginForm(initialPhoneLoginForm);
-        setPhoneError("");
-    }, []);
+    const {
+        step,
+        setStep,
+        email,
+        setEmail,
+        otp,
+        setOtp,
+        customerEmail,
+        errorCode,
+        pending,
+        loadSession,
+        reset,
+        requestOtp,
+        verifyOtp,
+        logout,
+    } = useCustomerAuth();
     const handleClose = useCallback(() => {
-        resetDialog();
+        reset();
         onClose();
-    }, [onClose, resetDialog]);
+    }, [onClose, reset]);
+
+    // Mỗi lần mở dialog kiểm tra session Customer hiện tại
+    useEffect(() => {
+        if (open) void loadSession();
+    }, [loadSession, open]);
 
     useEffect(() => {
         if (open) {
@@ -128,20 +134,6 @@ export function AccountDialog({
             window.removeEventListener("keydown", handleKeyDown);
         };
     }, [handleClose, open]);
-
-    const handleNext = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const digits = phoneLoginForm.phoneNumber.replace(/\D/g, "");
-
-        if (digits.length < 6 || digits.length > 15) {
-            setPhoneError(t("account.phone.invalid"));
-            return;
-        }
-
-        setPhoneError("");
-    };
-
-    const handleCancel = resetDialog;
 
     if (!isClient || typeof document === "undefined") return null;
 
@@ -201,99 +193,79 @@ export function AccountDialog({
                                 </div>
                             </div>
                         </div>
+                    ) : step === "SIGNED_IN" ? (
+                        <div className="px-6 pb-2 pt-8 md:px-10 md:pt-10">
+                            <h2
+                                id="account-dialog-title"
+                                className="text-xl font-bold leading-tight text-gray-900 md:text-2xl"
+                            >
+                                {t("account.signedIn.title")}
+                            </h2>
+                            <p className="mt-4 break-all text-sm leading-relaxed text-gray-600 md:text-base">
+                                {t("account.signedIn.description", {
+                                    email: customerEmail ?? "",
+                                })}
+                            </p>
+                        </div>
                     ) : (
                         <form
-                            id="account-phone-form"
-                            onSubmit={handleNext}
+                            id="account-auth-form"
+                            onSubmit={step === "EMAIL" ? requestOtp : verifyOtp}
                             className="px-6 pb-2 pt-8 md:px-10 md:pt-10"
                         >
                             <h2
                                 id="account-dialog-title"
                                 className="text-xl font-bold leading-tight text-gray-900 md:text-2xl"
                             >
-                                {t("account.phone.title")}
+                                {t(step === "EMAIL" ? "account.email.title" : "account.otp.title")}
                             </h2>
                             <p className="mt-4 text-sm leading-relaxed text-gray-600 md:text-base">
-                                {t("account.phone.description")}
+                                {step === "EMAIL"
+                                    ? t("account.email.description")
+                                    : t("account.otp.description", { email })}
                             </p>
 
                             <div className="mt-8">
-                                <div className="flex flex-col gap-3 sm:flex-row">
-                                    <div className="relative sm:w-48">
-                                        <label
-                                            htmlFor="account-country-code"
-                                            className="sr-only"
-                                        >
-                                            {t("account.phone.countryCode")}
-                                        </label>
-                                        <select
-                                            id="account-country-code"
-                                            value={phoneLoginForm.countryCode}
-                                            onChange={(event) =>
-                                                setPhoneLoginForm(
-                                                    (current) => ({
-                                                        ...current,
-                                                        countryCode:
-                                                            event.target.value,
-                                                    }),
-                                                )
-                                            }
-                                            className="h-14 w-full appearance-none border border-gray-300 bg-white px-4 pr-10 text-base outline-none focus:border-(--brand-green) focus:ring-1 focus:ring-(--brand-green)"
-                                        >
-                                            <option value="+81">
-                                                Japan +81
-                                            </option>
-                                            <option value="+1">
-                                                United States +1
-                                            </option>
-                                            <option value="+44">
-                                                United Kingdom +44
-                                            </option>
-                                        </select>
-                                        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <label
-                                            htmlFor="account-phone-number"
-                                            className="sr-only"
-                                        >
-                                            {t("account.phone.number")}
-                                        </label>
-                                        <input
-                                            id="account-phone-number"
-                                            type="tel"
-                                            inputMode="tel"
-                                            autoComplete="tel-national"
-                                            autoFocus
-                                            value={phoneLoginForm.phoneNumber}
-                                            onChange={(event) => {
-                                                setPhoneLoginForm(
-                                                    (current) => ({
-                                                        ...current,
-                                                        phoneNumber:
-                                                            event.target.value,
-                                                    }),
-                                                );
-                                                if (phoneError)
-                                                    setPhoneError("");
-                                            }}
-                                            aria-invalid={Boolean(phoneError)}
-                                            aria-describedby={
-                                                phoneError
-                                                    ? "account-phone-error"
-                                                    : undefined
-                                            }
-                                            className={`h-14 w-full border bg-white px-4 text-base outline-none focus:ring-1 ${phoneError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-(--brand-green) focus:ring-(--brand-green)"}`}
-                                        />
-                                    </div>
-                                </div>
-                                {phoneError && (
-                                    <p
-                                        id="account-phone-error"
-                                        className="mt-2 text-sm text-red-600"
-                                    >
-                                        {phoneError}
+                                <label htmlFor="account-auth-input" className="sr-only">
+                                    {t(step === "EMAIL" ? "account.email.label" : "account.otp.label")}
+                                </label>
+                                <input
+                                    key={step}
+                                    id="account-auth-input"
+                                    type={step === "EMAIL" ? "email" : "text"}
+                                    inputMode={step === "EMAIL" ? "email" : "numeric"}
+                                    autoComplete={step === "EMAIL" ? "email" : "one-time-code"}
+                                    required
+                                    autoFocus
+                                    placeholder={t(
+                                        step === "EMAIL"
+                                            ? "account.email.placeholder"
+                                            : "account.otp.placeholder",
+                                    )}
+                                    value={step === "EMAIL" ? email : otp}
+                                    onChange={(event) =>
+                                        step === "EMAIL"
+                                            ? setEmail(event.target.value)
+                                            : setOtp(event.target.value)
+                                    }
+                                    aria-invalid={Boolean(errorCode)}
+                                    aria-describedby={errorCode ? "account-auth-error" : undefined}
+                                    className={`h-14 w-full border bg-white px-4 text-base outline-none focus:ring-1 ${errorCode ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-(--brand-green) focus:ring-(--brand-green)"}`}
+                                />
+                                {errorCode && (
+                                    <p id="account-auth-error" className="mt-2 text-sm text-red-600">
+                                        {t(errorKey(step, errorCode))}
                                     </p>
+                                )}
+                                {step === "OTP" && (
+                                    <button
+                                        type="button"
+                                        onClick={() => requestOtp()}
+                                        disabled={pending}
+                                        className="mt-4 text-sm text-(--brand-green) underline underline-offset-4 disabled:opacity-50"
+                                    >
+                                        {t("account.otp.resend")}
+                                    </button>
                                 )}
                             </div>
                         </form>
@@ -315,26 +287,36 @@ export function AccountDialog({
                     {step === "INTRO" ? (
                         <button
                             type="button"
-                            onClick={() => setStep("PHONE")}
+                            onClick={() => setStep("EMAIL")}
                             className="h-12 flex-1 bg-(--brand-green) px-4 text-sm font-medium text-white transition-[background-color,box-shadow] duration-200 hover:bg-(--brand-green-dark) hover:shadow-md active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--brand-green) focus-visible:ring-offset-2 md:text-base"
                         >
                             {t("account.cta")}
+                        </button>
+                    ) : step === "SIGNED_IN" ? (
+                        <button
+                            type="button"
+                            onClick={logout}
+                            disabled={pending}
+                            className="h-12 flex-1 border border-gray-300 px-5 text-sm text-gray-700 transition-[background-color,border-color,box-shadow] duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-sm disabled:opacity-50"
+                        >
+                            {t("account.signedIn.logout")}
                         </button>
                     ) : (
                         <div className="flex flex-1 flex-wrap  gap-2 sm:flex-row justify-end">
                             <button
                                 type="button"
-                                onClick={handleCancel}
+                                onClick={reset}
                                 className="h-12 border border-gray-300 px-5 text-sm text-gray-700 transition-[background-color,border-color,box-shadow] duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-sm active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--brand-green) focus-visible:ring-offset-2"
                             >
-                                {t("account.phone.cancel")}
+                                {t("account.email.cancel")}
                             </button>
                             <button
                                 type="submit"
-                                form="account-phone-form"
-                                className="h-12 bg-(--brand-green) px-6 text-sm font-medium text-white transition-[background-color,box-shadow] duration-200 hover:bg-(--brand-green-dark) hover:shadow-md active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--brand-green) focus-visible:ring-offset-2"
+                                form="account-auth-form"
+                                disabled={pending}
+                                className="h-12 bg-(--brand-green) px-6 text-sm font-medium text-white transition-[background-color,box-shadow] duration-200 hover:bg-(--brand-green-dark) hover:shadow-md active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--brand-green) focus-visible:ring-offset-2 disabled:opacity-60"
                             >
-                                {t("account.phone.next")}
+                                {t(step === "EMAIL" ? "account.email.next" : "account.otp.verify")}
                             </button>
                         </div>
                     )}

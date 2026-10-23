@@ -5,17 +5,15 @@ import gsap from "gsap";
 
 export interface RefineFilters {
   category: string;
-  period: string;
   size: string;
   priceMin: string;
   priceMax: string;
 }
 
-export type RefineGroup = "category" | "period" | "price" | "size";
+export type RefineGroup = "category" | "price" | "size";
 
 export const emptyRefineFilters: RefineFilters = {
   category: "all",
-  period: "all",
   size: "all",
   priceMin: "",
   priceMax: "",
@@ -24,7 +22,6 @@ export const emptyRefineFilters: RefineFilters = {
 export function hasRefineFilters(filters: RefineFilters) {
   return (
     filters.category !== "all" ||
-    filters.period !== "all" ||
     filters.size !== "all" ||
     filters.priceMin !== "" ||
     filters.priceMax !== ""
@@ -74,7 +71,7 @@ export function useRefineDrawer(
       .to(backdrop, { opacity: 0, duration: 0.25, ease: "power2.in" }, 0);
   }, [open]);
 
-  // Panel con (Category / Period / ...) trượt đè lên danh sách nhóm
+  // Panel con (Category / Price / ...) trượt đè lên danh sách nhóm
   useEffect(() => {
     if (!activeGroup || !groupPanelRef.current) return;
     gsap.fromTo(
@@ -101,7 +98,7 @@ export function useRefineDrawer(
   }, []);
 
   // Chọn 1 giá trị trong danh sách rồi quay lại màn nhóm, giống trang tham khảo
-  const selectOption = (key: "category" | "period" | "size", value: string) => {
+  const selectOption = (key: "category" | "size", value: string) => {
     setDraftValue(key, value);
     setActiveGroup(null);
   };

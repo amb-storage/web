@@ -1,30 +1,61 @@
+import type { Metadata } from "next";
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import ProductGallery from "./_components/ProductGallery/ProductGallery";
 import ProductInfo from "./_components/ProductInfo/ProductInfo";
 import RelatedProducts from "./_components/RelatedProducts/RelatedProducts";
 import { RecentlyViewedTracker } from "../../_components/RecentlyViewedSection/RecentlyViewedTracker";
-import { storefrontRepository } from "@/lib/storefront";
+import { storefrontRepository } from "@/lib/storefront/api-storefront";
+import type { Locale } from "@/lib/storefront";
+
+// generateMetadata và page dùng chung 1 lần gọi API trong cùng request
+const getProduct = cache((locale: Locale, slug: string) =>
+    storefrontRepository.getProductBySlug(locale, slug),
+);
+
+export async function generateMetadata({
+    params,
+}: PageProps<"/[locale]/shop/[slug]">): Promise<Metadata> {
+    const { slug } = await params;
+    const locale = (await getLocale()) as Locale;
+    const product = await getProduct(locale, slug);
+    if (!product) return {};
+    return {
+        title: product.seo.title,
+        description: product.seo.description ?? undefined,
+    };
+}
 
 export default async function ProductDetailPage({
     params,
 }: PageProps<"/[locale]/shop/[slug]">) {
     const { slug } = await params;
-    const product = await storefrontRepository.getProductBySlug(slug);
+    const locale = (await getLocale()) as Locale;
+    const product = await getProduct(locale, slug);
 
     if (!product) notFound();
+    // Slug cũ: backend đã redirect sang slug canonical, đưa URL web về đúng slug đó
+    if (product.slug !== slug) {
+        redirect({ href: `/shop/${product.slug}`, locale });
+    }
 
-    const locale = (await getLocale()) as "ja" | "en";
-    const productTitle = product.name[locale];
+    const productTitle = product.name;
     const t = await getTranslations("productDetail");
 
-    const allProducts = await storefrontRepository.getProducts({
-        sort: "newest",
-    });
-    const relatedProducts = allProducts
-        .filter((item) => item.slug !== slug)
-        .slice(0, 6);
+    const allProducts = await storefrontRepository.getAllProducts(locale);
+    // Ưu tiên sản phẩm cùng danh mục, thiếu thì bù bằng sản phẩm mới nhất
+    const categorySlugs = new Set(product.categories.map((category) => category.slug));
+    const others = allProducts.filter((item) => item.id !== product.id);
+    const relatedProducts = [
+        ...others.filter((item) =>
+            item.categories.some((category) => categorySlugs.has(category.slug)),
+        ),
+        ...others.filter(
+            (item) => !item.categories.some((category) => categorySlugs.has(category.slug)),
+        ),
+    ].slice(0, 6);
 
     return (
         <div className="w-full">

@@ -1,19 +1,27 @@
 import type {
-  HomepageCollections,
-  Product,
-  ProductQuery,
-  StoreSettings,
-  Story,
-  StorefrontTaxonomy,
+    AboutContent,
+    Homepage,
+    Locale,
+    NavigationItem,
+    PolicyContent,
+    Product,
+    ProductDetail,
+    ProductFacets,
+    StoreSettings,
+    Story,
+    StoryCard,
 } from "./types";
 
 export interface StorefrontRepository {
-  getHomepage(): Promise<HomepageCollections>;
-  getProducts(query?: ProductQuery): Promise<Product[]>;
-  getProductBySlug(slug: string): Promise<Product | null>;
-  getCategories(): Promise<StorefrontTaxonomy[]>;
-  getCollections(): Promise<StorefrontTaxonomy[]>;
-  getStories(): Promise<Story[]>;
-  getStoryBySlug(slug: string): Promise<Story | null>;
-  getStoreSettings(): Promise<StoreSettings>;
+    getHomepage(locale: Locale): Promise<Homepage | null>;
+    getAllProducts(locale: Locale): Promise<Product[]>;
+    getProductBySlug(locale: Locale, slug: string): Promise<ProductDetail | null>;
+    getProductFacets(locale: Locale): Promise<ProductFacets>;
+    getStories(locale: Locale): Promise<StoryCard[]>;
+    getStoryBySlug(locale: Locale, slug: string): Promise<Story | null>;
+    getHeaderNavigation(locale: Locale): Promise<NavigationItem[]>;
+    getFooterNavigation(locale: Locale): Promise<NavigationItem[]>;
+    getStoreSettings(locale: Locale): Promise<StoreSettings>;
+    getAbout(locale: Locale): Promise<AboutContent | null>;
+    getPolicies(locale: Locale): Promise<PolicyContent[]>;
 }

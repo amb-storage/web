@@ -1,68 +1,164 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { products } from "@/data/mock";
+import { useLocale } from "next-intl";
+import type { ApiCart, ApiCartItem, ApiLocale } from "@/lib/api/types";
+import { ApiClientError } from "@/lib/api/client";
+import type { Availability, Money } from "@/lib/storefront/types";
 import {
-  addProductToCart,
-  readCartItems,
-  removeProductFromCart,
-  updateProductQuantity,
-} from "./CartState";
-import type { CartItem } from "./CartState";
+  addCartItem,
+  createCheckoutSession,
+  fetchCart,
+  fetchProductImage,
+  removeCartItem,
+  updateCartItem,
+} from "./cartApi";
+
+export interface CartLine {
+  productId: string;
+  slug: string | null;
+  name: string | null;
+  size: string | null;
+  quantity: number;
+  // ELIGIBLE = còn mua được; UNAVAILABLE / NOT_PURCHASABLE = đã hết hoặc bị gỡ
+  status: ApiCartItem["status"];
+  availability: Availability;
+  unitPrice: Money | null;
+  lineTotal: Money | null;
+  image: string | null;
+}
 
 interface CartContextValue {
-  items: CartItem[];
+  items: CartLine[];
   count: number;
+  subtotal: Money;
   hydrated: boolean;
+  pending: boolean;
+  // Mã lỗi backend của thao tác gần nhất (vd. CART_QUANTITY_UNAVAILABLE), null nếu ổn
+  errorCode: string | null;
   has: (productId: string) => boolean;
-  add: (productId: string, quantity?: number) => void;
-  remove: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  add: (productId: string, quantity?: number) => Promise<void>;
+  remove: (productId: string) => Promise<void>;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  checkout: (input: { email: string; successUrl: string; cancelUrl: string }) => Promise<void>;
+  refresh: () => Promise<void>;
+  setCart: (cart: ApiCart) => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
-const STORAGE_KEY = "amb-storage-cart";
-const validProductIds = new Set(products.map((product) => product.id));
+
+function toMoney(price: ApiCart["subtotal"] | null): Money | null {
+  return price ? { amount: price.amount, currency: "JPY" } : null;
+}
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const locale = useLocale() as ApiLocale;
+  const [cart, setCart] = useState<ApiCart | null>(null);
+  const [images, setImages] = useState<Record<string, string | null>>({});
   const [hydrated, setHydrated] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setItems(readCartItems(window.localStorage.getItem(STORAGE_KEY), validProductIds));
-      setHydrated(true);
-    });
-    return () => window.cancelAnimationFrame(frame);
+  const run = useCallback(async (action: () => Promise<ApiCart>) => {
+    setPending(true);
+    setErrorCode(null);
+    try {
+      setCart(await action());
+    } catch (error) {
+      setErrorCode(error instanceof ApiClientError ? error.code : "UNKNOWN");
+    } finally {
+      setPending(false);
+    }
   }, []);
 
-  useEffect(() => {
-    if (hydrated) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [hydrated, items]);
+  const refresh = useCallback(async () => {
+    try {
+      setCart(
+        await fetchCart(locale).catch((error: unknown) => {
+          // Session Customer hết hạn: backend đã xoá cookie, gọi lại sẽ ra giỏ khách vãng lai
+          if (error instanceof ApiClientError && error.code === "CUSTOMER_AUTH_SESSION_EXPIRED")
+            return fetchCart(locale);
+          throw error;
+        }),
+      );
+    } catch (error) {
+      setErrorCode(error instanceof ApiClientError ? error.code : "UNKNOWN");
+    } finally {
+      setHydrated(true);
+    }
+  }, [locale]);
 
-  const value = useMemo<CartContextValue>(
-    () => ({
+  // Lấy giỏ hàng lần đầu (và khi đổi ngôn ngữ để tên sản phẩm đúng locale)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đồng bộ state với giỏ hàng trên server
+    void refresh();
+  }, [refresh]);
+
+  // Cart API không có ảnh → lấy ảnh cho những dòng chưa có trong cache
+  useEffect(() => {
+    const missing = (cart?.items ?? []).filter(
+      (item) => item.product && !(item.productId in images),
+    );
+    if (missing.length === 0) return;
+    let cancelled = false;
+    void Promise.all(
+      missing.map(async (item) => {
+        const image = await fetchProductImage(locale, item.product!.slug).catch(() => null);
+        return [item.productId, image] as const;
+      }),
+    ).then((entries) => {
+      if (!cancelled) setImages((current) => ({ ...current, ...Object.fromEntries(entries) }));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [cart, images, locale]);
+
+  const value = useMemo<CartContextValue>(() => {
+    const items: CartLine[] = (cart?.items ?? []).map((item) => ({
+      productId: item.productId,
+      slug: item.product?.slug ?? null,
+      name: item.product?.name ?? null,
+      size: item.size,
+      quantity: item.quantity,
+      status: item.status,
+      availability: item.availability,
+      unitPrice: toMoney(item.unitPrice),
+      lineTotal: toMoney(item.lineTotal),
+      image: images[item.productId] ?? null,
+    }));
+
+    return {
       items,
-      count: items.reduce((total, item) => total + item.quantity, 0),
+      count: cart?.itemCount ?? 0,
+      subtotal: toMoney(cart?.subtotal ?? null) ?? { amount: 0, currency: "JPY" },
       hydrated,
+      pending,
+      errorCode,
       has: (productId) => items.some((item) => item.productId === productId),
-      add: (productId, quantity = 1) => {
-        const product = products.find((item) => item.id === productId);
-        if (!product) return;
-        setItems((current) =>
-          addProductToCart(current, product.id, product.availability, quantity),
-        );
-      },
-      remove: (productId) =>
-        setItems((current) => removeProductFromCart(current, productId)),
+      add: (productId, quantity = 1) => run(() => addCartItem(locale, productId, quantity)),
+      remove: (productId) => run(() => removeCartItem(locale, productId)),
       updateQuantity: (productId, quantity) =>
-        setItems((current) =>
-          updateProductQuantity(current, productId, quantity),
-        ),
-    }),
-    [hydrated, items]
-  );
+        quantity < 1
+          ? run(() => removeCartItem(locale, productId))
+          : run(() => updateCartItem(locale, productId, quantity)),
+      checkout: async (input) => {
+        setPending(true);
+        setErrorCode(null);
+        try {
+          const session = await createCheckoutSession(locale, input);
+          // Chuyển sang trang thanh toán Stripe; kết quả thanh toán do webhook xác nhận
+          window.location.assign(session.checkoutUrl);
+        } catch (error) {
+          setErrorCode(error instanceof ApiClientError ? error.code : "UNKNOWN");
+          setPending(false);
+        }
+      },
+      refresh,
+      setCart,
+    };
+  }, [cart, errorCode, hydrated, images, locale, pending, refresh, run]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

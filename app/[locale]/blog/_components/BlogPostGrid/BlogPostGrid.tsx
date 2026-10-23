@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import type { Story } from "@/lib/storefront/types";
+import type { StoryCard } from "@/lib/storefront/types";
 import { useBlogPostGridAnimation } from "./useBlogPostGridAnimation";
 
 interface BlogPostGridProps {
-    posts: Story[];
+    posts: StoryCard[];
 }
 
 export default function BlogPostGrid({ posts }: BlogPostGridProps) {
@@ -27,7 +27,7 @@ export default function BlogPostGrid({ posts }: BlogPostGridProps) {
                             <div className="blog-post-card-img absolute inset-0">
                                 <Image
                                     src={post.coverImage}
-                                    alt={post.title}
+                                    alt={post.coverAlt ?? post.title}
                                     fill
                                     sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
                                     className="object-cover transition-transform duration-500 group-hover:scale-105"

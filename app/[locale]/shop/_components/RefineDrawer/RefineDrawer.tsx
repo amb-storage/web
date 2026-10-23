@@ -18,7 +18,6 @@ interface RefineDrawerProps {
   open: boolean;
   applied: RefineFilters;
   categories: RefineOption[];
-  periods: RefineOption[];
   sizes: RefineOption[];
   onClose: () => void;
   onApply: (filters: RefineFilters) => void;
@@ -31,7 +30,6 @@ export default function RefineDrawer({
   open,
   applied,
   categories,
-  periods,
   sizes,
   onClose,
   onApply,
@@ -54,11 +52,10 @@ export default function RefineDrawer({
 
   const groups: Array<{ key: RefineGroup; label: string; isSet: boolean }> = [
     { key: "category", label: t("filters.category"), isSet: draft.category !== "all" },
-    { key: "period", label: t("filters.period"), isSet: draft.period !== "all" },
     { key: "price", label: t("filters.price"), isSet: draft.priceMin !== "" || draft.priceMax !== "" },
     { key: "size", label: t("filters.size"), isSet: draft.size !== "all" },
   ];
-  const listOptions = { category: categories, period: periods, size: sizes };
+  const listOptions = { category: categories, size: sizes };
   const activeLabel = groups.find((group) => group.key === activeGroup)?.label;
   const canClear = hasRefineFilters(draft);
 

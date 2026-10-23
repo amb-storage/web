@@ -17,21 +17,39 @@
         "open": "アカウントを開く",
         "mobileLabel": "ログイン",
         "close": "アカウントダイアログを閉じる",
-        "title": "電話番号だけを使用してログインかアカウントを作成しましょう",
+        "title": "メールアドレスだけでログイン・アカウント作成",
         "benefits": {
           "status": "注文ステータスの通知を受け取る",
           "history": "注文履歴を表示し、素早く再注文する",
           "payment": "支払い情報を管理して、会計を迅速に行う"
         },
         "cta": "ログインまたはアカウントの作成",
-        "phone": {
-          "title": "電話番号を入力してください",
-          "description": "SMSで確認コードをお送りします。",
-          "countryCode": "国番号",
-          "number": "電話番号",
-          "invalid": "有効な電話番号を入力してください。",
+        "email": {
+          "title": "メールアドレスを入力してください",
+          "description": "認証コード（8桁）をメールでお送りします。",
+          "label": "メールアドレス",
+          "placeholder": "example@email.com",
           "next": "次へ",
           "cancel": "キャンセル"
+        },
+        "otp": {
+          "title": "認証コードを入力してください",
+          "description": "{email} に送信した8桁のコードを入力してください。",
+          "label": "認証コード",
+          "placeholder": "12345678",
+          "verify": "ログイン",
+          "resend": "コードを再送信",
+          "invalid": "認証コードが正しくないか、有効期限が切れています。",
+          "invalidFormat": "8桁の数字を入力してください。"
+        },
+        "signedIn": {
+          "title": "ログイン中",
+          "description": "{email} でログインしています。",
+          "logout": "ログアウト"
+        },
+        "errors": {
+          "generic": "処理に失敗しました。もう一度お試しください。",
+          "rateLimited": "リクエストが多すぎます。少し時間をおいてお試しください。"
         }
       },
       "openMenu": "メニューを開く",
@@ -169,13 +187,8 @@
     "empty": "条件に一致する商品がありません。",
     "filters": {
       "category": "Category",
-      "period": "Period",
       "price": "Prices",
       "size": "Size"
-    },
-    "categories": {
-      "military": "ミリタリー",
-      "denim": "デニム"
     },
     "sort": {
       "label": "並び替え",
@@ -221,12 +234,32 @@
       "specialThanks": "Special Thanks",
       "brandShop": "Brand, Shop",
       "collector": "Collector"
+    },
+    "contact": {
+      "name": "氏名",
+      "email": "メールアドレス",
+      "title": "タイトル",
+      "message": "メッセージ",
+      "messagePlaceholder": "その他、重要と思われる情報がございましたら、ご教示いただけますと幸いです。 *",
+      "recaptcha": "このフォームはreCAPTCHAによって保護されており、Googleの個人情報保護方針および利用規約が適用されます。",
+      "send": "送信"
     }
   },
   "contentPages": {
     "about": {
       "title": "ABOUT US",
-      "intro": "Amb:STORAGEは、ミリタリーとデニムを中心にオリジナルヴィンテージウェアをセレクトしています。ブランドや会社に関する詳細は、確認済みのクライアント原稿が届き次第掲載します。"
+      "intro": "Amb:STORAGEは、ミリタリーとデニムを中心にオリジナルヴィンテージウェアをセレクトしています。ブランドや会社に関する詳細は、確認済みのクライアント原稿が届き次第掲載します。",
+      "sections": {
+        "company": "会社概要",
+        "philosophy": "ブランド理念",
+        "mission": "Mission",
+        "vision": "Vision",
+        "values": "Core Values",
+        "promise": "Our Promise",
+        "knowledge": "Knowledge & Community",
+        "contact": "お問い合わせ"
+      },
+      "backToTop": "TOPに戻る"
     },
     "privacy": {
       "title": "プライバシーポリシー",
@@ -235,6 +268,9 @@
     "commercialTransactions": {
       "title": "特定商取引法に基づく表記",
       "intro": "特定商取引法に基づく表記の全文は、確認済みのクライアント・法務原稿が届き次第掲載します。"
+    },
+    "policy": {
+      "menu": "メニュー"
     }
   },
   "cart": {
@@ -248,7 +284,23 @@
     "continueShopping": "ショッピングを続ける",
     "remove": "削除",
     "total": "合計",
-    "checkout": "お会計に進む {amount}"
+    "checkout": "お会計に進む {amount}",
+    "unavailableItem": "販売終了した商品",
+    "unavailable": "この商品は現在購入できません",
+    "removeUnavailable": "購入できない商品をカートから削除してください。",
+    "email": "メールアドレス",
+    "emailPlaceholder": "example@email.com",
+    "checkoutStatus": {
+      "success": "ご注文ありがとうございます。お支払いの確認後、確認メールをお送りします。",
+      "cancel": "お支払いはキャンセルされました。カートの内容はそのまま保存されています。"
+    },
+    "errors": {
+      "generic": "処理に失敗しました。もう一度お試しください。",
+      "stock": "在庫数を超えているため追加できません。",
+      "unavailable": "購入できない商品が含まれています。",
+      "checkout": "現在お支払いを開始できません。しばらくしてからお試しください。",
+      "rateLimited": "操作が多すぎます。少し時間をおいてお試しください。"
+    }
   },
   "notFound": {
     "eyebrow": "PAGE NOT FOUND",

@@ -1,3 +1,5 @@
+import type { NavigationItem } from "./types";
+
 export interface HeaderNavigationItem {
     id: string;
     label: string;
@@ -7,7 +9,29 @@ export interface HeaderNavigationItem {
     children: readonly HeaderNavigationItem[];
 }
 
-export const headerNavigation = [
+// Dropdown nhiều mục (vd. Shop Now) xếp dọc, ít mục (vd. Home → About Us) xếp ngang
+const VERTICAL_DROPDOWN_MIN_ITEMS = 3;
+
+// Chuyển menu từ `GET /navigation/header` sang cấu trúc header đang dùng; backend không có id nên ghép từ vị trí + href
+export function toHeaderNavigation(
+    items: readonly NavigationItem[],
+    parentId = "nav",
+): HeaderNavigationItem[] {
+    return items.map((item, index) => {
+        const id = `${parentId}-${index}-${item.href}`;
+        return {
+            id,
+            label: item.label,
+            href: item.href,
+            dropdownLayout:
+                item.children.length >= VERTICAL_DROPDOWN_MIN_ITEMS ? "vertical" : "horizontal",
+            children: toHeaderNavigation(item.children, id),
+        };
+    });
+}
+
+// Dự phòng khi không gọi được API navigation, để header vẫn có menu
+export const fallbackHeaderNavigation = [
     {
         id: "home",
         label: "Home",
@@ -26,50 +50,7 @@ export const headerNavigation = [
         label: "Shop Now",
         href: "/shop",
         dropdownLayout: "vertical",
-        children: [
-            {
-                id: "vintage-military",
-                label: "Vintage MILITARY",
-                href: "/shop/vintage-military",
-                children: [],
-            },
-            {
-                id: "vintage-denim",
-                label: "Vintage DENIM",
-                href: "/shop/vintage-denim",
-                children: [],
-            },
-            {
-                id: "other-vtg-items",
-                label: "Other VTG Items",
-                href: "/shop/other-vtg-items",
-                children: [],
-            },
-            {
-                id: "jackets",
-                label: "Jackets",
-                href: "/shop/jackets",
-                children: [],
-            },
-            {
-                id: "shirts",
-                label: "Shirts",
-                href: "/shop/shirts",
-                children: [],
-            },
-            {
-                id: "t-shirts",
-                label: "T-Shirts",
-                href: "/shop",
-                children: [],
-            },
-            {
-                id: "pants",
-                label: "Pants",
-                href: "/shop/pants",
-                children: [],
-            },
-        ],
+        children: [],
     },
     {
         id: "mili-talks",

@@ -1,26 +1,44 @@
+import type { Metadata } from "next";
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { storefrontRepository } from "@/lib/storefront";
+import { storefrontRepository } from "@/lib/storefront/api-storefront";
+import { formatDate, type Locale } from "@/lib/storefront";
 import { BlogPostContent } from "./_components/BlogPostContent";
+
+// generateMetadata và page dùng chung 1 lần gọi API trong cùng request
+const getStory = cache((locale: Locale, slug: string) =>
+    storefrontRepository.getStoryBySlug(locale, slug),
+);
+
+export async function generateMetadata({
+    params,
+}: PageProps<"/[locale]/blog/[slug]">): Promise<Metadata> {
+    const { slug } = await params;
+    const post = await getStory((await getLocale()) as Locale, slug);
+    if (!post) return {};
+    return {
+        title: post.seo?.title ?? post.title,
+        description: post.seo?.description ?? post.excerpt,
+    };
+}
 
 export default async function BlogPostPage({
     params,
 }: PageProps<"/[locale]/blog/[slug]">) {
     const { slug } = await params;
-    const post = await storefrontRepository.getStoryBySlug(slug);
+    const post = await getStory((await getLocale()) as Locale, slug);
 
     if (!post) notFound();
-
-    const locale = (await getLocale()) as "ja" | "en";
 
     return (
         <div className="bg-[#eff5f0]">
             <header className="bg-white py-8 mx-auto">
                 <div className="mx-auto max-w-3xl">
                     <span className="text-[13px] font-semibold">
-                        {post.date}
+                        {formatDate(post.publishedAt)}
                     </span>
                     <h1 className="mt-2 line-clamp-2 text-3xl font-bold leading-tight text-(--brand-green) md:text-[40px]">
                         {post.title}
@@ -31,7 +49,7 @@ export default async function BlogPostPage({
             <div className="mx-auto max-w-2xl bg-[#eff5f0] px-5 pb-10">
                 <Image
                     src={post.coverImage}
-                    alt={post.title}
+                    alt={post.coverAlt ?? post.title}
                     width={1080}
                     height={1350}
                     priority
@@ -47,21 +65,7 @@ export default async function BlogPostPage({
                 </p>
             </div>
 
-            {post.contentSections ? (
-                <BlogPostContent
-                    sections={post.contentSections}
-                    locale={locale}
-                />
-            ) : (
-                <div className="mx-auto bg-white px-5 py-12 md:px-8 md:py-16">
-                    <div
-                        className="[&_a]:text-(--brand-green) [&_a]:underline [&_h2]:mb-3 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-(--brand-green) [&_img]:my-6 [&_img]:w-full [&_img]:rounded-lg [&_li]:mb-1 [&_p]:mb-4 [&_p]:leading-relaxed [&_p]:text-gray-700 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:pl-6]"
-                        dangerouslySetInnerHTML={{
-                            __html: post.contentHtml[locale],
-                        }}
-                    />
-                </div>
-            )}
+            <BlogPostContent sections={post.sections} />
         </div>
     );
 }

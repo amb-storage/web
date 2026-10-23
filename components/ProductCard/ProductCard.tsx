@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { useLocale } from "next-intl";
-import { formatMoney, getProductBadges } from "@/lib/storefront";
+import { formatMoney, getProductBadges, isPurchasable } from "@/lib/storefront";
 import type { Product } from "@/lib/storefront";
 import { useCart } from "@/components/Cart/useCart";
 import { AddToCartDialog } from "@/components/Cart/AddToCartDialog";
@@ -29,13 +28,12 @@ export default function ProductCard({
     taxInLabel,
     className,
 }: ProductCardProps) {
-    const locale = useLocale() as "ja" | "en";
     const { add } = useCart();
     const [addToCartOpen, setAddToCartOpen] = useState(false);
-    const name = product.name[locale];
-    const displayName = `${name} ${product.size}`;
-    const isSold = product.availability === "SOLD_OUT";
-    const badges = getProductBadges(product, locale).filter(
+    const name = product.name;
+    const displayName = product.imageAlt ?? name;
+    const isSold = !isPurchasable(product);
+    const badges = getProductBadges(product).filter(
         (badge) => badge.variant !== "sold",
     );
 
@@ -60,13 +58,15 @@ export default function ProductCard({
                     className="absolute inset-0 block"
                     aria-label={displayName}
                 >
-                    <Image
-                        src={product.images[0]}
-                        alt={displayName}
-                        fill
-                        sizes="(min-width: 768px) 230px, 80vw"
-                        className="product-card-img transform-[scale(1)] object-cover transition-transform duration-500 ease-out group-hover:[transform:scale(1.08)]"
-                    />
+                    {product.images[0] && (
+                        <Image
+                            src={product.images[0]}
+                            alt={displayName}
+                            fill
+                            sizes="(min-width: 768px) 230px, 80vw"
+                            className="product-card-img transform-[scale(1)] object-cover transition-transform duration-500 ease-out group-hover:[transform:scale(1.08)]"
+                        />
+                    )}
                 </Link>
 
                 {isSold && (
@@ -106,7 +106,7 @@ export default function ProductCard({
                     className="flex flex-col items-start justify-between gap-0"
                 >
                     <h3 className="line-clamp-2 text-sm font-medium leading-[1.3] tracking-[0.13em] text-(--brand-green) transition-colors group-hover:text-(--brand-green-dark)">
-                        {name} {product.size}
+                        {name}
                     </h3>
                     <p className="mt-1 text-sm italic font-medium leading-[1.3] tracking-[0.08em] text-black">
                         {isSold

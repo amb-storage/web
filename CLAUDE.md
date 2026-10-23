@@ -23,7 +23,7 @@ A Japanese-first vintage clothing shop (military / denim jackets). Match the pat
 | Route pages                       | `app/[locale]/<route>/page.tsx`                                                                |
 | Components used by one route only | `app/[locale]/<route>/_components/`                                                            |
 | Shared components                 | `components/` ; site chrome in `components/Layout/` ; shadcn output in `components/ui/`        |
-| Mock data                         | `data/mock/` (crawl/reference data stays in `data/crawl/`)                                      |
+| API client / types                | `lib/api/` ; storefront repository + mappers in `lib/storefront/` (crawl data stays in `data/crawl/`) |
 | Images                            | `assets/` (static import), not `public/`                                                       |
 | Cross-cutting hooks / utils       | `hooks/`, `lib/` (`cn` from `@/lib/utils`, `getStrictContext` from `@/lib/get-strict-context`) |
 
@@ -95,14 +95,15 @@ All of this lives in the component's `use<ComponentName>Animation.ts` hook (see 
 - Set the initial hidden state with Tailwind classes (`opacity-0 translate-y-6`, `scale-x-0`, `hidden`) so there is no flash before JS runs.
 - Comments in this codebase are written in Vietnamese; keep that style.
 
-## Data shape (mock products)
+## Data (backend API)
 
-```ts
-{ id: 1, title: "40s USAAF B-15A Flight Jacket 36", price: "110.000 ¥",
-  image: jacket1, href: "/shop/40s-usaaf-b15a", isSoldOut: false }
-```
+All storefront data comes from the backend `/api/v1` (`amb/api`), mapped per `docs/WEB_API_MAPPING.md`. There is no runtime mock data any more.
 
-Every product-carousel list (`specialVintageProducts`, `mostPopularProducts`, `newArrivalProducts` in `data/mock/products.ts`) uses this exact shape — `price` is required since `ProductCard` always renders it. Price is a preformatted string with `.` thousands separator and `¥`. Shop links live under `/shop/...`, categories `/shop/vintage`, `/shop/modern`.
+- Server components read through `storefrontRepository` from `@/lib/storefront/api-storefront` (calls `API_BASE_URL` with `Accept-Language: <locale>`). Every method takes the locale; responses are already single-language, so UI models (`Product`, `StoryCard`, …) use plain `string`, not `{ ja, en }`.
+- Browser code (Cart, Customer OTP, Checkout) uses `apiRequest` from `@/lib/api/client` against the same-origin `/api/v1/*` rewrite — never call the backend origin directly, or the `/api/v1`-path cookies and CSRF break. Mutations send `X-CSRF-Token` + `Idempotency-Key`.
+- API response types live in `lib/api/types.ts`; mapping API → UI models in `lib/storefront/api-mappers.ts`.
+- Price is `Money` (`{ amount, currency: "JPY" }`) formatted with `formatMoney`; purchasable = `isPurchasable(product)` (`availability === "AVAILABLE"`). Category filters use category slugs (`/shop?category=vintage-military`).
+- Media URLs are relative `/api/v1/media/:id` and work with `next/image` via `images.localPatterns`.
 
 ## Known gotchas
 

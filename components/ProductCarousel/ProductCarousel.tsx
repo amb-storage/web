@@ -26,6 +26,9 @@ export default function ProductCarousel({
     const { sliderRef, canScrollLeft, canScrollRight, scroll, resetAllHovers } =
         useCarousel(products.length, { scrollByItem: true });
 
+    // Rail chưa được cấu hình trên CMS (không có sản phẩm) thì ẩn cả section
+    if (products.length === 0) return null;
+
     return (
         <section
             className={cn(

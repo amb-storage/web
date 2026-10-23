@@ -1,4 +1,5 @@
-import type { Locale, Product } from "./types";
+import { isPurchasable } from "./filters";
+import type { Product } from "./types";
 
 export interface ProductBadge {
   id: string;
@@ -6,15 +7,9 @@ export interface ProductBadge {
   variant: "default" | "accent" | "brand" | "sold";
 }
 
-export function getProductBadges(product: Product, locale: Locale): ProductBadge[] {
-  return [
-    ...(product.availability === "SOLD_OUT"
-      ? [{ id: "availability-sold", label: "SOLD", variant: "sold" as const }]
-      : []),
-    ...product.tags.slice(0, 2).map((tag) => ({
-      id: tag.id,
-      label: tag.label[locale],
-      variant: tag.variant ?? "default",
-    })),
-  ];
+// Backend không còn trả tag sản phẩm, nên badge hiện chỉ còn trạng thái hết hàng
+export function getProductBadges(product: Product): ProductBadge[] {
+  return isPurchasable(product)
+    ? []
+    : [{ id: "availability-sold", label: "SOLD", variant: "sold" }];
 }

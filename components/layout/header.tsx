@@ -26,7 +26,6 @@ import { CartPreview } from "@/components/Cart/CartPreview";
 import LanguageSwitcher from "@/components/LanguageSwitcher/LanguageSwitcher";
 import {
     getHeaderScrollState,
-    headerNavigation,
     type HeaderNavigationItem,
 } from "@/lib/storefront";
 import {
@@ -35,10 +34,13 @@ import {
     useMobileSubmenu,
 } from "./useHeaderAnimation";
 
-export default function Header() {
+interface HeaderProps {
+    // Menu từ `GET /navigation/header` (layout luôn lấy bản tiếng Anh theo yêu cầu khách)
+    navigation: readonly HeaderNavigationItem[];
+}
+
+export default function Header({ navigation }: HeaderProps) {
     const t = useTranslations("homepage.header");
-    // Khách muốn menu luôn hiện tiếng Anh ở cả ja và en, nên dùng thẳng label trong headerNavigation
-    const navigation: readonly HeaderNavigationItem[] = headerNavigation;
     const router = useRouter();
     const { count, hydrated } = useCart();
     const [searchOpen, setSearchOpen] = useState(false);

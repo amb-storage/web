@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import { useEffect, useId, useState, useSyncExternalStore } from "react";
 import { Link } from "@/i18n/navigation";
@@ -30,10 +30,11 @@ export function AddToCartDialog({
     onAddToCart,
     onClose,
 }: AddToCartDialogProps) {
-    const locale = useLocale() as "ja" | "en";
     const t = useTranslations("homepage.productCard");
     const titleId = useId();
     const [quantity, setQuantity] = useState(1);
+    // Không cho chọn vượt tồn kho backend báo (null = không giới hạn hiển thị)
+    const maxQuantity = product.quantity ?? Number.POSITIVE_INFINITY;
     const totalPrice = {
         ...product.price,
         amount: product.price.amount * quantity,
@@ -83,13 +84,15 @@ export function AddToCartDialog({
                     className="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain pb-24"
                 >
                     <div className="relative aspect-4/3 bg-[#ebedef]">
-                        <Image
-                            src={product.images[0]}
-                            alt={product.name[locale]}
-                            fill
-                            sizes="(min-width: 768px) 1280px, 100vw"
-                            className="object-cover"
-                        />
+                        {product.images[0] && (
+                            <Image
+                                src={product.images[0]}
+                                alt={product.imageAlt ?? product.name}
+                                fill
+                                sizes="(min-width: 768px) 1280px, 100vw"
+                                className="object-cover"
+                            />
+                        )}
                     </div>
 
                     <div className="space-y-6 p-6 pb-8">
@@ -97,7 +100,7 @@ export function AddToCartDialog({
                             id={titleId}
                             className="text-2xl font-bold leading-tight md:text-3xl"
                         >
-                            {product.name[locale]} {product.size}
+                            {product.name}
                         </h2>
                         <p className="text-xl tracking-[0.13em]">
                             {formatMoney(product.price)}
@@ -112,33 +115,32 @@ export function AddToCartDialog({
                         </Link>
 
                         <div className="space-y-5 text-sm leading-relaxed text-gray-700">
-                            <section>
-                                <h3 className="font-semibold text-black">
-                                    {t("productDetails")}:
-                                </h3>
-                                <p className="mt-2 whitespace-pre-line">
-                                    {product.description[locale]}
-                                </p>
-                            </section>
-
-                            <section>
-                                <h3 className="font-semibold text-black">
-                                    {t("size")}: {product.size}
-                                </h3>
-                                {product.measurements?.[locale] && (
+                            {product.description && (
+                                <section>
+                                    <h3 className="font-semibold text-black">
+                                        {t("productDetails")}:
+                                    </h3>
                                     <p className="mt-2 whitespace-pre-line">
-                                        {product.measurements[locale]}
+                                        {product.description}
                                     </p>
-                                )}
-                            </section>
+                                </section>
+                            )}
+
+                            {product.size && (
+                                <section>
+                                    <h3 className="font-semibold text-black">
+                                        {t("size")}: {product.size}
+                                    </h3>
+                                </section>
+                            )}
 
                             <section>
                                 <h3 className="font-semibold text-black">
                                     {t("condition")}:
                                 </h3>
-                                {product.condition?.[locale] && (
+                                {product.condition && (
                                     <p className="mt-2">
-                                        {product.condition[locale]}
+                                        {product.condition}
                                     </p>
                                 )}
                                 <p className="mt-2 whitespace-pre-line text-xs">
@@ -181,9 +183,10 @@ export function AddToCartDialog({
                                 </span>
                                 <button
                                     type="button"
-                                    onClick={() => setQuantity((value) => value + 1)}
+                                    onClick={() => setQuantity((value) => Math.min(maxQuantity, value + 1))}
+                                    disabled={quantity >= maxQuantity}
                                     aria-label={t("increaseQuantity")}
-                                    className="flex h-8 w-8 items-center justify-center bg-gray-100 text-lg text-gray-700 transition-colors hover:bg-gray-200"
+                                    className="flex h-8 w-8 items-center justify-center bg-gray-100 text-lg text-gray-700 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-40"
                                 >
                                     +
                                 </button>

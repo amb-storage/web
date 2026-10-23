@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import NewsletterForm from "./NewsletterForm";
 import FooterNav from "./FooterNav";
-import { storeSettings } from "@/data/mock";
+import type { NavigationItem, StoreSettings } from "@/lib/storefront";
 
 const paymentIcons = [
     { Icon: FaApplePay, color: "text-black md:text-white" },
@@ -28,30 +28,44 @@ const paymentIcons = [
     { Icon: FaCcJcb, color: "text-[#e0002a] md:text-white" },
 ];
 
-const socialLinks = [
-    {
-        key: "email",
-        href: `mailto:${storeSettings.contactEmail}`,
-        icon: FaEnvelope,
-        mobileClass: "bg-black",
-    },
-    {
-        key: "instagram",
-        href: storeSettings.socialLinks[0].href,
-        icon: FaInstagram,
-        mobileClass: "bg-[#e4405f]",
-    },
-    {
-        key: "tiktok",
-        href: storeSettings.socialLinks[1].href,
-        icon: FaTiktok,
-        mobileClass: "bg-black",
-    },
-] as const;
+// Icon + màu nền mobile theo mạng xã hội; link do admin nhập trong Settings
+const socialStyles = {
+    instagram: { icon: FaInstagram, mobileClass: "bg-[#e4405f]" },
+    tiktok: { icon: FaTiktok, mobileClass: "bg-black" },
+} as const;
 
-export default function Footer() {
+function getSocialKey(link: { label: string; href: string }) {
+    const value = `${link.label} ${link.href}`.toLowerCase();
+    if (value.includes("instagram")) return "instagram" as const;
+    if (value.includes("tiktok")) return "tiktok" as const;
+    return null;
+}
+
+interface FooterProps {
+    // `GET /settings` + `GET /navigation/footer`; null khi API lỗi để footer vẫn hiện phần tĩnh
+    settings: StoreSettings | null;
+    navigation: NavigationItem[];
+}
+
+export default function Footer({ settings, navigation }: FooterProps) {
     const t = useTranslations("homepage.footer");
     const year = new Date().getFullYear();
+    const socialLinks = [
+        ...(settings?.contactEmail
+            ? [
+                  {
+                      key: "email" as const,
+                      href: `mailto:${settings.contactEmail}`,
+                      icon: FaEnvelope,
+                      mobileClass: "bg-black",
+                  },
+              ]
+            : []),
+        ...(settings?.socialLinks ?? []).flatMap((link) => {
+            const key = getSocialKey(link);
+            return key ? [{ key, href: link.href, ...socialStyles[key] }] : [];
+        }),
+    ];
 
     return (
         <footer className="w-full bg-(--brand-green) text-white">
@@ -72,12 +86,12 @@ export default function Footer() {
                             />
                         </Link>
 
-                        <FooterNav />
+                        <FooterNav items={navigation} />
                     </div>
 
                     <div className="flex min-w-0 flex-1 flex-col gap-4">
                         <p className="max-w-full break-words text-xl leading-relaxed tracking-[0.1em] md:tracking-[0.13em]">
-                            {t("tagline")}
+                            {settings?.footerText ?? t("tagline")}
                         </p>
                         <NewsletterForm />
                     </div>
