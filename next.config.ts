@@ -4,6 +4,8 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const apiBaseUrl = (process.env.API_BASE_URL ?? 'http://localhost:3000').replace(/\/+$/, '');
 
 const nextConfig: NextConfig = {
+  // Build gọn để chạy trong Docker (`node server.js`), không cần node_modules đầy đủ
+  output: 'standalone',
   // Proxy `/api/v1/*` sang backend để trình duyệt gọi cùng origin:
   // cookie Guest Cart / Customer (path `/api/v1`) và CSRF double-submit mới hoạt động
   async rewrites() {

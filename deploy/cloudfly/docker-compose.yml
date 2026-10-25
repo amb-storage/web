@@ -1,0 +1,35 @@
+# Web chạy chung server với API (amb/api, project amb-storage-prod).
+# Không publish port ra ngoài: Caddy / reverse proxy trên amb-network gọi vào amb-web:3000.
+services:
+  web:
+    build:
+      context: ../..
+      args:
+        API_BASE_URL: ${API_BASE_URL:?set API_BASE_URL}
+    image: ${AMB_STORAGE_WEB_IMAGE:?set AMB_STORAGE_WEB_IMAGE}
+    env_file: ${AMB_STORAGE_WEB_ENV_FILE:-/amb-storage-web/.env.production}
+    expose:
+      - '3000'
+    networks:
+      amb-network:
+        aliases:
+          - amb-web
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+networks:
+  amb-network:
+    name: amb-network
+    external: true

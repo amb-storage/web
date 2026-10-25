@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.github
+.vscode
+.env
+.env.*
+!.env.example
+deploy
+docs
+data/crawl
+*.log
+*.tsbuildinfo
+.DS_Store
