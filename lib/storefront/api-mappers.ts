@@ -104,10 +104,20 @@ export function toHomepage(home: ApiHome): Homepage {
     };
 }
 
+// Backend trả href theo route API cho Page / Policy; web dùng route riêng:
+// `/pages/<slug>` → `/<slug>` (catch-all [...rest]), `/content/policies/<slug>` → `/policy#<slug>`
+export function toWebHref(href: string) {
+    const page = /^\/pages\/([^/?#]+)\/?$/.exec(href);
+    if (page) return `/${page[1]}`;
+    const policy = /^\/content\/policies\/([^/?#]+)\/?$/.exec(href);
+    if (policy) return `/policy#${policy[1]}`;
+    return href;
+}
+
 export function toNavigationItems(items: ApiNavigationItem[]): NavigationItem[] {
     return items.map((item) => ({
         label: item.label,
-        href: item.href,
+        href: item.external ? item.href : toWebHref(item.href),
         external: item.external,
         children: toNavigationItems(item.children),
     }));

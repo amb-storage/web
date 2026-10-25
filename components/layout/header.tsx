@@ -160,6 +160,10 @@ export default function Header({ navigation }: HeaderProps) {
                     {navigation.map((item) => {
                         const hasDropdown = item.children.length > 0;
                         const isOpen = openDropdown === item.id;
+                        // Có mục cấp 3 (vd. Shop Now → Category → danh mục con) thì dropdown chia cột theo từng mục cấp 2
+                        const hasColumns = item.children.some(
+                            (subItem) => subItem.children.length > 0,
+                        );
 
                         return (
                             <div
@@ -211,29 +215,70 @@ export default function Header({ navigation }: HeaderProps) {
                                         <div
                                             className={cn(
                                                 "mx-auto flex max-w-[1440px] px-10 py-8",
-                                                item.dropdownLayout ===
-                                                    "vertical"
-                                                    ? "flex-col items-start gap-4"
-                                                    : "flex-wrap items-center gap-x-10 gap-y-4 lg:gap-x-14",
+                                                hasColumns
+                                                    ? "flex-wrap items-start gap-x-14 gap-y-8 lg:gap-x-20"
+                                                    : item.dropdownLayout ===
+                                                        "vertical"
+                                                      ? "flex-col items-start gap-4"
+                                                      : "flex-wrap items-center gap-x-10 gap-y-4 lg:gap-x-14",
                                             )}
                                         >
-                                            {item.children.map((subItem) => (
-                                                <Link
-                                                    key={subItem.id}
-                                                    href={
-                                                        subItem.href ??
-                                                        item.href ??
-                                                        "/"
-                                                    }
-                                                    onClick={() =>
-                                                        setOpenDropdown(null)
-                                                    }
-                                                    className="dropdown-item group relative inline-block text-base font-semibold text-gray-700 opacity-0 transition-colors hover:text-(--brand-green)"
-                                                >
-                                                    {subItem.label}
-                                                    <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-(--brand-green) transition-transform duration-300 group-hover:scale-x-100" />
-                                                </Link>
-                                            ))}
+                                            {item.children.map((subItem) => {
+                                                const subItemLink = (
+                                                    <Link
+                                                        key={subItem.id}
+                                                        href={
+                                                            subItem.href ??
+                                                            item.href ??
+                                                            "/"
+                                                        }
+                                                        onClick={() =>
+                                                            setOpenDropdown(
+                                                                null,
+                                                            )
+                                                        }
+                                                        className="dropdown-item group relative inline-block text-base font-semibold text-gray-700 opacity-0 transition-colors hover:text-(--brand-green)"
+                                                    >
+                                                        {subItem.label}
+                                                        <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-(--brand-green) transition-transform duration-300 group-hover:scale-x-100" />
+                                                    </Link>
+                                                );
+                                                if (!hasColumns)
+                                                    return subItemLink;
+
+                                                return (
+                                                    <div
+                                                        key={subItem.id}
+                                                        className="flex min-w-36 flex-col items-start gap-3"
+                                                    >
+                                                        {subItemLink}
+                                                        {subItem.children.map(
+                                                            (childItem) => (
+                                                                <Link
+                                                                    key={
+                                                                        childItem.id
+                                                                    }
+                                                                    href={
+                                                                        childItem.href ??
+                                                                        subItem.href ??
+                                                                        "/"
+                                                                    }
+                                                                    onClick={() =>
+                                                                        setOpenDropdown(
+                                                                            null,
+                                                                        )
+                                                                    }
+                                                                    className="dropdown-item text-sm font-medium text-gray-500 opacity-0 transition-colors hover:text-(--brand-green)"
+                                                                >
+                                                                    {
+                                                                        childItem.label
+                                                                    }
+                                                                </Link>
+                                                            ),
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
@@ -372,20 +417,44 @@ export default function Header({ navigation }: HeaderProps) {
                                             <div className="flex flex-col gap-1 pb-3 pl-2">
                                                 {item.children.map(
                                                     (subItem) => (
-                                                        <Link
-                                                            key={subItem.id}
-                                                            href={
-                                                                subItem.href ??
-                                                                item.href ??
-                                                                "/"
-                                                            }
-                                                            onClick={
-                                                                handleCloseMobileMenu
-                                                            }
-                                                            className="flex min-h-[66px] items-center pl-16 text-[15px] font-medium uppercase text-black hover:text-(--brand-green)"
-                                                        >
-                                                            {subItem.label}
-                                                        </Link>
+                                                        <div key={subItem.id}>
+                                                            <Link
+                                                                href={
+                                                                    subItem.href ??
+                                                                    item.href ??
+                                                                    "/"
+                                                                }
+                                                                onClick={
+                                                                    handleCloseMobileMenu
+                                                                }
+                                                                className="flex min-h-[66px] items-center pl-16 text-[15px] font-medium uppercase text-black hover:text-(--brand-green)"
+                                                            >
+                                                                {subItem.label}
+                                                            </Link>
+                                                            {/* Mục cấp 3 luôn hiện ngay dưới mục cha, không lồng thêm accordion */}
+                                                            {subItem.children.map(
+                                                                (childItem) => (
+                                                                    <Link
+                                                                        key={
+                                                                            childItem.id
+                                                                        }
+                                                                        href={
+                                                                            childItem.href ??
+                                                                            subItem.href ??
+                                                                            "/"
+                                                                        }
+                                                                        onClick={
+                                                                            handleCloseMobileMenu
+                                                                        }
+                                                                        className="flex min-h-[52px] items-center pl-24 text-sm font-medium text-gray-600 hover:text-(--brand-green)"
+                                                                    >
+                                                                        {
+                                                                            childItem.label
+                                                                        }
+                                                                    </Link>
+                                                                ),
+                                                            )}
+                                                        </div>
                                                     ),
                                                 )}
                                             </div>

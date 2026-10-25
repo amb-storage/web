@@ -37,7 +37,14 @@ export default async function RootLayout({
     const [headerNavigation, footerNavigation, settings] = await Promise.all([
         // Khách muốn menu header luôn hiện tiếng Anh ở cả ja và en
         withFallback<readonly HeaderNavigationItem[]>(
-            storefrontRepository.getHeaderNavigation("en").then(toHeaderNavigation),
+            storefrontRepository.getHeaderNavigation("en").then((items) => {
+                // API bỏ qua mục có đích chưa publish / bị tắt; rỗng hết thì dùng menu dự phòng để header không trắng
+                if (items.length === 0) {
+                    console.warn("[layout] header navigation is empty; using fallback menu");
+                    return fallbackHeaderNavigation;
+                }
+                return toHeaderNavigation(items);
+            }),
             fallbackHeaderNavigation,
             "header navigation",
         ),

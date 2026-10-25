@@ -1,6 +1,6 @@
-FROM node:24.10-alpine AS base
+FROM node:24.22.1-alpine AS base
 WORKDIR /app
-# Corepack đi kèm Node 24.10 chưa chạy được pnpm 12 → cài thẳng đúng bản trong "packageManager"
+# Corepack đi kèm Node 24 chưa chạy được pnpm 12 → cài thẳng đúng bản trong "packageManager"
 RUN npm install --global --no-fund --no-audit pnpm@12.4.1
 
 FROM base AS dependencies
@@ -17,7 +17,7 @@ COPY . .
 RUN test -n "$API_BASE_URL" || (echo "API_BASE_URL build arg is required" >&2; exit 1)
 RUN pnpm build
 
-FROM node:24.10-alpine AS runtime
+FROM node:24.22.1-alpine AS runtime
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
