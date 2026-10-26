@@ -1,23 +1,13 @@
 "use client";
 
-import {
-    useCallback,
-    useEffect,
-    useRef,
-    useSyncExternalStore,
-    type RefObject,
-} from "react";
+import { useSyncExternalStore, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import {
-    CheckCircle2,
-    History,
-    Square,
-    UserRound,
-    X,
-} from "lucide-react";
+import { CheckCircle2, CreditCard, History, UserRound, X } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { cn } from "@/lib/utils";
+import { useAccountDialog } from "./useAccountDialog";
 import { useCustomerAuth, type AccountDialogStep } from "./useCustomerAuth";
 
 interface AccountDialogProps {
@@ -26,8 +16,6 @@ interface AccountDialogProps {
     triggerRef: RefObject<HTMLButtonElement | null>;
 }
 
-const focusableSelector =
-    'button:not([disabled]), input:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
 const subscribeToClient = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
@@ -47,8 +35,6 @@ export function AccountDialog({
     triggerRef,
 }: AccountDialogProps) {
     const t = useTranslations("homepage.header");
-    const dialogRef = useRef<HTMLElement>(null);
-    const wasOpenRef = useRef(false);
     const isClient = useSyncExternalStore(
         subscribeToClient,
         getClientSnapshot,
@@ -70,80 +56,18 @@ export function AccountDialog({
         verifyOtp,
         logout,
     } = useCustomerAuth();
-    const handleClose = useCallback(() => {
-        reset();
-        onClose();
-    }, [onClose, reset]);
-
-    // Mỗi lần mở dialog kiểm tra session Customer hiện tại
-    useEffect(() => {
-        if (open) void loadSession();
-    }, [loadSession, open]);
-
-    useEffect(() => {
-        if (open) {
-            wasOpenRef.current = true;
-            window.requestAnimationFrame(() => {
-                dialogRef.current
-                    ?.querySelector<HTMLElement>("[data-account-initial-focus]")
-                    ?.focus();
-            });
-            return;
-        }
-
-        if (wasOpenRef.current) triggerRef.current?.focus();
-    }, [open, triggerRef]);
-
-    useEffect(() => {
-        if (!open) return;
-
-        const previousOverflow = document.body.style.overflow;
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                event.preventDefault();
-                handleClose();
-                return;
-            }
-
-            if (event.key !== "Tab") return;
-
-            const focusable = Array.from(
-                dialogRef.current?.querySelectorAll<HTMLElement>(
-                    focusableSelector,
-                ) ?? [],
-            );
-            if (focusable.length === 0) return;
-
-            const first = focusable[0];
-            const last = focusable[focusable.length - 1];
-
-            if (event.shiftKey && document.activeElement === first) {
-                event.preventDefault();
-                last.focus();
-            } else if (!event.shiftKey && document.activeElement === last) {
-                event.preventDefault();
-                first.focus();
-            }
-        };
-
-        document.body.style.overflow = "hidden";
-        window.addEventListener("keydown", handleKeyDown);
-
-        return () => {
-            document.body.style.overflow = previousOverflow;
-            window.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [handleClose, open]);
+    const { overlayRef, dialogRef, stepRef, inputRef, handleClose, handleOverlayClick } =
+        useAccountDialog({ open, step, errorCode, onClose, onOpen: loadSession, reset, triggerRef });
 
     if (!isClient || typeof document === "undefined") return null;
 
     return createPortal(
+        // Trạng thái ẩn ban đầu bằng class (invisible + opacity-0), GSAP trong useAccountDialog lo mở / đóng
         <div
+            ref={overlayRef}
             aria-hidden={!open}
-            className={`fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-black/50 p-4 transition-[opacity,visibility] duration-300 ease-out ${open ? "visible opacity-100" : "pointer-events-none invisible opacity-0"}`}
-            onClick={(event) => {
-                if (event.target === event.currentTarget) handleClose();
-            }}
+            className="invisible fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-black/50 p-4 opacity-0"
+            onClick={handleOverlayClick}
             role="presentation"
         >
             <section
@@ -152,9 +76,9 @@ export function AccountDialog({
                 aria-modal="true"
                 aria-labelledby="account-dialog-title"
                 tabIndex={-1}
-                className={`relative flex max-h-141 min-h-0 h-full w-full max-w-[38rem] flex-col overflow-y-auto overscroll-contain bg-white text-black shadow-2xl transition-[opacity,transform] duration-500 ease-out ${open ? "translate-y-0 scale-100 opacity-100" : "translate-y-[100vh] scale-[0.98] opacity-0"}`}
+                className="relative flex max-h-[calc(100svh-2rem)] w-full max-w-[38rem] flex-col overflow-y-auto overscroll-contain bg-white text-black opacity-0 shadow-2xl"
             >
-                <header className="flex justify-center px-6 pt-8 md:px-10 md:pt-10">
+                <header className="account-dialog-reveal flex justify-center px-6 pt-8 md:px-10 md:pt-10">
                     <div className="relative h-12 w-60 md:h-[51px] md:w-[238px]">
                         <Image
                             src={logo}
@@ -165,11 +89,11 @@ export function AccountDialog({
                     </div>
                 </header>
 
-                <div className="flex-1">
+                <div ref={stepRef} className="account-dialog-reveal flex-1">
                     {step === "INTRO" ? (
-                        <div className="p-6 space-y-6">
+                        <div className="space-y-6 px-6 pt-8 md:px-10">
                             <div className="flex flex-col items-start gap-4">
-                                <UserRound className="h-12 w-12 rounded-lg bg-gray-100 p-2 text-black" />
+                                <UserRound className="h-12 w-12 rounded-full bg-gray-100 p-2.5 text-(--brand-green)" />
                                 <h2
                                     id="account-dialog-title"
                                     className="text-xl font-bold leading-tight text-gray-900 md:text-2xl"
@@ -178,23 +102,23 @@ export function AccountDialog({
                                 </h2>
                             </div>
 
-                            <div className="divide-y divide-gray-400">
+                            <div className="divide-y divide-gray-200 border-y border-gray-200">
                                 <div className="flex items-start gap-4 py-4 text-sm text-gray-800 md:text-base">
-                                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
+                                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-(--brand-green)" />
                                     <span>{t("account.benefits.status")}</span>
                                 </div>
                                 <div className="flex items-start gap-4 py-4 text-sm text-gray-800 md:text-base">
-                                    <History className="mt-0.5 h-5 w-5 shrink-0" />
+                                    <History className="mt-0.5 h-5 w-5 shrink-0 text-(--brand-green)" />
                                     <span>{t("account.benefits.history")}</span>
                                 </div>
                                 <div className="flex items-start gap-4 py-4 text-sm text-gray-800 md:text-base">
-                                    <Square className="mt-0.5 h-5 w-5 shrink-0" />
+                                    <CreditCard className="mt-0.5 h-5 w-5 shrink-0 text-(--brand-green)" />
                                     <span>{t("account.benefits.payment")}</span>
                                 </div>
                             </div>
                         </div>
                     ) : step === "SIGNED_IN" ? (
-                        <div className="px-6 pb-2 pt-8 md:px-10 md:pt-10">
+                        <div className="px-6 pt-8 md:px-10">
                             <h2
                                 id="account-dialog-title"
                                 className="text-xl font-bold leading-tight text-gray-900 md:text-2xl"
@@ -211,7 +135,7 @@ export function AccountDialog({
                         <form
                             id="account-auth-form"
                             onSubmit={step === "EMAIL" ? requestOtp : verifyOtp}
-                            className="px-6 pb-2 pt-8 md:px-10 md:pt-10"
+                            className="px-6 pt-8 md:px-10"
                         >
                             <h2
                                 id="account-dialog-title"
@@ -230,6 +154,7 @@ export function AccountDialog({
                                     {t(step === "EMAIL" ? "account.email.label" : "account.otp.label")}
                                 </label>
                                 <input
+                                    ref={inputRef}
                                     key={step}
                                     id="account-auth-input"
                                     type={step === "EMAIL" ? "email" : "text"}
@@ -250,7 +175,13 @@ export function AccountDialog({
                                     }
                                     aria-invalid={Boolean(errorCode)}
                                     aria-describedby={errorCode ? "account-auth-error" : undefined}
-                                    className={`h-14 w-full border bg-white px-4 text-base outline-none focus:ring-1 ${errorCode ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-(--brand-green) focus:ring-(--brand-green)"}`}
+                                    className={cn(
+                                        "h-14 w-full border bg-white px-4 text-base outline-none transition-colors focus:ring-1",
+                                        step === "OTP" && "font-mono text-lg tracking-[0.3em]",
+                                        errorCode
+                                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                                            : "border-gray-300 focus:border-(--brand-green) focus:ring-(--brand-green)",
+                                    )}
                                 />
                                 {errorCode && (
                                     <p id="account-auth-error" className="mt-2 text-sm text-red-600">
@@ -273,13 +204,13 @@ export function AccountDialog({
                 </div>
 
                 <footer
-                    className={`flex items-center gap-2 px-6 pb-6 pt-6 transition-[opacity,transform] duration-500 ease-out ${open ? "translate-y-0 opacity-100 delay-500" : "translate-y-3 opacity-0"}`}
+                    className="account-dialog-reveal flex items-center gap-2 px-6 pb-6 pt-8 md:px-10 md:pb-10"
                 >
                     <button
                         type="button"
                         onClick={handleClose}
                         data-account-initial-focus
-                        className="flex h-12 w-12 shrink-0 items-center justify-center border border-gray-100 bg-white text-(--brand-green) shadow-sm transition-[background-color,border-color,box-shadow] duration-200  hover:border-gray-200 hover:bg-gray-100 hover:shadow-md active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--brand-green) focus-visible:ring-offset-2"
+                        className="flex h-12 w-12 shrink-0 items-center justify-center border border-gray-100 bg-white text-(--brand-green) shadow-sm transition-[background-color,border-color,box-shadow] duration-200 hover:border-gray-200 hover:bg-gray-100 hover:shadow-md active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--brand-green) focus-visible:ring-offset-2"
                         aria-label={t("account.close")}
                     >
                         <X className="h-6 w-6" />
@@ -302,7 +233,7 @@ export function AccountDialog({
                             {t("account.signedIn.logout")}
                         </button>
                     ) : (
-                        <div className="flex flex-1 flex-wrap  gap-2 sm:flex-row justify-end">
+                        <div className="flex flex-1 flex-wrap justify-end gap-2">
                             <button
                                 type="button"
                                 onClick={reset}
