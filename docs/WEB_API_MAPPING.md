@@ -29,12 +29,6 @@ stock through its pending Order before creating a Stripe Session; payment
 confirmation consumes that reservation and decrements physical Product
 quantity. Browser success/cancel redirects do not change payment or stock.
 
-About and policy detail responses come in two shapes, selected by
-`schemaVersion`: `2` is the structured layout (About sections such as
-`companyOverview`/`coreValues`, policy `sections` with paragraphs/bullets);
-`1` is a single localized rich-text `body` (plus `title`, `seo`, and
-`effectiveAt` for policies) written by the admin About/Policy editor.
-
 Product responses use `price`, `size`, `quantity`, and Category projections;
 they do not expose Period, Variants, or legacy price fields. Story is the sole
 backend content resource; `/blog` is only a Web display route.
