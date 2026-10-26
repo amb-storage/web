@@ -3,6 +3,8 @@ import type {
     ApiAbout,
     ApiAvailability,
     ApiPolicySection,
+    ApiRichTextAbout,
+    ApiRichTextDocument,
     ApiSection,
     ApiSeo,
 } from "@/lib/api/types";
@@ -146,11 +148,16 @@ export interface CmsPage {
     sections: ApiSection[];
 }
 
-export type AboutContent = ApiAbout;
+// schemaVersion 2: About dạng cấu trúc cũ; schemaVersion 1: một nội dung rich text từ editor admin mới
+export type AboutContent = ApiAbout | ApiRichTextAbout;
 
-export interface PolicyContent {
+interface PolicyContentBase {
     slug: string;
     title: string;
     effectiveAt: string;
-    sections: ApiPolicySection[];
 }
+
+// Policy dạng cũ chia sẵn section (đoạn / gạch đầu dòng); dạng mới là một nội dung rich text
+export type PolicyContent =
+    | (PolicyContentBase & { kind: "sections"; sections: ApiPolicySection[] })
+    | (PolicyContentBase & { kind: "richText"; body: ApiRichTextDocument });

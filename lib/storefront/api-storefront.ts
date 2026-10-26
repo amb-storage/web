@@ -11,6 +11,8 @@ import type {
     ApiProductFacets,
     ApiProductSort,
     ApiProductSummary,
+    ApiRichTextAbout,
+    ApiRichTextPolicyDetail,
     ApiStoreSettings,
     ApiStoryCard,
     ApiStoryDetail,
@@ -26,7 +28,7 @@ import {
 } from "./api-mappers";
 import { isPurchasable } from "./filters";
 import type { StorefrontRepository } from "./repository";
-import type { ProductListQuery, ProductSort } from "./types";
+import type { PolicyContent, ProductListQuery, ProductSort } from "./types";
 
 // Backend giới hạn limit tối đa 100/trang
 const PAGE_LIMIT = 100;
@@ -174,7 +176,7 @@ export const storefrontRepository: StorefrontRepository = {
     },
 
     async getAbout(locale) {
-        return apiGetOrNull<ApiAbout>("/content/about", { locale });
+        return apiGetOrNull<ApiAbout | ApiRichTextAbout>("/content/about", { locale });
     },
 
     async getPolicies(locale) {
@@ -184,23 +186,20 @@ export const storefrontRepository: StorefrontRepository = {
         );
         const policies = await Promise.all(
             items.map((item) =>
-                apiGetOrNull<ApiPolicyDetail>(
+                apiGetOrNull<ApiPolicyDetail | ApiRichTextPolicyDetail>(
                     `/content/policies/${encodeURIComponent(item.slug)}`,
                     { locale },
                 ),
             ),
         );
-        return policies.flatMap((policy) =>
-            policy
-                ? [
-                      {
-                          slug: policy.slug,
-                          title: policy.title,
-                          effectiveAt: policy.effectiveAt,
-                          sections: policy.sections,
-                      },
-                  ]
-                : [],
-        );
+        return policies.flatMap((policy): PolicyContent[] => {
+            if (!policy) return [];
+            const base = { slug: policy.slug, title: policy.title, effectiveAt: policy.effectiveAt };
+            return [
+                policy.schemaVersion === 1
+                    ? { ...base, kind: "richText", body: policy.body }
+                    : { ...base, kind: "sections", sections: policy.sections },
+            ];
+        });
     },
 };
