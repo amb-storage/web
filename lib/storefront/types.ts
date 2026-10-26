@@ -49,14 +49,23 @@ export interface ProductDetail extends Product {
 
 export type ProductSort = "newest" | "price-low" | "price-high";
 
-export interface ProductQuery {
+// Bộ lọc trang Shop (đọc từ URL `/shop?...`), map sang query `GET /products`
+export interface ProductListQuery {
     search?: string;
     category?: string;
+    size?: string;
     priceMin?: number;
     priceMax?: number;
-    size?: string;
-    inStock?: boolean;
     sort?: ProductSort;
+    inStock?: boolean;
+    page?: number;
+}
+
+export interface ProductListPage {
+    items: Product[];
+    total: number;
+    page: number;
+    totalPages: number;
 }
 
 export interface ProductFacets {

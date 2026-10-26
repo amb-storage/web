@@ -5,74 +5,51 @@ import { useTranslations } from "next-intl";
 import { Check, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ProductCard from "@/components/ProductCard/ProductCard";
-import { filterAndSortProducts } from "@/lib/storefront";
-import type { Product, ProductFacets, ProductSort } from "@/lib/storefront";
+import type { Product, ProductFacets, ProductListQuery } from "@/lib/storefront";
 import RefineDrawer from "../RefineDrawer/RefineDrawer";
-import {
-    emptyRefineFilters,
-    hasRefineFilters,
-    type RefineFilters,
-} from "../RefineDrawer/useRefineDrawer";
+import { hasRefineFilters } from "../RefineDrawer/useRefineDrawer";
 import SortDropdown from "../SortDropdown/SortDropdown";
+import ShopPagination from "../ShopPagination/ShopPagination";
+import { useShopFilters } from "./useShopFilters";
 
 interface ShopCatalogProps {
+    // Kết quả `GET /products` theo bộ lọc trên URL (server đã lọc + chia trang)
     products: Product[];
+    total: number;
+    page: number;
+    totalPages: number;
+    query: ProductListQuery;
     facets: ProductFacets;
-    initialSearch: string;
-    initialCategory: string;
-}
-
-// Ô giá trống hoặc không phải số thì bỏ qua điều kiện đó
-function toPrice(value: string) {
-    if (value.trim() === "") return undefined;
-    const amount = Number(value);
-    return Number.isFinite(amount) ? amount : undefined;
 }
 
 export default function ShopCatalog({
     products,
+    total,
+    page,
+    totalPages,
+    query,
     facets,
-    initialSearch,
-    initialCategory,
 }: ShopCatalogProps) {
     const t = useTranslations("shop");
     const tCard = useTranslations("homepage.productCard");
-    const [filters, setFilters] = useState<RefineFilters>({
-        ...emptyRefineFilters,
-        category: initialCategory,
-    });
-    const [search, setSearch] = useState(initialSearch);
-    const [inStock, setInStock] = useState(false);
-    const [sort, setSort] = useState<ProductSort>("newest");
+    const { isPending, refineFilters, applyRefine, setSort, setInStock, clearSearch } =
+        useShopFilters(query);
     const [isRefineOpen, setIsRefineOpen] = useState(false);
     // Đổi key mỗi lần mở để drawer mount lại với bản nháp = bộ lọc hiện tại
     const [refineKey, setRefineKey] = useState(0);
+    const inStock = Boolean(query.inStock);
+    const search = query.search ?? "";
 
-    // Danh mục / size lấy từ `GET /products/facets` (backend đã tính sẵn theo sản phẩm đang bán)
+    // Danh mục / size lấy từ `GET /products/facets`; value là slug để gửi lại cho API
     const options = useMemo(
         () => ({
             categories: facets.categories.map((category) => ({
                 value: category.slug,
                 label: category.label.toUpperCase(),
             })),
-            // Lọc theo size hiển thị của sản phẩm (vd. "40R"), không theo slug đã lowercase
-            sizes: facets.sizes.map((size) => ({ value: size.label, label: size.label })),
+            sizes: facets.sizes.map((size) => ({ value: size.slug, label: size.label })),
         }),
         [facets],
-    );
-
-    const visibleProducts = useMemo(
-        () =>
-            filterAndSortProducts(products, {
-                search,
-                sort,
-                inStock,
-                category: filters.category,
-                size: filters.size,
-                priceMin: toPrice(filters.priceMin),
-                priceMax: toPrice(filters.priceMax),
-            }),
-        [filters, inStock, products, search, sort],
     );
 
     const openRefine = () => {
@@ -91,6 +68,7 @@ export default function ShopCatalog({
                                 type="checkbox"
                                 checked={inStock}
                                 onChange={(event) => setInStock(event.target.checked)}
+                                disabled={isPending}
                                 className="peer sr-only"
                             />
                             <span
@@ -106,7 +84,7 @@ export default function ShopCatalog({
                         </label>
 
                         <p className="text-xs font-medium leading-[1.33] text-black/55">
-                            {t("itemCount", { count: visibleProducts.length })}
+                            {t("itemCount", { count: total })}
                         </p>
 
                         {search && (
@@ -114,7 +92,7 @@ export default function ShopCatalog({
                                 “{search}”
                                 <button
                                     type="button"
-                                    onClick={() => setSearch("")}
+                                    onClick={clearSearch}
                                     aria-label={t("clearSearch")}
                                     className="grid h-5 w-5 place-content-center rounded-full hover:bg-black/6"
                                 >
@@ -132,24 +110,31 @@ export default function ShopCatalog({
                             className="relative grid h-10 w-10 place-content-center rounded-full border border-[#222] transition-colors duration-500 hover:bg-black hover:text-white"
                         >
                             <SlidersHorizontal className="h-3.5 w-3.5" strokeWidth={1.5} />
-                            {hasRefineFilters(filters) && (
+                            {hasRefineFilters(refineFilters) && (
                                 <span
                                     aria-hidden
                                     className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-(--brand-green)"
                                 />
                             )}
                         </button>
-                        <SortDropdown value={sort} onChange={setSort} />
+                        <SortDropdown value={query.sort ?? "newest"} onChange={setSort} />
                     </div>
                 </div>
 
-                {visibleProducts.length === 0 ? (
+                {products.length === 0 ? (
                     <div className="py-20 text-center text-gray-600">
                         {t("empty")}
                     </div>
                 ) : (
-                    <div className="mt-8 grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-                        {visibleProducts.map((product) => (
+                    <div
+                        aria-busy={isPending}
+                        className={cn(
+                            "mt-8 grid grid-cols-1 gap-x-5 gap-y-12 transition-opacity duration-300 sm:grid-cols-2 lg:grid-cols-4",
+                            // Đang tải kết quả cho bộ lọc mới
+                            isPending && "pointer-events-none opacity-50",
+                        )}
+                    >
+                        {products.map((product) => (
                             <ProductCard
                                 key={product.id}
                                 product={product}
@@ -163,16 +148,18 @@ export default function ShopCatalog({
                         ))}
                     </div>
                 )}
+
+                <ShopPagination query={query} page={page} totalPages={totalPages} />
             </div>
 
             <RefineDrawer
                 key={refineKey}
                 open={isRefineOpen}
-                applied={filters}
+                applied={refineFilters}
                 categories={options.categories}
                 sizes={options.sizes}
                 onClose={() => setIsRefineOpen(false)}
-                onApply={setFilters}
+                onApply={applyRefine}
             />
         </section>
     );

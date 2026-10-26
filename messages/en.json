@@ -208,6 +208,12 @@
       "apply": "Search with these filters",
       "priceMin": "Minimum price",
       "priceMax": "Maximum price"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page",
+      "page": "Page {page}"
     }
   },
   "productDetail": {

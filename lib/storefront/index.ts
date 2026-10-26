@@ -1,4 +1,5 @@
-export { filterAndSortProducts, isPurchasable } from "./filters";
+export { isPurchasable } from "./filters";
+export { parseShopSearchParams, toShopSearch } from "./shop-query";
 export { formatDate, formatMoney } from "./format";
 export { getHeaderScrollState } from "./header";
 export { fallbackHeaderNavigation, toHeaderNavigation } from "./header-navigation";

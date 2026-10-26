@@ -8,6 +8,8 @@ import type {
     Product,
     ProductDetail,
     ProductFacets,
+    ProductListPage,
+    ProductListQuery,
     StoreSettings,
     Story,
     StoryCard,
@@ -16,6 +18,7 @@ import type {
 export interface StorefrontRepository {
     getHomepage(locale: Locale): Promise<Homepage | null>;
     getAllProducts(locale: Locale): Promise<Product[]>;
+    searchProducts(locale: Locale, query: ProductListQuery): Promise<ProductListPage>;
     getProductBySlug(locale: Locale, slug: string): Promise<ProductDetail | null>;
     getProductFacets(locale: Locale): Promise<ProductFacets>;
     getStories(locale: Locale): Promise<StoryCard[]>;

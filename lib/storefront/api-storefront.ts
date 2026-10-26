@@ -9,6 +9,7 @@ import type {
     ApiPolicySummary,
     ApiProductDetail,
     ApiProductFacets,
+    ApiProductSort,
     ApiProductSummary,
     ApiStoreSettings,
     ApiStoryCard,
@@ -23,12 +24,34 @@ import {
     toStory,
     toStoryCard,
 } from "./api-mappers";
+import { isPurchasable } from "./filters";
 import type { StorefrontRepository } from "./repository";
+import type { ProductListQuery, ProductSort } from "./types";
 
 // Backend giới hạn limit tối đa 100/trang
 const PAGE_LIMIT = 100;
 // Chặn vòng lặp nếu backend trả totalPages bất thường
 const MAX_PAGES = 20;
+// Số sản phẩm mỗi trang ở /shop
+const SHOP_PAGE_SIZE = 24;
+
+const API_PRODUCT_SORT = {
+    newest: "newest",
+    "price-low": "price_asc",
+    "price-high": "price_desc",
+} as const satisfies Record<ProductSort, ApiProductSort>;
+
+// Bộ lọc web → query của `GET /products` (category / size gửi dạng mảng slug)
+function toApiProductFilters(query: ProductListQuery) {
+    return {
+        category: query.category ? [query.category] : undefined,
+        size: query.size ? [query.size] : undefined,
+        q: query.search,
+        minPrice: query.priceMin,
+        maxPrice: query.priceMax,
+        sort: API_PRODUCT_SORT[query.sort ?? "newest"],
+    };
+}
 
 // Lấy hết các trang của một danh sách phân trang
 async function fetchAllPages<T>(
@@ -59,6 +82,39 @@ export const storefrontRepository: StorefrontRepository = {
             }),
         );
         return products.map(toProduct);
+    },
+
+    async searchProducts(locale, query) {
+        const page = query.page ?? 1;
+        const filters = toApiProductFilters(query);
+        if (!query.inStock) {
+            const result = await apiGet<ApiPage<ApiProductSummary>>("/products", {
+                locale,
+                query: { ...filters, page, limit: SHOP_PAGE_SIZE },
+                revalidate: 30,
+            });
+            return {
+                items: result.items.map(toProduct),
+                total: result.total,
+                page,
+                totalPages: result.totalPages,
+            };
+        }
+        // API chưa có filter "còn hàng" → lấy hết theo các bộ lọc khác rồi lọc + chia trang ở web
+        const matching = await fetchAllPages((apiPage) =>
+            apiGet<ApiPage<ApiProductSummary>>("/products", {
+                locale,
+                query: { ...filters, page: apiPage, limit: PAGE_LIMIT },
+                revalidate: 30,
+            }),
+        );
+        const inStock = matching.map(toProduct).filter(isPurchasable);
+        return {
+            items: inStock.slice((page - 1) * SHOP_PAGE_SIZE, page * SHOP_PAGE_SIZE),
+            total: inStock.length,
+            page,
+            totalPages: Math.ceil(inStock.length / SHOP_PAGE_SIZE),
+        };
     },
 
     async getProductBySlug(locale, slug) {
