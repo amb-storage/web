@@ -393,3 +393,25 @@ export interface ApiCustomerAuth {
     customer: { id: string; email: string; status: "ACTIVE" };
     session: { createdAt: string; expiresAt: string; lastSeenAt: string };
 }
+
+/* ---------- Contact (お問い合わせ) ---------- */
+
+export const CONTACT_CATEGORIES = ["PRODUCT", "BUYING", "ORDER", "FEEDBACK", "OTHER"] as const;
+export type ApiContactCategory = (typeof CONTACT_CATEGORIES)[number];
+
+// POST /contact — hợp đồng theo amb-portal/docs/CONTACT_API_PROPOSAL.md
+export interface ApiContactRequest {
+    name: string;
+    email: string;
+    category: ApiContactCategory;
+    subject: string;
+    message: string;
+    orderNumber: string | null;
+    locale: ApiLocale;
+    // Honeypot chống bot: người thật không thấy ô này nên luôn để trống
+    website: string;
+}
+
+export interface ApiContactAccepted {
+    id: string;
+}

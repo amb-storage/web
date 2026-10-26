@@ -170,7 +170,8 @@
         "miliTalks": "Mili Talks",
         "aboutUs": "ABOUT US",
         "privacyPolicy": "Privacy Policy",
-        "commercialTransactions": "Commercial Transactions"
+        "commercialTransactions": "Commercial Transactions",
+        "contact": "Contact"
       },
       "social": {
         "email": "Email",
@@ -256,7 +257,8 @@
         "knowledge": "Knowledge & Community",
         "contact": "Contact"
       },
-      "backToTop": "Back to top"
+      "backToTop": "Back to top",
+      "contactForm": "Go to the contact form"
     },
     "privacy": {
       "title": "Privacy Policy",
@@ -268,6 +270,53 @@
     },
     "policy": {
       "menu": "Menu"
+    },
+    "contact": {
+      "title": "Contact",
+      "intro": "For questions about our items, selling to us or your order, or to share feedback, please use the form below.\nWe will reply to the email address you provide, usually within 2–3 business days.",
+      "form": {
+        "name": "Name",
+        "email": "Email",
+        "category": "Topic",
+        "categoryPlaceholder": "Please select",
+        "categories": {
+          "PRODUCT": "About an item",
+          "BUYING": "Selling to us",
+          "ORDER": "About an order",
+          "FEEDBACK": "Feedback",
+          "OTHER": "Other"
+        },
+        "orderNumber": "Order number",
+        "orderNumberHint": "Including your order number helps us answer faster.",
+        "subject": "Subject",
+        "message": "Message",
+        "messageCount": "{count} / {max} characters",
+        "required": "Required",
+        "agree": "I agree to the <privacy>Privacy Policy</privacy>.",
+        "submit": "Send",
+        "sending": "Sending…",
+        "failed": "Your message could not be sent. Please try again later.",
+        "rateLimited": "Too many messages in a short time. Please wait a moment and try again.",
+        "failedFallback": "If it is urgent, please email us:",
+        "errors": {
+          "required": "This field is required.",
+          "email": "Please enter a valid email address.",
+          "tooLong": "This is too long.",
+          "agree": "Please agree to the Privacy Policy."
+        },
+        "sent": {
+          "title": "Thank you for contacting us",
+          "body": "Your message has been sent. We usually reply within 2–3 business days. If you have not heard from us after a few days, please check your spam folder.",
+          "again": "Send another message"
+        }
+      },
+      "info": {
+        "title": "Other ways to reach us",
+        "phone": "Phone",
+        "email": "Email",
+        "instagram": "Instagram",
+        "note": "※You can also contact us by email or Instagram DM."
+      }
     }
   },
   "cart": {

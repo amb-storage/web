@@ -9,15 +9,18 @@ interface FooterNavProps {
     items: NavigationItem[];
 }
 
-// Trang chính sách là route riêng của web, luôn giữ link này dù menu CMS không có
+// Trang chính sách / liên hệ là route riêng của web, luôn giữ link dù menu CMS không có
 const POLICY_HREF = "/policy";
+const CONTACT_HREF = "/contact";
 
 export default function FooterNav({ items }: FooterNavProps) {
     const t = useTranslations("homepage.footer");
     const { handleMouseEnter, handleMouseLeave } = useFooterNavAnimation();
-    const links = items.some((item) => item.href === POLICY_HREF)
-        ? items
-        : [...items, { label: t("nav.privacyPolicy"), href: POLICY_HREF, external: false, children: [] }];
+    const fixedLinks = [
+        { label: t("nav.privacyPolicy"), href: POLICY_HREF, external: false, children: [] },
+        { label: t("nav.contact"), href: CONTACT_HREF, external: false, children: [] },
+    ];
+    const links = [...items, ...fixedLinks.filter((fixed) => !items.some((item) => item.href === fixed.href))];
     const className =
         "relative min-w-0 whitespace-nowrap py-1 text-sm font-semibold text-white/90 transition-colors hover:text-white";
 

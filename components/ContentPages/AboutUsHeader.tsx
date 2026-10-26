@@ -18,6 +18,7 @@ export default async function AboutUsHeader() {
         labels={{
           aboutUs: tFooter("nav.commercialTransactions"),
           privacyPolicy: tFooter("nav.privacyPolicy"),
+          contact: tFooter("nav.contact"),
         }}
       />
     </>

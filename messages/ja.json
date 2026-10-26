@@ -170,7 +170,8 @@
         "miliTalks": "Mili Talks",
         "aboutUs": "ABOUT US",
         "privacyPolicy": "Privacy Policy",
-        "commercialTransactions": "Commercial Transactions"
+        "commercialTransactions": "Commercial Transactions",
+        "contact": "お問い合わせ"
       },
       "social": {
         "email": "メール",
@@ -256,7 +257,8 @@
         "knowledge": "Knowledge & Community",
         "contact": "お問い合わせ"
       },
-      "backToTop": "TOPに戻る"
+      "backToTop": "TOPに戻る",
+      "contactForm": "お問い合わせフォームへ"
     },
     "privacy": {
       "title": "プライバシーポリシー",
@@ -268,6 +270,53 @@
     },
     "policy": {
       "menu": "メニュー"
+    },
+    "contact": {
+      "title": "お問い合わせ",
+      "intro": "商品・買取・ご注文に関するご質問や、ご意見・ご感想は下記フォームよりお送りください。\n内容を確認のうえ、通常2〜3営業日以内にご入力いただいたメールアドレスへご返信いたします。",
+      "form": {
+        "name": "お名前",
+        "email": "メールアドレス",
+        "category": "お問い合わせ種別",
+        "categoryPlaceholder": "選択してください",
+        "categories": {
+          "PRODUCT": "商品について",
+          "BUYING": "買取について",
+          "ORDER": "ご注文について",
+          "FEEDBACK": "ご意見・ご感想",
+          "OTHER": "その他"
+        },
+        "orderNumber": "注文番号",
+        "orderNumberHint": "ご注文についてのお問い合わせは、注文番号があるとスムーズです。",
+        "subject": "件名",
+        "message": "お問い合わせ内容",
+        "messageCount": "{count} / {max} 文字",
+        "required": "必須",
+        "agree": "<privacy>プライバシーポリシー</privacy>に同意のうえ送信します。",
+        "submit": "送信する",
+        "sending": "送信中…",
+        "failed": "送信できませんでした。時間をおいて再度お試しください。",
+        "rateLimited": "短時間に送信が集中しています。しばらく時間をおいてから再度お試しください。",
+        "failedFallback": "お急ぎの場合はメールでご連絡ください：",
+        "errors": {
+          "required": "入力してください。",
+          "email": "メールアドレスの形式が正しくありません。",
+          "tooLong": "文字数が多すぎます。",
+          "agree": "プライバシーポリシーへの同意が必要です。"
+        },
+        "sent": {
+          "title": "お問い合わせありがとうございます",
+          "body": "送信が完了しました。内容を確認のうえ、通常2〜3営業日以内にご返信いたします。数日たっても返信がない場合は、迷惑メールフォルダもご確認ください。",
+          "again": "別のお問い合わせをする"
+        }
+      },
+      "info": {
+        "title": "その他のご連絡方法",
+        "phone": "電話番号",
+        "email": "メール",
+        "instagram": "Instagram",
+        "note": "※お問い合わせはメールまたはInstagramのDMでも受け付けています。"
+      }
     }
   },
   "cart": {

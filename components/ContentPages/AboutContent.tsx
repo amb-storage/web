@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import RichText from "@/components/RichText/RichText";
+import { Link } from "@/i18n/navigation";
 import type { AboutContent as AboutContentData } from "@/lib/storefront";
 import type { ApiRichTextDocument } from "@/lib/api/types";
 
@@ -65,6 +66,15 @@ export default function AboutContent({ about }: AboutContentProps) {
               </dl>
             )}
             {section.body && <RichText document={section.body} className={richTextClassName} />}
+            {section.id === "contact" && (
+              // Mục お問い合わせ dẫn sang form liên hệ
+              <Link
+                href="/contact"
+                className="mt-6 inline-block bg-(--brand-green) px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#14382c]"
+              >
+                {t("contactForm")}
+              </Link>
+            )}
             {section.values && (
               <div className="mt-6 space-y-5 text-sm leading-8 text-gray-700 md:text-base">
                 {section.values.map((value) => (
