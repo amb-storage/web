@@ -290,24 +290,6 @@ export interface ApiAbout {
     contact: ApiAboutRichTextBlock;
 }
 
-// About / Policy soạn bằng editor rich text mới của admin (một nội dung song ngữ, schemaVersion 1)
-export interface ApiRichTextAbout {
-    schemaVersion: 1;
-    slug: string;
-    title: string;
-    seo: ApiSeo | null;
-    body: ApiRichTextDocument;
-}
-
-export interface ApiRichTextPolicyDetail {
-    schemaVersion: 1;
-    slug: string;
-    title: string;
-    effectiveAt: string;
-    seo: ApiSeo | null;
-    body: ApiRichTextDocument;
-}
-
 export interface ApiPolicySummary {
     slug: string;
     title: string;

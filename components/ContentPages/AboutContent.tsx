@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import RichText from "@/components/RichText/RichText";
-import { cn } from "@/lib/utils";
 import type { AboutContent as AboutContentData } from "@/lib/storefront";
 import type { ApiRichTextDocument } from "@/lib/api/types";
 
@@ -12,10 +11,6 @@ type AboutSection = {
   values?: { id: string; title: string; body: string }[];
 };
 
-// Heading trong rich text (h2–h4) cùng màu thương hiệu với tiêu đề section
-const richTextHeadingClassName =
-  "[&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-(--brand-green) md:[&_h2]:text-2xl [&_h3]:mt-8 [&_h3]:font-semibold [&_h3]:text-black [&_h4]:mt-6 [&_h4]:font-semibold [&_h4]:text-black";
-
 const richTextClassName =
   "mt-5 space-y-5 text-sm leading-8 text-gray-700 md:text-base [&_a]:text-(--brand-green) [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:text-black";
 
@@ -26,21 +21,6 @@ interface AboutContentProps {
 
 export default function AboutContent({ about }: AboutContentProps) {
   const t = useTranslations("contentPages.about");
-
-  // Nội dung soạn bằng editor rich text mới của admin: một bài liền mạch, tiêu đề do admin đặt
-  if (about.schemaVersion === 1) {
-    return (
-      <div className="mx-auto w-full max-w-5xl px-4 pb-20 md:px-10 md:pb-28">
-        <section className="border-t border-gray-200 py-10 md:py-14">
-          <h2 className="text-2xl font-bold text-(--brand-green) md:text-3xl">{about.title}</h2>
-          <RichText document={about.body} className={cn(richTextClassName, richTextHeadingClassName)} />
-        </section>
-        <a href="#top" className="mt-8 block text-center text-sm text-(--brand-green) underline underline-offset-4">
-          {t("backToTop")}
-        </a>
-      </div>
-    );
-  }
   // Thứ tự section cố định theo layout trang; tiêu đề nào CMS không có thì lấy từ messages
   const sections: AboutSection[] = [
     { id: "company", title: t("sections.company"), details: about.companyOverview },
