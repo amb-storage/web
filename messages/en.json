@@ -334,14 +334,59 @@
     "unavailableItem": "Item no longer available",
     "unavailable": "This item is currently unavailable",
     "removeUnavailable": "Please remove unavailable items from your cart.",
-    "email": "Email",
-    "emailPlaceholder": "example@email.com",
+    "shipping": {
+      "contactTitle": "Contact",
+      "addressTitle": "Shipping address",
+      "optional": "(optional)",
+      "defaultCountry": "Japan",
+      "fields": {
+        "email": {
+          "label": "Email",
+          "placeholder": "example@email.com"
+        },
+        "recipientName": {
+          "label": "Full name",
+          "placeholder": "Taro Yamada"
+        },
+        "phoneNumber": {
+          "label": "Phone number",
+          "placeholder": "+81 90-1234-5678"
+        },
+        "country": {
+          "label": "Country",
+          "placeholder": "Japan"
+        },
+        "postalCode": {
+          "label": "Postal code",
+          "placeholder": "123-4567"
+        },
+        "prefecture": {
+          "label": "Prefecture / State",
+          "placeholder": "Tokyo"
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "Shibuya-ku"
+        },
+        "addressLine1": {
+          "label": "Address",
+          "placeholder": "1-2-3 Jinnan"
+        },
+        "addressLine2": {
+          "label": "Apartment, suite, etc.",
+          "placeholder": "Room 101"
+        }
+      }
+    },
     "errors": {
       "generic": "Something went wrong. Please try again.",
       "stock": "Not enough stock for this quantity.",
       "unavailable": "Your cart contains items that cannot be purchased.",
       "checkout": "Checkout is unavailable right now. Please try again later.",
-      "rateLimited": "Too many requests. Please wait a moment and try again."
+      "rateLimited": "Too many requests. Please wait a moment and try again.",
+      "empty": "Your cart is empty. Add an item before checking out.",
+      "previousAttempt": "Your previous checkout is still being processed. Please wait a moment and try again.",
+      "invalidShipping": "Please check your details. The contact or shipping information is invalid."
     }
   },
   "notFound": {

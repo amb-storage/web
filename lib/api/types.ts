@@ -376,6 +376,25 @@ export interface ApiCart {
     subtotal: ApiCartPrice;
 }
 
+// Body `POST /checkout/sessions`; prefecture bắt buộc khi country là Nhật (JP / JPN / JAPAN / 日本)
+export interface ApiShippingAddress {
+    country: string;
+    postalCode: string;
+    prefecture?: string;
+    city: string;
+    addressLine1: string;
+    addressLine2?: string;
+}
+
+export interface ApiCheckoutSessionInput {
+    email: string;
+    successUrl: string;
+    cancelUrl: string;
+    recipientName: string;
+    phoneNumber: string;
+    shippingAddress: ApiShippingAddress;
+}
+
 export interface ApiCheckoutSession {
     orderId: string;
     checkoutUrl: string;

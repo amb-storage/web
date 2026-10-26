@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useLocale } from "next-intl";
-import type { ApiCart, ApiCartItem, ApiLocale } from "@/lib/api/types";
+import type { ApiCart, ApiCartItem, ApiCheckoutSessionInput, ApiLocale } from "@/lib/api/types";
 import { ApiClientError } from "@/lib/api/client";
 import type { Availability, Money } from "@/lib/storefront/types";
 import {
@@ -44,7 +44,7 @@ interface CartContextValue {
   remove: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   clear: () => Promise<void>;
-  checkout: (input: { email: string; successUrl: string; cancelUrl: string }) => Promise<void>;
+  checkout: (input: ApiCheckoutSessionInput) => Promise<void>;
   refresh: () => Promise<void>;
   setCart: (cart: ApiCart) => void;
 }

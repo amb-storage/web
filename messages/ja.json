@@ -334,14 +334,59 @@
     "unavailableItem": "販売終了した商品",
     "unavailable": "この商品は現在購入できません",
     "removeUnavailable": "購入できない商品をカートから削除してください。",
-    "email": "メールアドレス",
-    "emailPlaceholder": "example@email.com",
+    "shipping": {
+      "contactTitle": "ご連絡先",
+      "addressTitle": "お届け先",
+      "optional": "（任意）",
+      "defaultCountry": "日本",
+      "fields": {
+        "email": {
+          "label": "メールアドレス",
+          "placeholder": "example@email.com"
+        },
+        "recipientName": {
+          "label": "お名前",
+          "placeholder": "山田 太郎"
+        },
+        "phoneNumber": {
+          "label": "電話番号",
+          "placeholder": "090-1234-5678"
+        },
+        "country": {
+          "label": "国",
+          "placeholder": "日本"
+        },
+        "postalCode": {
+          "label": "郵便番号",
+          "placeholder": "123-4567"
+        },
+        "prefecture": {
+          "label": "都道府県",
+          "placeholder": "東京都"
+        },
+        "city": {
+          "label": "市区町村",
+          "placeholder": "渋谷区"
+        },
+        "addressLine1": {
+          "label": "番地",
+          "placeholder": "神南1-2-3"
+        },
+        "addressLine2": {
+          "label": "建物名・部屋番号",
+          "placeholder": "○○マンション 101"
+        }
+      }
+    },
     "errors": {
       "generic": "処理に失敗しました。もう一度お試しください。",
       "stock": "在庫数を超えているため追加できません。",
       "unavailable": "購入できない商品が含まれています。",
       "checkout": "現在お支払いを開始できません。しばらくしてからお試しください。",
-      "rateLimited": "操作が多すぎます。少し時間をおいてお試しください。"
+      "rateLimited": "操作が多すぎます。少し時間をおいてお試しください。",
+      "empty": "カートが空です。商品を追加してからお会計に進んでください。",
+      "previousAttempt": "前回のお支払い手続きがまだ処理中です。少し時間をおいてからお試しください。",
+      "invalidShipping": "入力内容をご確認ください。お届け先または連絡先に誤りがあります。"
     }
   },
   "notFound": {

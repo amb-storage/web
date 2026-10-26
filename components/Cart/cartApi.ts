@@ -2,6 +2,7 @@ import { apiRequest } from "@/lib/api/client";
 import type {
     ApiCart,
     ApiCheckoutSession,
+    ApiCheckoutSessionInput,
     ApiLocale,
     ApiProductDetail,
 } from "@/lib/api/types";
@@ -42,7 +43,7 @@ export function mergeGuestCart(locale: ApiLocale) {
 
 export function createCheckoutSession(
     locale: ApiLocale,
-    input: { email: string; successUrl: string; cancelUrl: string },
+    input: ApiCheckoutSessionInput,
 ) {
     return mutate<ApiCheckoutSession>(locale, "/checkout/sessions", "POST", input);
 }
@@ -61,7 +62,12 @@ export function cartErrorKey(code: string) {
     if (code === "INSUFFICIENT_STOCK" || code === "CART_QUANTITY_INVALID") return "errors.stock";
     if (code === "CART_PRODUCT_NOT_PURCHASABLE" || code === "CHECKOUT_CART_INVALID")
         return "errors.unavailable";
-    if (code.startsWith("STRIPE_")) return "errors.checkout";
+    if (code === "CHECKOUT_CART_EMPTY") return "errors.empty";
+    // Đơn trước vẫn đang mở bên Stripe (vd. tab khác) → đợi rồi thử lại
+    if (code === "CHECKOUT_PREVIOUS_ATTEMPT_OPEN") return "errors.previousAttempt";
+    // Backend từ chối thông tin giao hàng / email (ValidationPipe)
+    if (code === "VALIDATION_ERROR") return "errors.invalidShipping";
+    if (code.startsWith("STRIPE_") || code === "CHECKOUT_REDIRECT_NOT_ALLOWED") return "errors.checkout";
     if (code.endsWith("RATE_LIMITED")) return "errors.rateLimited";
     return "errors.generic";
 }

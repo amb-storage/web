@@ -5,13 +5,11 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/storefront";
 import { useCart } from "@/components/Cart/useCart";
-import { cartErrorKey } from "@/components/Cart/cartApi";
-import { useCartCheckout } from "./useCartCheckout";
+import CheckoutForm from "../CheckoutForm/CheckoutForm";
 
 export default function CartView() {
     const t = useTranslations("cart");
-    const { items, subtotal, remove, hydrated, pending, errorCode } = useCart();
-    const { email, setEmail, handleSubmit } = useCartCheckout();
+    const { items, remove, hydrated, pending } = useCart();
     const hasUnavailable = items.some((item) => item.status !== "ELIGIBLE");
 
     return (
@@ -86,44 +84,7 @@ export default function CartView() {
                         ))}
                     </div>
 
-                    <form
-                        onSubmit={handleSubmit}
-                        className="mt-8 ml-auto flex w-full max-w-sm flex-col gap-4"
-                    >
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">{t("total")}</span>
-                            <span className="text-lg font-semibold">
-                                {formatMoney(subtotal)}
-                            </span>
-                        </div>
-                        <label className="flex flex-col gap-2 text-sm">
-                            <span className="font-medium">{t("email")}</span>
-                            <input
-                                type="email"
-                                required
-                                autoComplete="email"
-                                value={email}
-                                onChange={(event) => setEmail(event.target.value)}
-                                placeholder={t("emailPlaceholder")}
-                                className="h-11 border border-gray-300 px-3 outline-none focus:border-(--brand-green)"
-                            />
-                        </label>
-                        {hasUnavailable && (
-                            <p className="text-sm text-red-600">{t("removeUnavailable")}</p>
-                        )}
-                        {errorCode && (
-                            <p role="alert" className="text-sm text-red-600">
-                                {t(cartErrorKey(errorCode))}
-                            </p>
-                        )}
-                        <button
-                            type="submit"
-                            disabled={pending || hasUnavailable}
-                            className="flex h-12 items-center justify-center bg-(--brand-green) px-4 text-sm font-medium text-white transition-colors hover:bg-(--brand-green-dark) disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                            {t("checkout", { amount: formatMoney(subtotal) })}
-                        </button>
-                    </form>
+                    <CheckoutForm hasUnavailable={hasUnavailable} />
                 </>
             )}
         </div>
