@@ -10,6 +10,7 @@ unchanged.
 | Homepage | `GET /api/v1/home` |
 | Product list/detail/facets | `GET /api/v1/products`, `/api/v1/products/:slug`, `/api/v1/products/facets` |
 | Stories (Web label: Mili Talks) | `GET /api/v1/stories`, `/api/v1/stories/:slug` |
+| Mili Talks landing (`/blog`) | `GET /api/v1/content/stories` |
 | Navigation | `GET /api/v1/navigation/header`, `/api/v1/navigation/footer` |
 | Settings | `GET /api/v1/settings` |
 | About and policies | `GET /api/v1/content/about`, `/api/v1/content/policies`, `/api/v1/content/policies/:slug` |

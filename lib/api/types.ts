@@ -320,6 +320,22 @@ export interface ApiPolicyDetail {
     seo: ApiSeo | null;
 }
 
+// Landing Mili Talks do admin soạn (`GET /content/stories`)
+export interface ApiStoriesLanding {
+    schemaVersion: 2;
+    slug: string;
+    title: string | null;
+    seo: ApiSeo | null;
+    intro: ApiStoriesIntro;
+    featuredTalk?: ApiStoryCard;
+    grids: Array<{
+        id: string;
+        title: string;
+        description: string | null;
+        talks: ApiStoryCard[];
+    }>;
+}
+
 export interface ApiStoryDetail extends ApiStoryCard {
     seo: ApiSeo | null;
     sections: ApiSection[];

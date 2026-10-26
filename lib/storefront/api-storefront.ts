@@ -12,6 +12,7 @@ import type {
     ApiProductSort,
     ApiProductSummary,
     ApiStoreSettings,
+    ApiStoriesLanding,
     ApiStoryCard,
     ApiStoryDetail,
 } from "@/lib/api/types";
@@ -21,6 +22,7 @@ import {
     toProduct,
     toProductDetail,
     toStoreSettings,
+    toStoriesLanding,
     toStory,
     toStoryCard,
 } from "./api-mappers";
@@ -138,6 +140,12 @@ export const storefrontRepository: StorefrontRepository = {
             }),
         );
         return stories.map(toStoryCard);
+    },
+
+    async getStoriesLanding(locale) {
+        // 404 khi chưa xuất bản landing Mili Talks → trang /blog dùng nội dung mặc định
+        const landing = await apiGetOrNull<ApiStoriesLanding>("/content/stories", { locale });
+        return landing ? toStoriesLanding(landing) : null;
     },
 
     async getStoryBySlug(locale, slug) {

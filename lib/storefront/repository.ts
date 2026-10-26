@@ -11,6 +11,7 @@ import type {
     ProductListPage,
     ProductListQuery,
     StoreSettings,
+    StoriesLanding,
     Story,
     StoryCard,
 } from "./types";
@@ -22,6 +23,7 @@ export interface StorefrontRepository {
     getProductBySlug(locale: Locale, slug: string): Promise<ProductDetail | null>;
     getProductFacets(locale: Locale): Promise<ProductFacets>;
     getStories(locale: Locale): Promise<StoryCard[]>;
+    getStoriesLanding(locale: Locale): Promise<StoriesLanding | null>;
     getStoryBySlug(locale: Locale, slug: string): Promise<Story | null>;
     getHeaderNavigation(locale: Locale): Promise<NavigationItem[]>;
     getFooterNavigation(locale: Locale): Promise<NavigationItem[]>;

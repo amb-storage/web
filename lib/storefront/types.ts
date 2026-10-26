@@ -92,6 +92,14 @@ export interface Story extends StoryCard {
     sections: StorySection[];
 }
 
+export interface StoriesLanding {
+    title: string | null;
+    seo: ApiSeo | null;
+    intro: { heading: string; introduction: string; supportingText: string | null };
+    featuredStory: StoryCard | null;
+    grids: Array<{ id: string; title: string; description: string | null; stories: StoryCard[] }>;
+}
+
 export interface HomeHeroCategory {
     key: string;
     title: string;

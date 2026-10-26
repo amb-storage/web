@@ -5,6 +5,7 @@ import type {
     ApiProductDetail,
     ApiProductSummary,
     ApiStoreSettings,
+    ApiStoriesLanding,
     ApiStoryCard,
     ApiStoryDetail,
 } from "@/lib/api/types";
@@ -14,6 +15,7 @@ import type {
     Product,
     ProductDetail,
     StoreSettings,
+    StoriesLanding,
     Story,
     StoryCard,
 } from "./types";
@@ -70,6 +72,21 @@ export function toStoryCard(story: ApiStoryCard): StoryCard {
 
 export function toStory(story: ApiStoryDetail): Story {
     return { ...toStoryCard(story), seo: story.seo, sections: story.sections };
+}
+
+export function toStoriesLanding(landing: ApiStoriesLanding): StoriesLanding {
+    return {
+        title: landing.title,
+        seo: landing.seo,
+        intro: landing.intro,
+        featuredStory: landing.featuredTalk ? toStoryCard(landing.featuredTalk) : null,
+        grids: landing.grids.map((grid) => ({
+            id: grid.id,
+            title: grid.title,
+            description: grid.description,
+            stories: grid.talks.map(toStoryCard),
+        })),
+    };
 }
 
 export function toHomepage(home: ApiHome): Homepage {
