@@ -334,6 +334,14 @@ export interface ApiStoriesLanding {
         description: string | null;
         talks: ApiStoryCard[];
     }>;
+    // Cột Special Thanks soạn trong admin (Mili Talks → Trang chủ blog); null khi chưa có / đang tắt
+    references?: ApiStoriesReferenceGroup[] | null;
+}
+
+export interface ApiStoriesReferenceGroup {
+    id: string;
+    title: string;
+    items: string[];
 }
 
 export interface ApiStoryDetail extends ApiStoryCard {

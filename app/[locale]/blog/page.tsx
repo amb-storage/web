@@ -5,6 +5,35 @@ import BlogPostGrid from "@/components/BlogPostGrid/BlogPostGrid";
 import FeaturedPostImage from "@/components/FeaturedPostImage/FeaturedPostImage";
 import BlogReferences from "./_components/BlogReferences/BlogReferences";
 
+// Danh sách cảm ơn theo trang Mili Talks hiện tại của amb-storage.com, dùng khi CMS chưa có mục Special Thanks
+const DEFAULT_REFERENCES = {
+    websites: ["usmilitariaforum.com", "heddels.com", "vintageleatherjacket.org"],
+    brandShop: [
+        "ACORN Buy&Sell Vintage",
+        "EXTRA'S GARMENT Supply & Co.",
+        "MASH CO. Ltd.",
+        "mushroom",
+        "THE NAVY-ism",
+        "jollyjack",
+        "BedfordCord",
+        "Berberjin",
+        "BIDSTITCH",
+        "Marvin's Vintage",
+        "G-1 STALKER",
+        "Golden State Vintage",
+    ],
+    collector: [
+        "Aota Mituhiro",
+        "Jiro Okawa",
+        "Satoshi Kakui",
+        "Okanineko",
+        "Jon of LeatherJacketJawn",
+        "Eric Maggiori",
+        "Antinio Martinez",
+        "Ed Anthony Stanford",
+    ],
+};
+
 export default async function BlogIndexPage() {
     const t = await getTranslations("blog");
     const locale = (await getLocale()) as Locale;
@@ -20,46 +49,14 @@ export default async function BlogIndexPage() {
                   stories: await storefrontRepository.getStories(locale),
               },
           ];
-    const referenceGroups = [
-        {
-            title: t("references.specialThanks"),
-            items: [
-                "usmilitariaforum.com",
-                "heddels.com",
-                "vintageleatherjacket.org",
-            ],
-        },
-        {
-            title: t("references.brandShop"),
-            items: [
-                "ACORN Buy&Sell Vintage",
-                "EXTRA'S GARMENT Supply & Co.",
-                "MASH CO. Ltd.",
-                "mushroom",
-                "THE NAVY-ism",
-                "jollyjack",
-                "BedfordCord",
-                "Berberjin",
-                "BIDSTITCH",
-                "Marvin's Vintage",
-                "G-1 STALKER",
-                "Golden State Vintage",
-            ],
-        },
-        {
-            title: t("references.collector"),
-            items: [
-                "Aota Mituhiro",
-                "Jiro Okawa",
-                "Satoshi Kakui",
-                "Okanineko",
-                "Jon of LeatherJacketJawn",
-                "Eric Maggiori",
-                "Antinio Martinez",
-                "Ed Anthony Stanford",
-            ],
-        },
-    ];
+    // Cột Special Thanks soạn trong admin; landing chưa có mục này thì dùng danh sách mặc định
+    const referenceGroups = landing?.references?.length
+        ? landing.references
+        : [
+              { title: t("references.specialThanks"), items: DEFAULT_REFERENCES.websites },
+              { title: t("references.brandShop"), items: DEFAULT_REFERENCES.brandShop },
+              { title: t("references.collector"), items: DEFAULT_REFERENCES.collector },
+          ];
 
     return (
         <div className="w-full bg-(--surface-muted)">

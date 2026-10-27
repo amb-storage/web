@@ -68,10 +68,15 @@ async function fetchAllPages<T>(
     return [first, ...rest].flatMap((page) => page.items);
 }
 
+// Đồ vintage thường chỉ có 1 cái: tình trạng còn hàng phải luôn mới, nên dữ liệu sản phẩm
+// không dùng cache fetch của Next (0 = không cache). Nội dung CMS / menu / settings vẫn cache 60s.
+const LIVE_STOCK = 0;
+
 // Chỉ dùng ở server component (gọi thẳng API_BASE_URL)
 export const storefrontRepository: StorefrontRepository = {
     async getHomepage(locale) {
-        const home = await apiGetOrNull<ApiHome>("/home", { locale });
+        // Trang chủ có các dải sản phẩm (badge SOLD OUT) → không cache như sản phẩm
+        const home = await apiGetOrNull<ApiHome>("/home", { locale, revalidate: LIVE_STOCK });
         return home ? toHomepage(home) : null;
     },
 
@@ -80,7 +85,7 @@ export const storefrontRepository: StorefrontRepository = {
             apiGet<ApiPage<ApiProductSummary>>("/products", {
                 locale,
                 query: { sort: "newest", page, limit: PAGE_LIMIT },
-                revalidate: 30,
+                revalidate: LIVE_STOCK,
             }),
         );
         return products.map(toProduct);
@@ -93,7 +98,7 @@ export const storefrontRepository: StorefrontRepository = {
             const result = await apiGet<ApiPage<ApiProductSummary>>("/products", {
                 locale,
                 query: { ...filters, page, limit: SHOP_PAGE_SIZE },
-                revalidate: 30,
+                revalidate: LIVE_STOCK,
             });
             return {
                 items: result.items.map(toProduct),
@@ -107,7 +112,7 @@ export const storefrontRepository: StorefrontRepository = {
             apiGet<ApiPage<ApiProductSummary>>("/products", {
                 locale,
                 query: { ...filters, page: apiPage, limit: PAGE_LIMIT },
-                revalidate: 30,
+                revalidate: LIVE_STOCK,
             }),
         );
         const inStock = matching.map(toProduct).filter(isPurchasable);
@@ -123,7 +128,7 @@ export const storefrontRepository: StorefrontRepository = {
         // Slug cũ được backend trả 308 về slug canonical; fetch tự follow redirect
         const product = await apiGetOrNull<ApiProductDetail>(
             `/products/${encodeURIComponent(slug)}`,
-            { locale, revalidate: 30 },
+            { locale, revalidate: LIVE_STOCK },
         );
         return product ? toProductDetail(product) : null;
     },

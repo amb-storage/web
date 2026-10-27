@@ -86,6 +86,7 @@ export function toStoriesLanding(landing: ApiStoriesLanding): StoriesLanding {
             description: grid.description,
             stories: grid.talks.map(toStoryCard),
         })),
+        references: landing.references ?? null,
     };
 }
 
