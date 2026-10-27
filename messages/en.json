@@ -144,7 +144,10 @@
     },
     "customerVoice": {
       "title": "Customer's Voice",
-      "viewProduct": "View product"
+      "viewProduct": "View product",
+      "subtitle": "What customers say about the vintage pieces they found at Amb:STORAGE.",
+      "viewAll": "View all customer reviews ({count})",
+      "anonymous": "Customer"
     },
     "blog": {
       "title": "MILI TALKS",
@@ -426,5 +429,12 @@
     "previous": "Previous page",
     "next": "Next page",
     "page": "Page {page}"
+  },
+  "customerVoicePage": {
+    "title": "Customer's Voice",
+    "intro": "Reviews from customers who found their vintage piece at Amb:STORAGE.",
+    "count": "{count} reviews",
+    "empty": "No customer reviews yet.",
+    "backToShop": "Browse the shop"
   }
 }

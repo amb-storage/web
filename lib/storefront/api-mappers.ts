@@ -114,6 +114,7 @@ export function toHomepage(home: ApiHome): Homepage {
                     quote: voice.quote,
                     image: product.images[0],
                     href: `/shop/${product.slug}`,
+                    productName: product.name,
                 },
             ];
         }),

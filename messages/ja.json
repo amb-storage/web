@@ -144,7 +144,10 @@
     },
     "customerVoice": {
       "title": "Customer's Voice",
-      "viewProduct": "商品を見る"
+      "viewProduct": "商品を見る",
+      "subtitle": "Amb:STORAGE でお買い物いただいたお客様からの声です。",
+      "viewAll": "すべてのお客様の声を見る（{count}件）",
+      "anonymous": "お客様"
     },
     "blog": {
       "title": "MILI TALKS",
@@ -426,5 +429,12 @@
     "previous": "前のページ",
     "next": "次のページ",
     "page": "{page}ページ目"
+  },
+  "customerVoicePage": {
+    "title": "Customer's Voice",
+    "intro": "Amb:STORAGE でヴィンテージをお迎えいただいたお客様から届いた声をご紹介します。",
+    "count": "{count}件",
+    "empty": "まだお客様の声はありません。",
+    "backToShop": "ショップを見る"
   }
 }

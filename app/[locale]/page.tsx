@@ -35,7 +35,7 @@ export default async function Home() {
                 stories={otherStories}
             />
             {home && home.customerVoices.length > 0 && (
-                <CustomerVoiceSection testimonials={home.customerVoices} />
+                <CustomerVoiceSection voices={home.customerVoices} />
             )}
         </div>
     );

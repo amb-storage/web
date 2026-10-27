@@ -110,10 +110,12 @@ export interface HomeHeroCategory {
 
 export interface CustomerVoice {
     id: string;
+    // Admin không bắt buộc tên khách → chuỗi rỗng thì UI dùng nhãn mặc định
     name: string;
     quote: string;
     image: ProductImage;
     href: string;
+    productName: string;
 }
 
 export interface Homepage {
