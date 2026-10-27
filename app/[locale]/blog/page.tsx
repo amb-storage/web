@@ -112,10 +112,11 @@ export default async function BlogIndexPage({ searchParams }: PageProps<"/[local
                     key={grid.id}
                     className="mx-auto w-full max-w-[1280px] px-5 py-10 md:px-18 md:py-12"
                 >
-                    {grid.title && (
-                        <div className="mb-6 max-w-4xl">
-                            <h2 className="text-xl font-bold uppercase text-(--brand-green) md:text-3xl">
-                                {grid.title}
+                    {/* Đầu danh sách: tiêu đề (landing hoặc mặc định "記事一覧") + mô tả, tổng số bài bên phải */}
+                    <div className="mb-8 flex flex-col gap-3 border-b border-black/10 pb-6 md:flex-row md:items-end md:justify-between">
+                        <div className="max-w-3xl">
+                            <h2 className="text-2xl font-bold uppercase tracking-[0.04em] text-(--brand-green) md:text-3xl">
+                                {grid.title ?? t("listTitle")}
                             </h2>
                             {grid.description && (
                                 <p className="mt-3 text-sm leading-7 tracking-[0.08em] text-black md:text-base">
@@ -123,8 +124,17 @@ export default async function BlogIndexPage({ searchParams }: PageProps<"/[local
                                 </p>
                             )}
                         </div>
+                        {storiesPage.total > 0 && (
+                            <p className="shrink-0 text-xs font-medium text-black/55">
+                                {t("postCount", { count: storiesPage.total })}
+                            </p>
+                        )}
+                    </div>
+                    {grid.stories.length > 0 ? (
+                        <BlogPostGrid posts={grid.stories} />
+                    ) : (
+                        <p className="py-16 text-center text-gray-600">{t("empty")}</p>
                     )}
-                    <BlogPostGrid posts={grid.stories} />
                     <Pagination
                         page={storiesPage.page}
                         totalPages={storiesPage.totalPages}

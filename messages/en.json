@@ -239,7 +239,10 @@
       "brandShop": "Brand, Shop",
       "collector": "Collector"
     },
-    "viewDetails": "View details"
+    "viewDetails": "View details",
+    "listTitle": "All articles",
+    "postCount": "{count} articles",
+    "empty": "No articles yet."
   },
   "contentPages": {
     "about": {

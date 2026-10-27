@@ -239,7 +239,10 @@
       "brandShop": "Brand, Shop",
       "collector": "Collector"
     },
-    "viewDetails": "詳細を見る"
+    "viewDetails": "詳細を見る",
+    "listTitle": "記事一覧",
+    "postCount": "全{count}件",
+    "empty": "まだ記事がありません。"
   },
   "contentPages": {
     "about": {
