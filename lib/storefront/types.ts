@@ -98,6 +98,7 @@ export interface StoriesLanding {
     intro: { heading: string; introduction: string; supportingText: string | null };
     featuredStory: StoryCard | null;
     grids: Array<{ id: string; title: string; description: string | null; stories: StoryCard[] }>;
+    references: Array<{ id: string; title: string; items: string[] }>;
 }
 
 export interface HomeHeroCategory {

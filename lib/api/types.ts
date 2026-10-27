@@ -334,6 +334,7 @@ export interface ApiStoriesLanding {
         description: string | null;
         talks: ApiStoryCard[];
     }>;
+    references: Array<{ id: string; title: string; items: string[] }> | null;
 }
 
 export interface ApiStoryDetail extends ApiStoryCard {

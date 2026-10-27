@@ -80,6 +80,7 @@ export function toStoriesLanding(landing: ApiStoriesLanding): StoriesLanding {
         seo: landing.seo,
         intro: landing.intro,
         featuredStory: landing.featuredTalk ? toStoryCard(landing.featuredTalk) : null,
+        references: landing.references ?? [],
         grids: landing.grids.map((grid) => ({
             id: grid.id,
             title: grid.title,

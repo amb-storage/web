@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { cache } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import type { Locale } from "@/lib/storefront";
@@ -5,11 +7,21 @@ import BlogPostGrid from "@/components/BlogPostGrid/BlogPostGrid";
 import FeaturedPostImage from "@/components/FeaturedPostImage/FeaturedPostImage";
 import BlogReferences from "./_components/BlogReferences/BlogReferences";
 
+const getLanding = cache((locale: Locale) => storefrontRepository.getStoriesLanding(locale));
+
+export async function generateMetadata(): Promise<Metadata> {
+    const landing = await getLanding((await getLocale()) as Locale);
+    return {
+        title: landing?.seo?.title ?? landing?.title ?? "Mili Talks",
+        description: landing?.seo?.description ?? undefined,
+    };
+}
+
 export default async function BlogIndexPage() {
     const t = await getTranslations("blog");
     const locale = (await getLocale()) as Locale;
     // Ưu tiên landing Mili Talks soạn trong admin; chưa xuất bản thì dùng nội dung mặc định + toàn bộ bài
-    const landing = await storefrontRepository.getStoriesLanding(locale);
+    const landing = await getLanding(locale);
     const grids = landing
         ? landing.grids
         : [
@@ -20,46 +32,7 @@ export default async function BlogIndexPage() {
                   stories: await storefrontRepository.getStories(locale),
               },
           ];
-    const referenceGroups = [
-        {
-            title: t("references.specialThanks"),
-            items: [
-                "usmilitariaforum.com",
-                "heddels.com",
-                "vintageleatherjacket.org",
-            ],
-        },
-        {
-            title: t("references.brandShop"),
-            items: [
-                "ACORN Buy&Sell Vintage",
-                "EXTRA'S GARMENT Supply & Co.",
-                "MASH CO. Ltd.",
-                "mushroom",
-                "THE NAVY-ism",
-                "jollyjack",
-                "BedfordCord",
-                "Berberjin",
-                "BIDSTITCH",
-                "Marvin's Vintage",
-                "G-1 STALKER",
-                "Golden State Vintage",
-            ],
-        },
-        {
-            title: t("references.collector"),
-            items: [
-                "Aota Mituhiro",
-                "Jiro Okawa",
-                "Satoshi Kakui",
-                "Okanineko",
-                "Jon of LeatherJacketJawn",
-                "Eric Maggiori",
-                "Antinio Martinez",
-                "Ed Anthony Stanford",
-            ],
-        },
-    ];
+    const referenceGroups = landing?.references ?? [];
 
     return (
         <div className="w-full bg-(--surface-muted)">
@@ -89,7 +62,7 @@ export default async function BlogIndexPage() {
                         {landing?.intro.supportingText ?? t("references.intro")}
                     </p>
 
-                    <BlogReferences groups={referenceGroups} />
+                    {referenceGroups.length ? <BlogReferences groups={referenceGroups} /> : null}
                 </div>
             </section>
 
