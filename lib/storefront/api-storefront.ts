@@ -1,4 +1,4 @@
-import { apiGet, apiGetOrNull } from "@/lib/api/server";
+import { ApiError, apiGet, apiGetOrNull } from "@/lib/api/server";
 import type {
     ApiAbout,
     ApiCmsPage,
@@ -148,9 +148,18 @@ export const storefrontRepository: StorefrontRepository = {
     },
 
     async getStoriesLanding(locale) {
-        // 404 khi chưa xuất bản landing Mili Talks → trang /blog dùng nội dung mặc định
-        const landing = await apiGetOrNull<ApiStoriesLanding>("/content/stories", { locale });
-        return landing ? toStoriesLanding(landing) : null;
+        try {
+            // 404 khi chưa xuất bản landing Mili Talks → trang /blog dùng nội dung mặc định
+            const landing = await apiGetOrNull<ApiStoriesLanding>("/content/stories", { locale });
+            return landing ? toStoriesLanding(landing) : null;
+        } catch (error) {
+            // 503 STORE_CMS_INTEGRITY_FAILURE: landing đã xuất bản nhưng nội dung không hợp lệ → không làm sập /blog
+            if (error instanceof ApiError && error.status === 503) {
+                console.error("[stories landing] published landing is invalid", error.code);
+                return null;
+            }
+            throw error;
+        }
     },
 
     async getStoryBySlug(locale, slug) {

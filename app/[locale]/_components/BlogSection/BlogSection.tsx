@@ -1,17 +1,21 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import type { Homepage } from "@/lib/storefront";
+import type { Homepage, StoryCard } from "@/lib/storefront";
+import BlogPostGrid from "@/components/BlogPostGrid/BlogPostGrid";
 import FeaturedPostImage from "@/components/FeaturedPostImage/FeaturedPostImage";
 
 interface BlogSectionProps {
-    // `miliTalksIntro` / `featuredMiliTalk` của `GET /home`; thiếu thì dùng nội dung mặc định trong messages
+    // `miliTalksIntro` của `GET /home` (thiếu thì dùng messages); bài: `featuredMiliTalk` của Home, không có thì bài mới nhất
     intro?: Homepage["miliTalksIntro"];
     featuredStory?: Homepage["featuredStory"];
+    // Các bài còn lại (trừ bài nổi bật), hiện thành lưới bên dưới
+    stories?: StoryCard[];
 }
 
 export default function BlogSection({
     intro = null,
     featuredStory = null,
+    stories = [],
 }: BlogSectionProps) {
     const t = useTranslations("homepage.blog");
 
@@ -58,6 +62,12 @@ export default function BlogSection({
                         </div>
                     )}
                 </div>
+
+                {stories.length > 0 && (
+                    <div className="mt-10 md:mt-12">
+                        <BlogPostGrid posts={stories} />
+                    </div>
+                )}
             </div>
         </section>
     );

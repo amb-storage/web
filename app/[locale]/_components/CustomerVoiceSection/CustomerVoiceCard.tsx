@@ -28,14 +28,17 @@ export default function CustomerVoiceCard({
             ref={cardRef}
             className="flex translate-y-8 flex-col bg-transparent text-center opacity-0"
         >
-            <p className="mb-4 text-base font-bold tracking-[0.08em] text-black">
-                {name}
-            </p>
+            {/* Tên khách không bắt buộc trong admin → không có thì bỏ dòng tên */}
+            {name && (
+                <p className="mb-4 text-base font-bold tracking-[0.08em] text-black">
+                    {name}
+                </p>
+            )}
 
             <ProductThumb
                 image={image}
                 href={href}
-                alt={name}
+                alt={name || quote}
                 viewProductLabel={viewProductLabel}
                 className="aspect-square w-full"
             />

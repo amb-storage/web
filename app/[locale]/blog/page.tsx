@@ -37,18 +37,22 @@ const DEFAULT_REFERENCES = {
 export default async function BlogIndexPage() {
     const t = await getTranslations("blog");
     const locale = (await getLocale()) as Locale;
-    // Ưu tiên landing Mili Talks soạn trong admin; chưa xuất bản thì dùng nội dung mặc định + toàn bộ bài
-    const landing = await storefrontRepository.getStoriesLanding(locale);
-    const grids = landing
-        ? landing.grids
-        : [
-              {
-                  id: "all",
-                  title: null,
-                  description: null,
-                  stories: await storefrontRepository.getStories(locale),
-              },
-          ];
+    // Landing (admin) cho intro / bài nổi bật / References; danh sách bài luôn là toàn bộ bài đã xuất bản,
+    // không bị giới hạn theo số bài cấu hình ở lưới của landing
+    const [landing, stories] = await Promise.all([
+        storefrontRepository.getStoriesLanding(locale),
+        storefrontRepository.getStories(locale),
+    ]);
+    // Tiêu đề / mô tả lưới lấy từ lưới đầu tiên của landing (nếu có)
+    const gridHeading = landing?.grids[0];
+    const grids = [
+        {
+            id: "all",
+            title: gridHeading?.title ?? null,
+            description: gridHeading?.description ?? null,
+            stories,
+        },
+    ];
     // Cột Special Thanks soạn trong admin; landing chưa có mục này thì dùng danh sách mặc định
     const referenceGroups = landing?.references?.length
         ? landing.references

@@ -37,6 +37,7 @@ export default function ProductThumb({
                 src={image}
                 alt={alt}
                 fill
+                sizes="(min-width: 768px) 33vw, 100vw"
                 className="object-cover transition-transform"
             />
             <span
