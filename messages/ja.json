@@ -209,12 +209,6 @@
       "apply": "この条件で検索",
       "priceMin": "最低価格",
       "priceMax": "最高価格"
-    },
-    "pagination": {
-      "label": "ページ",
-      "previous": "前のページ",
-      "next": "次のページ",
-      "page": "{page}ページ目"
     }
   },
   "productDetail": {
@@ -241,7 +235,8 @@
       "specialThanks": "Special Thanks",
       "brandShop": "Brand, Shop",
       "collector": "Collector"
-    }
+    },
+    "viewDetails": "詳細を見る"
   },
   "contentPages": {
     "about": {
@@ -425,5 +420,11 @@
       "primaryAction": "カートに戻る",
       "secondaryAction": "ショッピングを続ける"
     }
+  },
+  "pagination": {
+    "label": "ページ",
+    "previous": "前のページ",
+    "next": "次のページ",
+    "page": "{page}ページ目"
   }
 }

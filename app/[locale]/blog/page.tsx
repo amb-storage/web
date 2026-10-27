@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import type { Locale } from "@/lib/storefront";
 import BlogPostGrid from "@/components/BlogPostGrid/BlogPostGrid";
+import Pagination from "@/components/Pagination/Pagination";
 import FeaturedPostImage from "@/components/FeaturedPostImage/FeaturedPostImage";
 import BlogReferences from "./_components/BlogReferences/BlogReferences";
 
@@ -34,15 +35,27 @@ const DEFAULT_REFERENCES = {
     ],
 };
 
-export default async function BlogIndexPage() {
+// Số bài mỗi trang ở /blog (chia hết cho lưới 3 cột)
+const STORIES_PER_PAGE = 12;
+
+// `?page=2` → 2; giá trị lạ thì về trang 1
+function toPage(value: string | string[] | undefined) {
+    const raw = Array.isArray(value) ? value[0] : value;
+    const page = raw && /^\d+$/.test(raw) ? Number(raw) : 1;
+    return Number.isSafeInteger(page) && page > 1 ? page : 1;
+}
+
+export default async function BlogIndexPage({ searchParams }: PageProps<"/[locale]/blog">) {
     const t = await getTranslations("blog");
     const locale = (await getLocale()) as Locale;
-    // Landing (admin) cho intro / bài nổi bật / References; danh sách bài luôn là toàn bộ bài đã xuất bản,
-    // không bị giới hạn theo số bài cấu hình ở lưới của landing
-    const [landing, stories] = await Promise.all([
+    const page = toPage((await searchParams).page);
+    // Landing (admin) cho intro / bài nổi bật / References; danh sách bài là mọi bài đã xuất bản,
+    // chia trang theo `GET /stories` (không bị giới hạn theo số bài cấu hình ở lưới của landing)
+    const [landing, storiesPage] = await Promise.all([
         storefrontRepository.getStoriesLanding(locale),
-        storefrontRepository.getStories(locale),
+        storefrontRepository.getStoriesPage(locale, page, STORIES_PER_PAGE),
     ]);
+    const stories = storiesPage.items;
     // Tiêu đề / mô tả lưới lấy từ lưới đầu tiên của landing (nếu có)
     const gridHeading = landing?.grids[0];
     const grids = [
@@ -112,6 +125,11 @@ export default async function BlogIndexPage() {
                         </div>
                     )}
                     <BlogPostGrid posts={grid.stories} />
+                    <Pagination
+                        page={storiesPage.page}
+                        totalPages={storiesPage.totalPages}
+                        hrefFor={(target) => (target > 1 ? `/blog?page=${target}` : "/blog")}
+                    />
                 </section>
             ))}
         </div>

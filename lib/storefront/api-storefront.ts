@@ -147,6 +147,19 @@ export const storefrontRepository: StorefrontRepository = {
         return stories.map(toStoryCard);
     },
 
+    async getStoriesPage(locale, page, limit) {
+        const result = await apiGet<ApiPage<ApiStoryCard>>("/stories", {
+            locale,
+            query: { page, limit },
+        });
+        return {
+            items: result.items.map(toStoryCard),
+            total: result.total,
+            page: result.page,
+            totalPages: result.totalPages,
+        };
+    },
+
     async getStoriesLanding(locale) {
         try {
             // 404 khi chưa xuất bản landing Mili Talks → trang /blog dùng nội dung mặc định

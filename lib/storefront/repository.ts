@@ -23,6 +23,11 @@ export interface StorefrontRepository {
     getProductBySlug(locale: Locale, slug: string): Promise<ProductDetail | null>;
     getProductFacets(locale: Locale): Promise<ProductFacets>;
     getStories(locale: Locale): Promise<StoryCard[]>;
+    getStoriesPage(
+        locale: Locale,
+        page: number,
+        limit: number,
+    ): Promise<{ items: StoryCard[]; total: number; page: number; totalPages: number }>;
     getStoriesLanding(locale: Locale): Promise<StoriesLanding | null>;
     getStoryBySlug(locale: Locale, slug: string): Promise<Story | null>;
     getHeaderNavigation(locale: Locale): Promise<NavigationItem[]>;
