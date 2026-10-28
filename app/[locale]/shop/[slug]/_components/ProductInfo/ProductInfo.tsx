@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -97,6 +98,34 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           )}
           <p className={bodyTextClass}>{tCard("conditionNote")}</p>
         </InfoSection>
+
+        {/* Bài Mili Talk admin gắn cho sản phẩm (`miliTalk` của GET /products/:slug); không gắn thì ẩn */}
+        {product.miliTalk && (
+          <InfoSection title={tCard("detailsBlog")}>
+            <Link
+              href={`/blog/${product.miliTalk.slug}`}
+              className="group flex items-center gap-3 text-(--brand-green) hover:text-(--brand-green-dark)"
+            >
+              <span className="relative h-14 w-11 shrink-0 overflow-hidden bg-[#ebedef]">
+                <Image
+                  src={product.miliTalk.coverImage}
+                  alt={product.miliTalk.coverAlt ?? product.miliTalk.title}
+                  fill
+                  sizes="44px"
+                  className="object-cover"
+                />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[11.2px] font-medium leading-[17px] underline underline-offset-2">
+                  {tCard("detailsBlogText")}
+                </span>
+                <span className="mt-0.5 block truncate text-[11.2px] leading-[17px] text-black/55">
+                  {product.miliTalk.title}
+                </span>
+              </span>
+            </Link>
+          </InfoSection>
+        )}
 
         {product.policyLinks.length > 0 && (
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[11.2px]">
