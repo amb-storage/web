@@ -44,6 +44,16 @@ Successful Stripe settlement enqueues a durable shop notification only when
 durable customer notifications; no-op updates do not. Both use unique dedupe
 keys and Resend idempotency keys.
 
+## Product Mili Talks link and Home blog image
+
+`GET /api/v1/products/:slug` includes `miliTalk`: the Story card (`id`, `slug`,
+`title`, `excerpt`, `coverMedia`, `publishedAt`) linked to the Product in the
+Admin, or `null` when none is linked or the Story is not published. Link it to
+`/blog/<slug>`.
+
+`GET /api/v1/home` returns `miliTalksIntro.media` (a media summary or `null`):
+the image chosen for the Home Mili Talks block. It links to `/blog`.
+
 ## View counting and popular products
 
 Call `POST /api/v1/views` once on every page navigation, including client-side

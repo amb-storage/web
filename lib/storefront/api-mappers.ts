@@ -55,6 +55,7 @@ export function toProductDetail(product: ApiProductDetail): ProductDetail {
         seo: product.seo,
         details: product.details,
         policyLinks: product.policyLinks,
+        miliTalk: product.miliTalk ? toStoryCard(product.miliTalk) : null,
     };
 }
 
@@ -118,7 +119,15 @@ export function toHomepage(home: ApiHome): Homepage {
                 },
             ];
         }),
-        miliTalksIntro: home.miliTalksIntro ?? null,
+        miliTalksIntro: home.miliTalksIntro
+            ? {
+                  heading: home.miliTalksIntro.heading,
+                  introduction: home.miliTalksIntro.introduction,
+                  supportingText: home.miliTalksIntro.supportingText,
+                  image: home.miliTalksIntro.media ? mediaSrc(home.miliTalksIntro.media) : null,
+                  imageAlt: home.miliTalksIntro.media?.alt ?? null,
+              }
+            : null,
         featuredStory: home.featuredMiliTalk ? toStoryCard(home.featuredMiliTalk) : null,
     };
 }

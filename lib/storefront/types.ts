@@ -45,6 +45,7 @@ export interface ProductDetail extends Product {
     seo: { title: string; description: string | null };
     details: Array<{ key: string; label: string; value: string }>;
     policyLinks: Array<{ slug: string; href: string; label: string }>;
+    miliTalk: StoryCard | null;
 }
 
 // popular: lượt xem trang sản phẩm 30 ngày gần nhất (backend tự đếm qua `POST /views`)
@@ -131,6 +132,8 @@ export interface Homepage {
         heading: string;
         introduction: string;
         supportingText: string | null;
+        image: string | null;
+        imageAlt: string | null;
     } | null;
     featuredStory: StoryCard | null;
 }

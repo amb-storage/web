@@ -52,7 +52,16 @@ export default function BlogSection({
                         </Link>
                     </div>
 
-                    {featuredStory && (
+                    {/* Hình chọn trong admin (bấm mở /blog); chưa chọn thì dùng ảnh bìa bài nổi bật như trước */}
+                    {intro?.image ? (
+                        <div className="flex justify-end">
+                            <FeaturedPostImage
+                                image={intro.image}
+                                title={intro.imageAlt ?? intro.heading}
+                                href="/blog"
+                            />
+                        </div>
+                    ) : featuredStory ? (
                         <div className="flex justify-end">
                             <FeaturedPostImage
                                 image={featuredStory.coverImage}
@@ -60,7 +69,7 @@ export default function BlogSection({
                                 href={`/blog/${featuredStory.slug}`}
                             />
                         </div>
-                    )}
+                    ) : null}
                 </div>
 
                 {stories.length > 0 && (

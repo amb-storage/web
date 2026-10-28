@@ -80,6 +80,8 @@ export interface ApiProductDetail extends ApiProductSummary {
     details: ApiProductDetailEntry[];
     media: ApiMediaSummary[];
     policyLinks: ApiPolicyLink[];
+    // Bài Mili Talks gắn với sản phẩm trong admin; null khi không gắn / bài chưa xuất bản
+    miliTalk?: ApiStoryCard | null;
 }
 
 export interface ApiFacetOption extends ApiTaxonomySummary {
@@ -254,7 +256,8 @@ export interface ApiHome {
     newArrivals?: ApiProductRail;
     mostPopular?: ApiProductRail;
     customerVoice?: { items: ApiCustomerVoiceItem[] };
-    miliTalksIntro?: ApiStoriesIntro;
+    // `media`: hình chọn trong admin cho khối Mili Talks ở trang chủ (bấm vào mở /blog)
+    miliTalksIntro?: ApiStoriesIntro & { media?: ApiMediaSummary | null };
     featuredMiliTalk?: ApiStoryCard;
 }
 

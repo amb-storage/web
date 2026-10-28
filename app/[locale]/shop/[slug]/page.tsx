@@ -6,6 +6,7 @@ import { Link, redirect } from "@/i18n/navigation";
 import ProductGallery from "./_components/ProductGallery/ProductGallery";
 import ProductInfo from "./_components/ProductInfo/ProductInfo";
 import RelatedProducts from "./_components/RelatedProducts/RelatedProducts";
+import ProductMiliTalk from "./_components/ProductMiliTalk/ProductMiliTalk";
 import { RecentlyViewedTracker } from "../../_components/RecentlyViewedSection/RecentlyViewedTracker";
 import TrackEvent from "@/components/Analytics/TrackEvent/TrackEvent";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
@@ -91,6 +92,7 @@ export default async function ProductDetailPage({
             </div>
 
             <div className="px-4 md:px-8">
+                {product.miliTalk && <ProductMiliTalk story={product.miliTalk} />}
                 <RelatedProducts
                     title={t("relatedProducts")}
                     products={relatedProducts}

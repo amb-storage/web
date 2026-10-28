@@ -228,7 +228,11 @@
     "sizes": "Sizes",
     "taggedSize": "Tagged size",
     "measurementsNote": "(*Measurements may vary slightly.)",
-    "condition": "Condition"
+    "condition": "Condition",
+    "miliTalk": {
+      "title": "Related on Mili Talks",
+      "readMore": "Read the article"
+    }
   },
   "blog": {
     "pageTitle": "MILI TALKS",

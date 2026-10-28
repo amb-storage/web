@@ -228,7 +228,11 @@
     "sizes": "Sizes",
     "taggedSize": "表記",
     "measurementsNote": "（*測定値の若干の誤差はご了承下さい。）",
-    "condition": "Condition"
+    "condition": "Condition",
+    "miliTalk": {
+      "title": "関連する Mili Talks",
+      "readMore": "記事を読む"
+    }
   },
   "blog": {
     "pageTitle": "MILI TALKS",
