@@ -198,7 +198,8 @@
       "label": "並び替え",
       "newest": "新着順",
       "priceLow": "価格の安い順",
-      "priceHigh": "価格の高い順"
+      "priceHigh": "価格の高い順",
+      "popular": "人気順"
     },
     "inStock": "In Stock",
     "itemCount": "{count} items",

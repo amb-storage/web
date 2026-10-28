@@ -41,6 +41,7 @@ const API_PRODUCT_SORT = {
     newest: "newest",
     "price-low": "price_asc",
     "price-high": "price_desc",
+    popular: "popular",
 } as const satisfies Record<ProductSort, ApiProductSort>;
 
 // Bộ lọc web → query của `GET /products` (category / size gửi dạng mảng slug)
@@ -78,6 +79,16 @@ export const storefrontRepository: StorefrontRepository = {
         // Trang chủ có các dải sản phẩm (badge SOLD OUT) → không cache như sản phẩm
         const home = await apiGetOrNull<ApiHome>("/home", { locale, revalidate: LIVE_STOCK });
         return home ? toHomepage(home) : null;
+    },
+
+    async getPopularProducts(locale, limit) {
+        // Xếp theo lượt xem trang sản phẩm 30 ngày gần nhất; bằng nhau thì hàng mới trước
+        const result = await apiGet<ApiPage<ApiProductSummary>>("/products", {
+            locale,
+            query: { sort: "popular", page: 1, limit },
+            revalidate: LIVE_STOCK,
+        });
+        return result.items.map(toProduct);
     },
 
     async getAllProducts(locale) {

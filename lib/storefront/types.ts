@@ -47,7 +47,8 @@ export interface ProductDetail extends Product {
     policyLinks: Array<{ slug: string; href: string; label: string }>;
 }
 
-export type ProductSort = "newest" | "price-low" | "price-high";
+// popular: lượt xem trang sản phẩm 30 ngày gần nhất (backend tự đếm qua `POST /views`)
+export type ProductSort = "newest" | "price-low" | "price-high" | "popular";
 
 // Bộ lọc trang Shop (đọc từ URL `/shop?...`), map sang query `GET /products`
 export interface ProductListQuery {

@@ -15,6 +15,7 @@ const sortOptions = [
   { value: "newest", key: "newest" },
   { value: "price-low", key: "priceLow" },
   { value: "price-high", key: "priceHigh" },
+  { value: "popular", key: "popular" },
 ] as const;
 
 export default function SortDropdown({ value, onChange }: SortDropdownProps) {

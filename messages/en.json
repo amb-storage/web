@@ -198,7 +198,8 @@
       "label": "Sort",
       "newest": "Newest",
       "priceLow": "Price low → high",
-      "priceHigh": "Price high → low"
+      "priceHigh": "Price high → low",
+      "popular": "Most popular"
     },
     "inStock": "In Stock",
     "itemCount": "{count} items",

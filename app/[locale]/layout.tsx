@@ -8,6 +8,7 @@ import SplashScreen from "@/components/SplashScreen/SplashScreen";
 import SmoothScroll from "@/components/SmoothScroll/SmoothScroll";
 import { CartProvider } from "@/components/Cart/CartProvider";
 import GoatCounter from "@/components/Analytics/GoatCounter/GoatCounter";
+import ViewTracker from "@/components/Analytics/ViewTracker/ViewTracker";
 import { leagueSpartan, poppins, stencilGothic } from "@/lib/fonts";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import {
@@ -73,6 +74,7 @@ export default async function RootLayout({
                         </SmoothScroll>
                     </CartProvider>
                     <GoatCounter />
+                    <ViewTracker />
                 </NextIntlClientProvider>
             </body>
         </html>

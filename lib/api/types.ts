@@ -93,7 +93,7 @@ export interface ApiProductFacets {
     maxPrice: number | null;
 }
 
-export type ApiProductSort = "newest" | "price_asc" | "price_desc";
+export type ApiProductSort = "newest" | "price_asc" | "price_desc" | "popular";
 
 export interface ApiProductListQuery {
     category?: string[];

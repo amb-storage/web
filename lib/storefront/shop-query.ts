@@ -2,7 +2,7 @@ import type { ProductListQuery, ProductSort } from "./types";
 
 type SearchParamValue = string | string[] | undefined;
 
-const SORTS: readonly ProductSort[] = ["newest", "price-low", "price-high"];
+const SORTS: readonly ProductSort[] = ["newest", "price-low", "price-high", "popular"];
 // Slug category / size giống normalizePublicSlug của backend (size "40R" → "40r")
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const MAX_SEARCH_LENGTH = 255;

@@ -19,6 +19,7 @@ import type {
 export interface StorefrontRepository {
     getHomepage(locale: Locale): Promise<Homepage | null>;
     getAllProducts(locale: Locale): Promise<Product[]>;
+    getPopularProducts(locale: Locale, limit: number): Promise<Product[]>;
     searchProducts(locale: Locale, query: ProductListQuery): Promise<ProductListPage>;
     getProductBySlug(locale: Locale, slug: string): Promise<ProductDetail | null>;
     getProductFacets(locale: Locale): Promise<ProductFacets>;

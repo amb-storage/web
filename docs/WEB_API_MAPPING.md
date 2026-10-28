@@ -19,6 +19,8 @@ unchanged.
 | Guest/customer Cart | `GET /api/v1/cart`, `/api/v1/cart/items`, `/api/v1/cart/merge`, and related item routes |
 | Customer OTP | `/api/v1/customer/auth/*` |
 | Checkout | `POST /api/v1/checkout/sessions`, `POST /api/v1/checkout/webhook` (Stripe only) |
+| View counting | `POST /api/v1/views` |
+| Admin financial dashboard | `GET /api/v1/admin/orders/financial-dashboard?from=YYYY-MM-DD&to=YYYY-MM-DD` (requires `orders.read`) |
 
 Cart and Customer Auth requests use `credentials: "include"`, the existing
 CSRF and Origin protections, and the existing idempotency behavior. Guest and
@@ -29,6 +31,49 @@ Cart changes only validate current availability. Checkout reserves requested
 stock through its pending Order before creating a Stripe Session; payment
 confirmation consumes that reservation and decrements physical Product
 quantity. Browser success/cancel redirects do not change payment or stock.
+
+Checkout tax is stored on the Order snapshot (`tax_amount`, `tax_rate_percent`,
+`tax_calculation_mode`). `tax_display_mode` remains a storefront display
+setting; it does not silently change payment amounts. The separate tax
+calculation setting defaults to `NONE`, preserving current production behavior.
+Receipts, Stripe Checkout line items, Admin order responses, and the financial
+dashboard read the same persisted snapshot.
+
+Successful Stripe settlement enqueues a durable shop notification only when
+`SHOP_NOTIFICATION_EMAIL` is configured. Admin fulfillment transitions enqueue
+durable customer notifications; no-op updates do not. Both use unique dedupe
+keys and Resend idempotency keys.
+
+## View counting and popular products
+
+Call `POST /api/v1/views` once on every page navigation, including client-side
+route changes. Send `productSlug` on product detail pages and an empty body
+elsewhere:
+
+```js
+fetch(`${API_ORIGIN}/api/v1/views`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(productSlug ? { productSlug } : {}),
+  keepalive: true,
+}).catch(() => {});
+```
+
+- A valid call returns `204` with no body; repeats within the same 12-hour
+  window, bots and unknown slugs are ignored silently, so the Web does not need
+  to deduplicate.
+- No cookies or CSRF token are needed. Do not use `navigator.sendBeacon`: it
+  sends `text/plain`, which the API does not parse.
+- Unknown body fields return `400`; more than 60 calls per minute from one IP
+  return `429`. Never block rendering on this call.
+- Call it from the browser only, not during server-side rendering, or every
+  view is attributed to the Web server's IP.
+
+`GET /api/v1/products?sort=popular` orders products by product-page views in
+the last 30 days, newest first among ties; it combines with the usual filters
+and pagination. For a homepage "Most popular" block use
+`GET /api/v1/products?sort=popular&limit=8`. Other `sort` values remain
+`newest` (default), `price_asc` and `price_desc`.
 
 Product responses use `price`, `size`, `quantity`, and Category projections;
 they do not expose Period, Variants, or legacy price fields. Story is the sole
