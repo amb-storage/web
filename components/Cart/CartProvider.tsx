@@ -16,6 +16,7 @@ import {
   updateCartItem,
 } from "./cartApi";
 import { savePendingCheckout } from "./checkoutStorage";
+import { trackEvent } from "@/lib/analytics";
 
 export interface CartLine {
   productId: string;
@@ -63,13 +64,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState(false);
   const [errorCode, setErrorCode] = useState<string | null>(null);
 
+  // Trả true khi thao tác thành công (để chỉ gửi analytics cho lần thêm giỏ thật sự thành công)
   const run = useCallback(async (action: () => Promise<ApiCart>) => {
     setPending(true);
     setErrorCode(null);
     try {
       setCart(await action());
+      return true;
     } catch (error) {
       setErrorCode(error instanceof ApiClientError ? error.code : "UNKNOWN");
+      return false;
     } finally {
       setPending(false);
     }
@@ -140,12 +144,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
       pending,
       errorCode,
       has: (productId) => items.some((item) => item.productId === productId),
-      add: (productId, quantity = 1) => run(() => addCartItem(locale, productId, quantity)),
-      remove: (productId) => run(() => removeCartItem(locale, productId)),
-      updateQuantity: (productId, quantity) =>
-        quantity < 1
+      add: async (productId, quantity = 1) => {
+        if (await run(() => addCartItem(locale, productId, quantity))) trackEvent("add_to_cart", productId);
+      },
+      remove: async (productId) => {
+        await run(() => removeCartItem(locale, productId));
+      },
+      updateQuantity: async (productId, quantity) => {
+        await (quantity < 1
           ? run(() => removeCartItem(locale, productId))
-          : run(() => updateCartItem(locale, productId, quantity)),
+          : run(() => updateCartItem(locale, productId, quantity)));
+      },
       clear: async () => {
         setPending(true);
         setErrorCode(null);
@@ -165,6 +174,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           const session = await createCheckoutSession(locale, input);
           // Lưu lại để trang /checkout/success hiện mã đơn và xoá giỏ
           savePendingCheckout({ orderId: session.orderId, email: input.email });
+          trackEvent("begin_checkout");
           // Chuyển sang trang thanh toán Stripe; kết quả thanh toán do webhook xác nhận
           window.location.assign(session.checkoutUrl);
         } catch (error) {

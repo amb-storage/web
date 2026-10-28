@@ -7,6 +7,7 @@ import ProductGallery from "./_components/ProductGallery/ProductGallery";
 import ProductInfo from "./_components/ProductInfo/ProductInfo";
 import RelatedProducts from "./_components/RelatedProducts/RelatedProducts";
 import { RecentlyViewedTracker } from "../../_components/RecentlyViewedSection/RecentlyViewedTracker";
+import TrackEvent from "@/components/Analytics/TrackEvent/TrackEvent";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import type { Locale } from "@/lib/storefront";
 
@@ -60,6 +61,7 @@ export default async function ProductDetailPage({
     return (
         <div className="w-full">
             <RecentlyViewedTracker productId={product.id} />
+            <TrackEvent name="view_product" title={product.slug} />
             {/* Breadcrumb */}
             <nav className="flex gap-2 whitespace-nowrap px-6 py-4 text-xs leading-4 tracking-[0.24px] text-black/80 md:mx-2 md:my-4">
                 <Link href="/" className="underline">

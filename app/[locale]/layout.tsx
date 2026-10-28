@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer/Footer";
 import SplashScreen from "@/components/SplashScreen/SplashScreen";
 import SmoothScroll from "@/components/SmoothScroll/SmoothScroll";
 import { CartProvider } from "@/components/Cart/CartProvider";
+import GoatCounter from "@/components/Analytics/GoatCounter/GoatCounter";
 import { leagueSpartan, poppins, stencilGothic } from "@/lib/fonts";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import {
@@ -71,6 +72,7 @@ export default async function RootLayout({
                             <Footer settings={settings} navigation={footerNavigation} />
                         </SmoothScroll>
                     </CartProvider>
+                    <GoatCounter />
                 </NextIntlClientProvider>
             </body>
         </html>
