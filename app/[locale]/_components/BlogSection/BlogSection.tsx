@@ -40,10 +40,6 @@ export default function BlogSection({
                                   })}
                         </p>
 
-                        <p className="text-base leading-relaxed text-gray-600">
-                            {intro ? intro.supportingText : t("description")}
-                        </p>
-
                         <Link
                             href="/blog"
                             className="inline-block w-fit bg-(--brand-green) px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-(--brand-green-dark)"
@@ -59,6 +55,7 @@ export default function BlogSection({
                                 image={intro.image}
                                 title={intro.imageAlt ?? intro.heading}
                                 href="/blog"
+                                aspectClassName="aspect-3/4"
                             />
                         </div>
                     ) : featuredStory ? (
@@ -67,6 +64,7 @@ export default function BlogSection({
                                 image={featuredStory.coverImage}
                                 title={featuredStory.title}
                                 href={`/blog/${featuredStory.slug}`}
+                                aspectClassName="aspect-3/4"
                             />
                         </div>
                     ) : null}
