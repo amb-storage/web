@@ -79,12 +79,19 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           {/* Số đo / thông số thêm do admin nhập ở mục Details của sản phẩm */}
           {product.details.length > 0 && (
             <dl className={cn(bodyTextClass, "mt-1")}>
-              {product.details.map((detail) => (
-                <div key={detail.key} className="flex gap-1">
-                  <dt>{detail.label}:</dt>
-                  <dd>{detail.value}</dd>
-                </div>
-              ))}
+              {product.details.map((detail) =>
+                // Khối số đo admin dán nguyên văn (key `measurements`): hiện như lúc dán, giữ xuống dòng, không nhãn
+                detail.key === "measurements" ? (
+                  <dd key={detail.key} className="my-1 whitespace-pre-line">
+                    {detail.value}
+                  </dd>
+                ) : (
+                  <div key={detail.key} className="flex gap-1">
+                    <dt>{detail.label}:</dt>
+                    <dd className="whitespace-pre-line">{detail.value}</dd>
+                  </div>
+                ),
+              )}
             </dl>
           )}
           <p className={bodyTextClass}>{t("measurementsNote")}</p>
