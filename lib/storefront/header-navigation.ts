@@ -9,9 +9,6 @@ export interface HeaderNavigationItem {
     children: readonly HeaderNavigationItem[];
 }
 
-// Dropdown nhiều mục (vd. Shop Now) xếp dọc, ít mục (vd. Home → About Us) xếp ngang
-const VERTICAL_DROPDOWN_MIN_ITEMS = 3;
-
 // Chuyển menu từ `GET /navigation/header` sang cấu trúc header đang dùng; backend không có id nên ghép từ vị trí + href
 export function toHeaderNavigation(
     items: readonly NavigationItem[],
@@ -23,8 +20,8 @@ export function toHeaderNavigation(
             id,
             label: item.label,
             href: item.href,
-            dropdownLayout:
-                item.children.length >= VERTICAL_DROPDOWN_MIN_ITEMS ? "vertical" : "horizontal",
+            // Khách muốn mọi dropdown xếp ngang (kể cả Shop Now nhiều mục)
+            dropdownLayout: "horizontal",
             children: toHeaderNavigation(item.children, id),
         };
     });
@@ -49,7 +46,7 @@ export const fallbackHeaderNavigation = [
         id: "shop-now",
         label: "Shop Now",
         href: "/shop",
-        dropdownLayout: "vertical",
+        dropdownLayout: "horizontal",
         children: [],
     },
     {
