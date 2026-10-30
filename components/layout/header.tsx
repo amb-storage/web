@@ -181,7 +181,7 @@ export default function Header({ navigation }: HeaderProps) {
                             >
                                 <Link
                                     href={item.href ?? "/"}
-                                    className="group relative text-sm font-semibold text-gray-800 transition-colors hover:text-(--brand-green)"
+                                    className="group relative whitespace-nowrap text-sm font-semibold text-gray-800 transition-colors hover:text-(--brand-green)"
                                 >
                                     {item.label}
                                     <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-(--brand-green) transition-transform duration-300 group-hover:scale-x-100" />
@@ -237,7 +237,7 @@ export default function Header({ navigation }: HeaderProps) {
                                                                 null,
                                                             )
                                                         }
-                                                        className="dropdown-item group relative inline-block text-base font-semibold text-gray-700 opacity-0 transition-colors hover:text-(--brand-green)"
+                                                        className="dropdown-item group relative inline-block whitespace-nowrap text-base font-semibold text-gray-700 opacity-0 transition-colors hover:text-(--brand-green)"
                                                     >
                                                         {subItem.label}
                                                         <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-(--brand-green) transition-transform duration-300 group-hover:scale-x-100" />
@@ -268,7 +268,7 @@ export default function Header({ navigation }: HeaderProps) {
                                                                             null,
                                                                         )
                                                                     }
-                                                                    className="dropdown-item text-sm font-medium text-gray-500 opacity-0 transition-colors hover:text-(--brand-green)"
+                                                                    className="dropdown-item whitespace-nowrap text-sm font-medium text-gray-500 opacity-0 transition-colors hover:text-(--brand-green)"
                                                                 >
                                                                     {
                                                                         childItem.label
