@@ -19,7 +19,9 @@ const textColorClass = {
 const isExternal = (href: string) => /^(https?:|mailto:|tel:)/.test(href);
 
 function applyMarks(text: ReactNode, marks: ApiRichTextMark[] = []) {
-    return marks.reduce<ReactNode>((child, mark) => {
+    // Màu chữ bọc trong cùng để <strong>/<a> (có màu riêng) không đè mất màu đã chọn
+    const ordered = [...marks].sort((a, b) => Number(b.type === "textColor") - Number(a.type === "textColor"));
+    return ordered.reduce<ReactNode>((child, mark) => {
         if (mark.type === "bold") return <strong>{child}</strong>;
         if (mark.type === "italic") return <em>{child}</em>;
         if (mark.type === "textColor") return <span className={textColorClass[mark.color]}>{child}</span>;
