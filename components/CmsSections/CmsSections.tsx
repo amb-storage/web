@@ -11,7 +11,7 @@ import type { ApiCta, ApiMediaSummary, ApiProductSummary, ApiSection } from "@/l
 import { cn } from "@/lib/utils";
 
 const richTextClassName =
-    "text-[13px] tracking-[0.1em] [&_a]:text-(--brand-green) [&_a]:underline [&_h2]:mb-4 [&_h2]:mt-0 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:leading-tight [&_h2]:text-(--brand-green) [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-(--brand-green) [&_li]:mb-2 [&_p]:mb-6 [&_p]:leading-[1.45] [&_p]:text-gray-900 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-(--brand-green) [&_blockquote]:pl-4";
+    "text-[15px] tracking-[0.1em] [&_a]:text-(--brand-green) [&_a]:underline [&_h2]:mb-4 [&_h2]:mt-0 [&_h2]:mt-2 [&_h2]:text-3xl md:[&_h2]:text-4xl [&_h2]:font-bold [&_h2]:leading-tight [&_h2]:text-(--brand-green) [&_h3]:mb-3 [&_h3]:mt-2 [&_h3]:text-2xl md:[&_h3]:text-[1.75rem] [&_h3]:font-bold [&_h3]:text-(--brand-green) [&_li]:mb-2 [&_p]:mb-6 [&_p]:leading-[1.45] [&_p]:text-gray-900 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-(--brand-green) [&_blockquote]:pl-4";
 
 const widthClass = {
     NARROW: "max-w-xl",
@@ -24,6 +24,16 @@ const spacingClass = {
     MEDIUM: "py-8",
     LARGE: "py-12",
 } as const;
+
+// Tiêu đề tuỳ chọn phía trên mỗi khối nội dung
+function BlockHeading({ text }: { text?: string }) {
+    if (!text) return null;
+    return (
+        <h2 className="mx-auto mb-6 max-w-6xl text-center text-2xl font-semibold text-gray-900 md:mb-8 md:text-3xl">
+            {text}
+        </h2>
+    );
+}
 
 function SectionImage({ media, alt }: { media: ApiMediaSummary; alt?: string | null }) {
     return (
@@ -40,8 +50,7 @@ function SectionImage({ media, alt }: { media: ApiMediaSummary; alt?: string | n
 function CtaLink({ cta }: { cta: ApiCta }) {
     const className = cn(
         "inline-flex min-h-10 items-center justify-center px-5 text-sm font-semibold transition-colors",
-        cta.variant === "PRIMARY" &&
-            "bg-(--brand-green) text-white hover:bg-(--brand-green-dark)",
+        cta.variant === "PRIMARY" && "bg-(--brand-green) text-white hover:bg-(--brand-green-dark)",
         cta.variant === "SECONDARY" &&
             "border-2 border-(--brand-green) text-(--brand-green) hover:bg-(--brand-green) hover:text-white",
         cta.variant === "TEXT" && "px-0 text-(--brand-green) underline underline-offset-4",
@@ -96,20 +105,10 @@ function ProductGrid({ products }: { products: ApiProductSummary[] }) {
 function ProductRail({ products }: { products: ApiProductSummary[] }) {
     const t = useTranslations("cmsSections");
 
-    return (
-        <ProductCarousel
-            products={products.map(toProduct)}
-            previousLabel={t("previous")}
-            nextLabel={t("next")}
-        />
-    );
+    return <ProductCarousel products={products.map(toProduct)} previousLabel={t("previous")} nextLabel={t("next")} />;
 }
 
-function ContactSection({
-    section,
-}: {
-    section: Extract<ApiSection, { type: "CONTACT" }>;
-}) {
+function ContactSection({ section }: { section: Extract<ApiSection, { type: "CONTACT" }> }) {
     const t = useTranslations("cmsSections.contact");
 
     return (
@@ -159,13 +158,8 @@ function ContactSection({
                         placeholder={t("messagePlaceholder")}
                         className="resize-none border border-[#a8a8a8] bg-white px-3 py-3 text-sm outline-none placeholder:text-gray-500 focus:border-(--brand-green)"
                     />
-                    <p className="mt-2 text-[10px] leading-4 tracking-[0.04em] text-gray-500">
-                        {t("recaptcha")}
-                    </p>
-                    <button
-                        type="button"
-                        className="w-fit bg-[#a9c8b0] px-5 py-2 text-sm text-white"
-                    >
+                    <p className="mt-2 text-[10px] leading-4 tracking-[0.04em] text-gray-500">{t("recaptcha")}</p>
+                    <button type="button" className="w-fit bg-[#a9c8b0] px-5 py-2 text-sm text-white">
                         {t("send")}
                     </button>
                 </div>
@@ -183,7 +177,9 @@ interface CmsSectionsProps {
 export default function CmsSections({ sections }: CmsSectionsProps) {
     return (
         <div className="overflow-hidden">
-            {sections.map((section) => {
+            {sections.map((section, index) => {
+                // Khối nội dung xen kẽ nền Trắng / Xám nhạt theo thứ tự trong bài
+                const stripe = index % 2 === 0 ? "bg-white" : "bg-[#eff5f0]";
                 switch (section.type) {
                     case "HERO":
                         return (
@@ -218,17 +214,12 @@ export default function CmsSections({ sections }: CmsSectionsProps) {
                             <section key={section.id} className="bg-white px-5 py-8 md:py-12">
                                 <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
                                     {section.collections.map((collection) => (
-                                        <div
-                                            key={collection.id}
-                                            className="border border-gray-200 p-5"
-                                        >
+                                        <div key={collection.id} className="border border-gray-200 p-5">
                                             <h3 className="text-lg font-bold text-(--brand-green)">
                                                 {collection.title}
                                             </h3>
                                             {collection.description && (
-                                                <p className="mt-2 text-sm text-gray-700">
-                                                    {collection.description}
-                                                </p>
+                                                <p className="mt-2 text-sm text-gray-700">{collection.description}</p>
                                             )}
                                         </div>
                                     ))}
@@ -269,7 +260,8 @@ export default function CmsSections({ sections }: CmsSectionsProps) {
                         return <ContactSection key={section.id} section={section} />;
                     case "RICH_TEXT":
                         return (
-                            <section key={section.id} className="bg-white py-8 md:py-12">
+                            <section key={section.id} className={cn(stripe, "py-8 md:py-12")}>
+                                <BlockHeading text={section.heading} />
                                 <div className={cn("mx-auto px-5", widthClass[section.width])}>
                                     <RichText document={section.body} className={richTextClassName} />
                                 </div>
@@ -277,7 +269,8 @@ export default function CmsSections({ sections }: CmsSectionsProps) {
                         );
                     case "IMAGE":
                         return (
-                            <section key={section.id} className="bg-[#eff5f0] px-5 py-8 md:py-12">
+                            <section key={section.id} className={cn(stripe, "px-5 py-8 md:py-12")}>
+                                <BlockHeading text={section.heading} />
                                 <div className={cn("mx-auto", widthClass[section.width])}>
                                     <SectionImage media={section.media} alt={section.alt} />
                                 </div>
@@ -285,11 +278,9 @@ export default function CmsSections({ sections }: CmsSectionsProps) {
                         );
                     case "IMAGE_WITH_TEXT":
                         return (
-                            <section
-                                key={section.id}
-                                className="bg-[#eff5f0] px-5 py-8 md:px-8 md:py-12"
-                            >
-                                <div className="mx-auto grid max-w-4xl items-center gap-8 md:grid-cols-2 md:gap-12">
+                            <section key={section.id} className={cn(stripe, "px-5 py-8 md:px-8 md:py-12")}>
+                                <BlockHeading text={section.heading} />
+                                <div className="mx-auto grid max-w-6xl items-start gap-8 md:grid-cols-[1.2fr_1fr] md:gap-16">
                                     <div
                                         className={cn(
                                             "overflow-hidden",
@@ -323,7 +314,8 @@ export default function CmsSections({ sections }: CmsSectionsProps) {
                         );
                     case "GALLERY":
                         return (
-                            <section key={section.id} className="bg-white px-5 py-8 md:py-12">
+                            <section key={section.id} className={cn(stripe, "px-5 py-8 md:py-12")}>
+                                <BlockHeading text={section.heading} />
                                 <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
                                     {section.media.map((media) => (
                                         <SectionImage key={media.id} media={media} />
@@ -333,7 +325,8 @@ export default function CmsSections({ sections }: CmsSectionsProps) {
                         );
                     case "QUOTE":
                         return (
-                            <section key={section.id} className="bg-white px-5 py-8 md:py-12">
+                            <section key={section.id} className={cn(stripe, "px-5 py-8 md:py-12")}>
+                                <BlockHeading text={section.heading} />
                                 <figure className="mx-auto max-w-2xl border-l-2 border-(--brand-green) pl-5">
                                     <blockquote className="text-lg leading-relaxed text-gray-900">
                                         {section.text}

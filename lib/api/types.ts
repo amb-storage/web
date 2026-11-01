@@ -3,11 +3,7 @@
 
 export type ApiLocale = "ja" | "en";
 
-export type ApiAvailability =
-    | "AVAILABLE"
-    | "TEMPORARILY_UNAVAILABLE"
-    | "SOLD_OUT"
-    | "UNAVAILABLE";
+export type ApiAvailability = "AVAILABLE" | "TEMPORARILY_UNAVAILABLE" | "SOLD_OUT" | "UNAVAILABLE";
 
 export interface ApiErrorBody {
     statusCode: number;
@@ -113,7 +109,8 @@ export interface ApiProductListQuery {
 export type ApiRichTextMark =
     | { type: "bold" }
     | { type: "italic" }
-    | { type: "link"; href: string };
+    | { type: "link"; href: string }
+    | { type: "textColor"; color: "GREEN" | "RED" | "BLUE" | "GRAY" };
 
 export type ApiRichTextNode =
     | { type: "doc"; content: ApiRichTextNode[] }
@@ -169,10 +166,17 @@ export type ApiSection =
           spacing: Spacing;
           actions: ApiCta[];
       }
-    | { id: string; type: "RICH_TEXT"; body: ApiRichTextDocument; width: Width }
+    | {
+          id: string;
+          type: "RICH_TEXT";
+          heading?: string;
+          body: ApiRichTextDocument;
+          width: Width;
+      }
     | {
           id: string;
           type: "IMAGE";
+          heading?: string;
           media: ApiMediaSummary;
           alt: string | null;
           width: Width;
@@ -180,13 +184,11 @@ export type ApiSection =
     | {
           id: string;
           type: "IMAGE_WITH_TEXT";
+          heading?: string;
           media: ApiMediaSummary;
           imagePosition: "LEFT" | "RIGHT";
           alignment: Alignment;
-          content: Array<
-              | { type: "RICH_TEXT"; body: ApiRichTextDocument }
-              | { type: "CTA"; cta: ApiCta }
-          >;
+          content: Array<{ type: "RICH_TEXT"; body: ApiRichTextDocument } | { type: "CTA"; cta: ApiCta }>;
       }
     | {
           id: string;
@@ -194,10 +196,11 @@ export type ApiSection =
           heading: string;
           body: ApiRichTextDocument;
       }
-    | { id: string; type: "GALLERY"; media: ApiMediaSummary[] }
+    | { id: string; type: "GALLERY"; heading?: string; media: ApiMediaSummary[] }
     | {
           id: string;
           type: "QUOTE";
+          heading?: string;
           text: string;
           attribution: string | null;
       }

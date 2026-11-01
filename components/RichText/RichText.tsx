@@ -8,12 +8,21 @@ interface RichTextProps {
     className?: string;
 }
 
+// Màu chữ giới hạn theo bảng màu thương hiệu (khớp với portal)
+const textColorClass = {
+    GREEN: "text-(--brand-green)",
+    RED: "text-[#b3261e]",
+    BLUE: "text-[#1f4e8c]",
+    GRAY: "text-gray-500",
+} as const;
+
 const isExternal = (href: string) => /^(https?:|mailto:|tel:)/.test(href);
 
 function applyMarks(text: ReactNode, marks: ApiRichTextMark[] = []) {
     return marks.reduce<ReactNode>((child, mark) => {
         if (mark.type === "bold") return <strong>{child}</strong>;
         if (mark.type === "italic") return <em>{child}</em>;
+        if (mark.type === "textColor") return <span className={textColorClass[mark.color]}>{child}</span>;
         // Link nội bộ đi qua Link của next-intl để giữ prefix locale
         return isExternal(mark.href) ? (
             <a href={mark.href} target="_blank" rel="noopener noreferrer">
@@ -35,7 +44,8 @@ function renderNodes(nodes: ApiRichTextNode[]): ReactNode[] {
             case "paragraph":
                 return <p key={index}>{renderNodes(node.content)}</p>;
             case "heading": {
-                const Heading = node.level === 1 ? "h2" : node.level === 2 ? "h3" : "h4";
+                // Editor có nút H2/H3 (level 2/3) → render đúng h2/h3; level 1 cũng thành h2 (h1 là tiêu đề trang)
+                const Heading = node.level === 3 ? "h3" : "h2";
                 return <Heading key={index}>{renderNodes(node.content)}</Heading>;
             }
             case "bulletList":

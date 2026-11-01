@@ -12,7 +12,8 @@ unchanged.
 | Stories (Web label: Mili Talks) | `GET /api/v1/stories`, `/api/v1/stories/:slug` |
 | Mili Talks landing (`/blog`) | `GET /api/v1/content/stories` |
 | Navigation | `GET /api/v1/navigation/header`, `/api/v1/navigation/footer` |
-| Settings | `GET /api/v1/settings` |
+| Settings (incl. `contactEmail`, `contactPhone`) | `GET /api/v1/settings` |
+| Contact form (お問い合わせ) | `POST /api/v1/contact` |
 | About and policies | `GET /api/v1/content/about`, `/api/v1/content/policies`, `/api/v1/content/policies/:slug` |
 | Pages | `GET /api/v1/pages/:slug` |
 | Media | `GET /api/v1/media/:id` |
@@ -54,6 +55,35 @@ Admin, or `null` when none is linked or the Story is not published. Link it to
 `GET /api/v1/home` returns `miliTalksIntro.media` (a media summary or `null`):
 the image chosen for the Home Mili Talks block. It links to `/blog`.
 
+## Contact form (お問い合わせ)
+
+`POST /api/v1/contact` stores the message for the Admin inbox and alerts the
+shop by email. It needs no session, cookie or CSRF token.
+
+```json
+{
+  "name": "山田 太郎",
+  "email": "taro@example.jp",
+  "category": "PRODUCT",
+  "subject": "MA-1のサイズについて",
+  "message": "…",
+  "orderNumber": "AMB-20260418-0012",
+  "locale": "ja",
+  "website": ""
+}
+```
+
+- `name` ≤ 100, `subject` ≤ 200, `message` ≤ 5000 characters (all required,
+  trimmed); `email` must be valid; `category` is
+  `PRODUCT | BUYING | ORDER | FEEDBACK | OTHER`; `locale` is `ja | en`;
+  `orderNumber` is optional (`null` or ≤ 64).
+- `website` is a honeypot: keep it hidden and empty. A filled value still
+  returns `202` but nothing is stored or sent.
+- Success: `202 { "id": "<uuid>" }`. Invalid or unknown fields: `400`.
+- At most 5 requests per IP per 10 minutes, invalid ones included; over the
+  limit returns `429 { "code": "CONTACT_RATE_LIMITED" }`.
+- The API sends no auto-reply to the customer.
+
 ## View counting and popular products
 
 Call `POST /api/v1/views` once on every page navigation, including client-side
@@ -88,3 +118,10 @@ and pagination. For a homepage "Most popular" block use
 Product responses use `price`, `size`, `quantity`, and Category projections;
 they do not expose Period, Variants, or legacy price fields. Story is the sole
 backend content resource; `/blog` is only a Web display route.
+
+## Editorial block headings and text color
+
+Public `RICH_TEXT`, `IMAGE`, `IMAGE_WITH_TEXT`, `GALLERY` and `QUOTE` sections
+may include `heading: string`; the field is omitted when the block has no
+heading. Rich text marks may include `{ "type": "textColor", "color":
+"GREEN" | "RED" | "BLUE" | "GRAY" }`.
