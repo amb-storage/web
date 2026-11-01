@@ -72,6 +72,8 @@ async function fetchAllPages<T>(
 // Đồ vintage thường chỉ có 1 cái: tình trạng còn hàng phải luôn mới, nên dữ liệu sản phẩm
 // không dùng cache fetch của Next (0 = không cache). Nội dung CMS / menu / settings vẫn cache 60s.
 const LIVE_STOCK = 0;
+// Blog luôn lấy mới: admin sửa/xuất bản bài là web hiện ngay, không chờ cache
+const LIVE_CONTENT = 0;
 
 // Chỉ dùng ở server component (gọi thẳng API_BASE_URL)
 export const storefrontRepository: StorefrontRepository = {
@@ -153,6 +155,7 @@ export const storefrontRepository: StorefrontRepository = {
             apiGet<ApiPage<ApiStoryCard>>("/stories", {
                 locale,
                 query: { page, limit: PAGE_LIMIT },
+                revalidate: LIVE_CONTENT,
             }),
         );
         return stories.map(toStoryCard);
@@ -162,6 +165,7 @@ export const storefrontRepository: StorefrontRepository = {
         const result = await apiGet<ApiPage<ApiStoryCard>>("/stories", {
             locale,
             query: { page, limit },
+            revalidate: LIVE_CONTENT,
         });
         return {
             items: result.items.map(toStoryCard),
@@ -174,7 +178,7 @@ export const storefrontRepository: StorefrontRepository = {
     async getStoriesLanding(locale) {
         try {
             // 404 khi chưa xuất bản landing Mili Talks → trang /blog dùng nội dung mặc định
-            const landing = await apiGetOrNull<ApiStoriesLanding>("/content/stories", { locale });
+            const landing = await apiGetOrNull<ApiStoriesLanding>("/content/stories", { locale, revalidate: LIVE_CONTENT });
             return landing ? toStoriesLanding(landing) : null;
         } catch (error) {
             // 503 STORE_CMS_INTEGRITY_FAILURE: landing đã xuất bản nhưng nội dung không hợp lệ → không làm sập /blog
@@ -189,7 +193,7 @@ export const storefrontRepository: StorefrontRepository = {
     async getStoryBySlug(locale, slug) {
         const story = await apiGetOrNull<ApiStoryDetail>(
             `/stories/${encodeURIComponent(slug)}`,
-            { locale },
+            { locale, revalidate: LIVE_CONTENT },
         );
         return story ? toStory(story) : null;
     },
