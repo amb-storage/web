@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
-import Image from "next/image";
+import LoadingImage from "@/components/LoadingImage/LoadingImage";
 import { Link } from "@/i18n/navigation";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import { formatDate, type Locale } from "@/lib/storefront";
@@ -47,7 +47,7 @@ export default async function BlogPostPage({
             </header>
 
             <div className="mx-auto max-w-2xl bg-[#eff5f0] px-5 pb-10">
-                <Image
+                <LoadingImage
                     src={post.coverImage}
                     alt={post.coverAlt ?? post.title}
                     width={1080}

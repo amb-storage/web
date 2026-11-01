@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import LoadingImage from "@/components/LoadingImage/LoadingImage";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -33,12 +33,13 @@ export default function BlogPostGrid({ posts }: BlogPostGridProps) {
                     >
                         <div className="relative aspect-4/5 w-full overflow-hidden bg-[#ebedef]">
                             <div className="blog-post-card-img absolute inset-0">
-                                <Image
+                                <LoadingImage
+                                    wrapperClassName="h-full w-full"
                                     src={post.coverImage}
                                     alt={post.coverAlt ?? post.title}
                                     fill
                                     sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    className="object-cover transition-[opacity,transform] duration-500 group-hover:scale-105"
                                 />
                             </div>
                         </div>

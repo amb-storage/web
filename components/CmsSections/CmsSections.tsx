@@ -1,4 +1,4 @@
-import Image from "next/image";
+import LoadingImage from "@/components/LoadingImage/LoadingImage";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import RichText from "@/components/RichText/RichText";
@@ -37,7 +37,7 @@ function BlockHeading({ text }: { text?: string }) {
 
 function SectionImage({ media, alt }: { media: ApiMediaSummary; alt?: string | null }) {
     return (
-        <Image
+        <LoadingImage
             src={media.url}
             alt={alt ?? media.alt ?? ""}
             width={media.width ?? 1080}
