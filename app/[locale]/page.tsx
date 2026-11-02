@@ -1,4 +1,6 @@
-import { getLocale } from "next-intl/server";
+import type { Metadata } from "next";
+import { cache } from "react";
+import { getLocale, getTranslations } from "next-intl/server";
 import HeroSection from "./_components/Hero/Hero";
 import SpecialVintageSection from "./_components/SpecialVintageSection/SpecialVintageSection";
 import MostPopularSection from "./_components/MostPopularSection/MostPopularSection";
@@ -12,11 +14,24 @@ import type { Locale } from "@/lib/storefront";
 // Số sản phẩm của rail Most Popular khi lấy tự động (`GET /products?sort=popular`)
 const POPULAR_PRODUCT_LIMIT = 8;
 
+// generateMetadata và page dùng chung 1 lần gọi API trong cùng request
+const getHomepage = cache((locale: Locale) => storefrontRepository.getHomepage(locale));
+
+// Tiêu đề SEO nhập ở admin → tiêu đề trang chủ → mặc định trong messages
+export async function generateMetadata(): Promise<Metadata> {
+    const locale = (await getLocale()) as Locale;
+    const [home, t] = await Promise.all([getHomepage(locale), getTranslations("metadata")]);
+    return {
+        title: home?.seo?.title ?? home?.title ?? t("title"),
+        description: home?.seo?.description ?? t("description"),
+    };
+}
+
 export default async function Home() {
     const locale = (await getLocale()) as Locale;
     const [home, products, stories, popularProducts] = await Promise.all([
         // null khi Home chưa publish trên CMS → các section tự ẩn / dùng nội dung mặc định
-        storefrontRepository.getHomepage(locale),
+        getHomepage(locale),
         storefrontRepository.getAllProducts(locale),
         // Bài mới nhất, dự phòng khi Home chưa chọn bài nổi bật; lỗi thì bỏ qua, không làm sập trang chủ
         storefrontRepository.getStoriesPage(locale, 1, 1).then((page) => page.items).catch(() => []),
