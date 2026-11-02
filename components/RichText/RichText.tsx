@@ -44,7 +44,13 @@ function renderNodes(nodes: ApiRichTextNode[]): ReactNode[] {
             case "hardBreak":
                 return <br key={index} />;
             case "paragraph":
-                return <p key={index}>{renderNodes(node.content)}</p>;
+                // Trình duyệt bỏ qua <br> cuối đoạn và thu gọn đoạn rỗng → thêm <br> để giống trong editor
+                return (
+                    <p key={index}>
+                        {renderNodes(node.content)}
+                        {(node.content.length === 0 || node.content.at(-1)?.type === "hardBreak") && <br />}
+                    </p>
+                );
             case "heading": {
                 // Editor có nút H2/H3 (level 2/3) → render đúng h2/h3; level 1 cũng thành h2 (h1 là tiêu đề trang)
                 const Heading = node.level === 3 ? "h3" : "h2";

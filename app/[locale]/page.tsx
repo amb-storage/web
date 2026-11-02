@@ -18,16 +18,15 @@ export default async function Home() {
         // null khi Home chưa publish trên CMS → các section tự ẩn / dùng nội dung mặc định
         storefrontRepository.getHomepage(locale),
         storefrontRepository.getAllProducts(locale),
-        // Toàn bộ bài Mili Talks đã xuất bản (mới nhất trước); lỗi thì bỏ qua, không làm sập trang chủ
-        storefrontRepository.getStories(locale).catch(() => []),
+        // Bài mới nhất, dự phòng khi Home chưa chọn bài nổi bật; lỗi thì bỏ qua, không làm sập trang chủ
+        storefrontRepository.getStoriesPage(locale, 1, 1).then((page) => page.items).catch(() => []),
         // Dự phòng cho Most Popular khi admin chưa chọn tay: sản phẩm được xem nhiều nhất 30 ngày qua
         storefrontRepository.getPopularProducts(locale, POPULAR_PRODUCT_LIMIT).catch(() => []),
     ]);
     // Admin đã chọn tay ở mục Most Popular thì giữ đúng danh sách đó, chưa chọn thì tự động theo lượt xem
     const mostPopular = home?.mostPopular.length ? home.mostPopular : popularProducts;
-    // Ưu tiên "Bài nổi bật" Home đã chọn, không có thì bài mới nhất; lưới bên dưới là các bài còn lại
+    // Ưu tiên "Bài nổi bật" Home đã chọn, không có thì bài mới nhất
     const featuredStory = home?.featuredStory ?? stories[0] ?? null;
-    const otherStories = stories.filter((story) => story.slug !== featuredStory?.slug);
 
     return (
         <div className="flex w-full min-w-0 flex-1 flex-col items-stretch justify-center overflow-x-clip bg-white font-sans dark:bg-black">
@@ -39,7 +38,6 @@ export default async function Home() {
             <BlogSection
                 intro={home?.miliTalksIntro}
                 featuredStory={featuredStory}
-                stories={otherStories}
             />
             {home && home.customerVoices.length > 0 && (
                 <CustomerVoiceSection voices={home.customerVoices} />
