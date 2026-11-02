@@ -155,6 +155,7 @@ export function toStoreSettings(settings: ApiStoreSettings): StoreSettings {
     return {
         storeName: settings.storeName,
         contactEmail: settings.contactEmail,
+        contactPhone: settings.contactPhone,
         taxDisplayMode: settings.taxDisplayMode,
         taxNote: settings.taxNote,
         footerText: settings.footerText,

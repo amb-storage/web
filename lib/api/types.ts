@@ -368,6 +368,7 @@ export interface ApiStoreSettings {
     defaultCurrency: string;
     storeName: string | null;
     contactEmail: string | null;
+    contactPhone: string | null;
     instagramUrl: string | null;
     taxDisplayMode: "NONE" | "TAX_INCLUDED" | "TAX_EXCLUDED";
     taxNote: string | null;

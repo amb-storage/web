@@ -148,6 +148,7 @@ export interface NavigationItem {
 export interface StoreSettings {
     storeName: string | null;
     contactEmail: string | null;
+    contactPhone: string | null;
     taxDisplayMode: "NONE" | "TAX_INCLUDED" | "TAX_EXCLUDED";
     taxNote: string | null;
     footerText: string | null;

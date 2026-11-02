@@ -24,7 +24,7 @@ export default async function ContactPage() {
             </section>
             <div className="grid gap-10 md:grid-cols-[1fr_300px]">
                 <ContactForm fallbackEmail={email} />
-                <ContactInfo email={email} />
+                <ContactInfo email={email} phone={settings?.contactPhone ?? null} socialLinks={settings?.socialLinks ?? []} />
             </div>
         </div>
     );
