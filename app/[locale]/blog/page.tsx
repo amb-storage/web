@@ -1,10 +1,24 @@
+import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import { shareMetadata } from "@/lib/seo/site";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import type { Locale } from "@/lib/storefront";
 import BlogPostGrid from "@/components/BlogPostGrid/BlogPostGrid";
 import Pagination from "@/components/Pagination/Pagination";
 import FeaturedPostImage from "@/components/FeaturedPostImage/FeaturedPostImage";
 import BlogReferences from "./_components/BlogReferences/BlogReferences";
+
+export async function generateMetadata(): Promise<Metadata> {
+    const locale = (await getLocale()) as Locale;
+    const landing = await storefrontRepository.getStoriesLanding(locale);
+    const title = landing?.seo?.title ?? landing?.title ?? "MILI TALKS";
+    const description = landing?.seo?.description ?? landing?.intro?.introduction?.slice(0, 160);
+    return {
+        title,
+        description,
+        ...shareMetadata({ locale, path: "/blog", title, description, image: landing?.featuredStory?.coverImage }),
+    };
+}
 
 // Danh sách cảm ơn theo trang Mili Talks hiện tại của amb-storage.com, dùng khi CMS chưa có mục Special Thanks
 const DEFAULT_REFERENCES = {

@@ -1,5 +1,6 @@
+import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import Header from "@/components/layout/header";
@@ -9,6 +10,7 @@ import SmoothScroll from "@/components/SmoothScroll/SmoothScroll";
 import { CartProvider } from "@/components/Cart/CartProvider";
 import GoatCounter from "@/components/Analytics/GoatCounter/GoatCounter";
 import ViewTracker from "@/components/Analytics/ViewTracker/ViewTracker";
+import { SITE_URL, shareMetadata } from "@/lib/seo/site";
 import { leagueSpartan, poppins, stencilGothic } from "@/lib/fonts";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import {
@@ -30,6 +32,25 @@ const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
     subsets: ["latin"],
 });
+
+// Mặc định cho mọi trang; trang nào có metadata riêng sẽ ghi đè
+export async function generateMetadata(): Promise<Metadata> {
+    const locale = (await getLocale()) as Locale;
+    const t = await getTranslations("metadata");
+    const { openGraph, twitter } = shareMetadata({
+        locale,
+        path: "/",
+        title: t("title"),
+        description: t("description"),
+    });
+    return {
+        metadataBase: new URL(SITE_URL),
+        title: t("title"),
+        description: t("description"),
+        openGraph,
+        twitter,
+    };
+}
 
 export default async function RootLayout({
     children,

@@ -1,3 +1,5 @@
+import JsonLd from "@/components/JsonLd/JsonLd";
+import { absoluteUrl, imageSrc, localizedPath, shareMetadata } from "@/lib/seo/site";
 import type { Metadata } from "next";
 import { cache } from "react";
 import { notFound } from "next/navigation";
@@ -24,9 +26,12 @@ export async function generateMetadata({
     const locale = (await getLocale()) as Locale;
     const product = await getProduct(locale, slug);
     if (!product) return {};
+    const title = product.seo.title;
+    const description = product.seo.description ?? undefined;
     return {
-        title: product.seo.title,
-        description: product.seo.description ?? undefined,
+        title,
+        description,
+        ...shareMetadata({ locale, path: `/shop/${product.slug}`, title, description, image: product.images[0] }),
     };
 }
 
@@ -61,6 +66,29 @@ export default async function ProductDetailPage({
 
     return (
         <div className="w-full">
+            <JsonLd
+                data={{
+                    "@context": "https://schema.org",
+                    "@type": "Product",
+                    name: product.name,
+                    description: product.seo.description ?? product.description ?? undefined,
+                    sku: product.slug,
+                    image: product.images.map((image) => absoluteUrl(imageSrc(image))),
+                    itemCondition: "https://schema.org/UsedCondition",
+                    offers: {
+                        "@type": "Offer",
+                        url: absoluteUrl(localizedPath(locale, `/shop/${product.slug}`)),
+                        price: product.price.amount,
+                        priceCurrency: product.price.currency,
+                        availability:
+                            product.availability === "AVAILABLE"
+                                ? "https://schema.org/InStock"
+                                : product.availability === "SOLD_OUT"
+                                  ? "https://schema.org/SoldOut"
+                                  : "https://schema.org/OutOfStock",
+                    },
+                }}
+            />
             <RecentlyViewedTracker productId={product.id} />
             <TrackEvent name="view_product" title={product.slug} />
             {/* Breadcrumb */}

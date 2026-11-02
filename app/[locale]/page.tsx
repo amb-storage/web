@@ -10,6 +10,8 @@ import CustomerVoiceSection from "./_components/CustomerVoiceSection/CustomerVoi
 import BlogSection from "./_components/BlogSection/BlogSection";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import type { Locale } from "@/lib/storefront";
+import { SITE_NAME, SITE_URL, shareMetadata } from "@/lib/seo/site";
+import JsonLd from "@/components/JsonLd/JsonLd";
 
 // Số sản phẩm của rail Most Popular khi lấy tự động (`GET /products?sort=popular`)
 const POPULAR_PRODUCT_LIMIT = 8;
@@ -21,9 +23,13 @@ const getHomepage = cache((locale: Locale) => storefrontRepository.getHomepage(l
 export async function generateMetadata(): Promise<Metadata> {
     const locale = (await getLocale()) as Locale;
     const [home, t] = await Promise.all([getHomepage(locale), getTranslations("metadata")]);
+    const title = home?.seo?.title ?? home?.title ?? t("title");
+    const description = home?.seo?.description ?? t("description");
     return {
-        title: home?.seo?.title ?? home?.title ?? t("title"),
-        description: home?.seo?.description ?? t("description"),
+        title,
+        description,
+        // Chưa có ảnh chia sẻ riêng → dùng ảnh danh mục đầu tiên của Hero
+        ...shareMetadata({ locale, path: "/", title, description, image: home?.heroCategories[0]?.image }),
     };
 }
 
@@ -45,6 +51,14 @@ export default async function Home() {
 
     return (
         <div className="flex w-full min-w-0 flex-1 flex-col items-stretch justify-center overflow-x-clip bg-white font-sans dark:bg-black">
+            <JsonLd
+                data={{
+                    "@context": "https://schema.org",
+                    "@type": "Store",
+                    name: SITE_NAME,
+                    url: SITE_URL,
+                }}
+            />
             <HeroSection categories={home?.heroCategories} />
             <SpecialVintageSection products={home?.specialVintage ?? []} />
             <NewArrivalsSection products={home?.newArrivals ?? products.slice(0, 12)} />

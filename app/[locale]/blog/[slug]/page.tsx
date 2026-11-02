@@ -6,6 +6,8 @@ import LoadingImage from "@/components/LoadingImage/LoadingImage";
 import { Link } from "@/i18n/navigation";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import { formatDate, type Locale } from "@/lib/storefront";
+import JsonLd from "@/components/JsonLd/JsonLd";
+import { SITE_NAME, absoluteUrl, imageSrc, shareMetadata } from "@/lib/seo/site";
 import CmsSections from "@/components/CmsSections/CmsSections";
 
 // generateMetadata và page dùng chung 1 lần gọi API trong cùng request
@@ -17,11 +19,22 @@ export async function generateMetadata({
     params,
 }: PageProps<"/[locale]/blog/[slug]">): Promise<Metadata> {
     const { slug } = await params;
-    const post = await getStory((await getLocale()) as Locale, slug);
+    const locale = (await getLocale()) as Locale;
+    const post = await getStory(locale, slug);
     if (!post) return {};
+    const title = post.seo?.title ?? post.title;
+    const description = post.seo?.description ?? post.excerpt;
     return {
-        title: post.seo?.title ?? post.title,
-        description: post.seo?.description ?? post.excerpt,
+        title,
+        description,
+        ...shareMetadata({
+            locale,
+            path: `/blog/${post.slug}`,
+            title,
+            description,
+            image: post.coverImage,
+            type: "article",
+        }),
     };
 }
 
@@ -35,6 +48,17 @@ export default async function BlogPostPage({
 
     return (
         <div className="bg-[#eff5f0]">
+            <JsonLd
+                data={{
+                    "@context": "https://schema.org",
+                    "@type": "BlogPosting",
+                    headline: post.title,
+                    description: post.excerpt,
+                    image: absoluteUrl(imageSrc(post.coverImage)),
+                    datePublished: post.publishedAt,
+                    publisher: { "@type": "Organization", name: SITE_NAME },
+                }}
+            />
             <header className="bg-white py-8 mx-auto">
                 <div className="mx-auto max-w-3xl">
                     <span className="text-[13px] font-semibold">
