@@ -11,7 +11,7 @@ import type { ApiCta, ApiMediaSummary, ApiProductSummary, ApiSection } from "@/l
 import { cn } from "@/lib/utils";
 
 const richTextClassName =
-    "text-[15px] tracking-[0.1em] [&_a]:text-(--brand-green) [&_a]:underline [&_h2]:mb-4 [&_h2]:mt-0 [&_h2]:mt-2 [&_h2]:text-3xl md:[&_h2]:text-4xl [&_h2]:font-bold [&_h2]:leading-tight [&_h2]:text-(--brand-green) [&_h3]:mb-3 [&_h3]:mt-2 [&_h3]:text-2xl md:[&_h3]:text-[1.75rem] [&_h3]:font-bold [&_h3]:text-(--brand-green) [&_li]:mb-2 [&_p]:mb-6 [&_p]:leading-[1.45] [&_p]:text-gray-900 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-(--brand-green) [&_blockquote]:pl-4";
+    "text-[15px] tracking-[0.1em] [&_a]:text-(--brand-green) [&_a]:underline [&_h2]:mb-4 [&_h2]:mt-0 [&_h2]:mt-2 [&_h2]:text-3xl md:[&_h2]:text-4xl [&_h2]:font-bold [&_h2]:leading-tight [&_h2]:text-(--brand-green) [&_h3]:mb-3 [&_h3]:mt-2 [&_h3]:text-2xl md:[&_h3]:text-[1.75rem] [&_h3]:font-bold [&_h3]:text-(--brand-green) [&_li]:mb-2 [&_li_p]:mb-0 [&_ul]:mb-6 [&_ol]:mb-6 [&_p]:mb-6 [&_p]:leading-[1.45] [&_p]:text-gray-900 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-(--brand-green) [&_blockquote]:pl-4";
 
 const widthClass = {
     NARROW: "max-w-xl",
@@ -283,7 +283,7 @@ export default function CmsSections({ sections }: CmsSectionsProps) {
                                 <div className="mx-auto grid max-w-6xl items-start gap-8 md:grid-cols-[1.2fr_1fr] md:gap-16">
                                     <div
                                         className={cn(
-                                            "overflow-hidden",
+                                            "overflow-hidden md:self-center",
                                             section.imagePosition === "RIGHT" && "md:order-2",
                                         )}
                                     >
