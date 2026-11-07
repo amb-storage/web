@@ -87,14 +87,14 @@ shop by email. It needs no session, cookie or CSRF token.
 ## View counting and popular products
 
 Call `POST /api/v1/views` once on every page navigation, including client-side
-route changes. Send `productSlug` on product detail pages and an empty body
-elsewhere:
+route changes. Send `path` (the pathname, without query string) on every page,
+plus `productSlug` on product detail pages:
 
 ```js
 fetch(`${API_ORIGIN}/api/v1/views`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(productSlug ? { productSlug } : {}),
+  body: JSON.stringify(productSlug ? { path, productSlug } : { path }),
   keepalive: true,
 }).catch(() => {});
 ```
@@ -104,6 +104,8 @@ fetch(`${API_ORIGIN}/api/v1/views`, {
   to deduplicate.
 - No cookies or CSRF token are needed. Do not use `navigator.sendBeacon`: it
   sends `text/plain`, which the API does not parse.
+- `path` must start with `/` and contain no `?` or `#`, or the call returns
+  `400`. A leading `/en` is ignored, so both languages count as one page.
 - Unknown body fields return `400`; more than 60 calls per minute from one IP
   return `429`. Never block rendering on this call.
 - Call it from the browser only, not during server-side rendering, or every
