@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import { fixedPageMetadata } from "@/lib/seo/page-seo";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import { parseShopSearchParams, type Locale } from "@/lib/storefront";
 import ShopCatalog from "./_components/ShopCatalog/ShopCatalog";
+
+export async function generateMetadata(): Promise<Metadata> {
+    const locale = (await getLocale()) as Locale;
+    const t = await getTranslations("shop");
+    return fixedPageMetadata(locale, "shop", "/shop", { title: t("title") });
+}
 
 export default async function ShopPage({
     searchParams,

@@ -160,5 +160,6 @@ export function toStoreSettings(settings: ApiStoreSettings): StoreSettings {
         taxNote: settings.taxNote,
         footerText: settings.footerText,
         socialLinks: settings.socialLinks,
+        pageSeo: settings.pageSeo ?? {},
     };
 }

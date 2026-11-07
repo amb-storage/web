@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { fixedPageMetadata } from "@/lib/seo/page-seo";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import CustomerVoiceCard from "@/components/CustomerVoiceCard/CustomerVoiceCard";
@@ -7,7 +8,10 @@ import type { Locale } from "@/lib/storefront";
 
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getTranslations("customerVoicePage");
-    return { title: t("title"), description: t("intro") };
+    return fixedPageMetadata((await getLocale()) as Locale, "customerVoice", "/customer-voice", {
+        title: t("title"),
+        description: t("intro"),
+    });
 }
 
 // Toàn bộ đánh giá trong khối Customer Voice của trang Home (admin: Trang website → Trang chủ)

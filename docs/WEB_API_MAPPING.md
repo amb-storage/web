@@ -12,7 +12,7 @@ unchanged.
 | Stories (Web label: Mili Talks) | `GET /api/v1/stories`, `/api/v1/stories/:slug` |
 | Mili Talks landing (`/blog`) | `GET /api/v1/content/stories` |
 | Navigation | `GET /api/v1/navigation/header`, `/api/v1/navigation/footer` |
-| Settings (incl. `contactEmail`, `contactPhone`) | `GET /api/v1/settings` |
+| Settings (incl. `contactEmail`, `contactPhone`, `pageSeo`) | `GET /api/v1/settings` |
 | Contact form (お問い合わせ) | `POST /api/v1/contact` |
 | About and policies | `GET /api/v1/content/about`, `/api/v1/content/policies`, `/api/v1/content/policies/:slug` |
 | Pages | `GET /api/v1/pages/:slug` |
@@ -127,3 +127,12 @@ Public `RICH_TEXT`, `IMAGE`, `IMAGE_WITH_TEXT`, `GALLERY` and `QUOTE` sections
 may include `heading: string`; the field is omitted when the block has no
 heading. Rich text marks may include `{ "type": "textColor", "color":
 "GREEN" | "RED" | "BLUE" | "GRAY" }`.
+
+## Fixed page SEO
+
+`GET /api/v1/settings` returns `pageSeo.shop`, `pageSeo.contact` and
+`pageSeo.customerVoice`, each `{ "title": string | null, "description": string | null }`
+in the request locale (English falls back to Japanese). Use them for the
+`<title>` and description of `/shop`, `/contact` and `/customer-voice`; `null`
+means keep the Web's own default.
+

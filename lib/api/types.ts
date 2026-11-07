@@ -364,6 +364,8 @@ export interface ApiNavigationItem {
     children: ApiNavigationItem[];
 }
 
+export type ApiPageSeoKey = "shop" | "contact" | "customerVoice";
+
 export interface ApiStoreSettings {
     defaultCurrency: string;
     storeName: string | null;
@@ -374,6 +376,8 @@ export interface ApiStoreSettings {
     taxNote: string | null;
     footerText: string | null;
     socialLinks: Array<{ label: string; href: string }>;
+    // Thiếu ở bản API cũ (trước migration 0041)
+    pageSeo?: Record<ApiPageSeoKey, ApiSeo>;
     shippingPolicy: ApiPolicyLink | null;
     returnsPolicy: ApiPolicyLink | null;
 }

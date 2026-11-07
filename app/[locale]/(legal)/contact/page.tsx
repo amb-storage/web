@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import { fixedPageMetadata } from "@/lib/seo/page-seo";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import type { Locale } from "@/lib/storefront";
 import ContactForm from "./_components/ContactForm/ContactForm";
@@ -6,6 +8,12 @@ import ContactInfo from "./_components/ContactInfo/ContactInfo";
 
 // Email dự phòng khi Store settings chưa có / API lỗi (đúng địa chỉ trên amb-storage.com)
 const DEFAULT_EMAIL = "theambitionent@gmail.com";
+
+export async function generateMetadata(): Promise<Metadata> {
+    const locale = (await getLocale()) as Locale;
+    const t = await getTranslations("contentPages.contact");
+    return fixedPageMetadata(locale, "contact", "/contact", { title: t("title") });
+}
 
 export default async function ContactPage() {
     const locale = (await getLocale()) as Locale;

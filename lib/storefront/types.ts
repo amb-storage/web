@@ -153,6 +153,8 @@ export interface StoreSettings {
     taxNote: string | null;
     footerText: string | null;
     socialLinks: Array<{ label: string; href: string }>;
+    // SEO admin nhập cho trang không có trên CMS (Shop, Liên hệ, Customer Voice)
+    pageSeo: Partial<Record<"shop" | "contact" | "customerVoice", { title: string | null; description: string | null }>>;
 }
 
 export interface CmsPage {
