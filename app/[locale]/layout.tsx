@@ -10,6 +10,7 @@ import SmoothScroll from "@/components/SmoothScroll/SmoothScroll";
 import { CartProvider } from "@/components/Cart/CartProvider";
 import GoatCounter from "@/components/Analytics/GoatCounter/GoatCounter";
 import ViewTracker from "@/components/Analytics/ViewTracker/ViewTracker";
+import MetaPixel from "@/components/Analytics/MetaPixel/MetaPixel";
 import { SITE_URL, shareMetadata } from "@/lib/seo/site";
 import { leagueSpartan, poppins, stencilGothic } from "@/lib/fonts";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
@@ -96,6 +97,7 @@ export default async function RootLayout({
                     </CartProvider>
                     <GoatCounter />
                     <ViewTracker />
+                    <MetaPixel />
                 </NextIntlClientProvider>
             </body>
         </html>

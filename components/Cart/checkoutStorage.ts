@@ -5,6 +5,9 @@ const STORAGE_KEY = "amb-pending-checkout";
 export interface PendingCheckout {
     orderId: string;
     email: string;
+    // Tổng tiền + sản phẩm của đơn, cho sự kiện Purchase của Meta Pixel ở trang success
+    value?: number;
+    contentIds?: string[];
     // Đã xoá giỏ hàng chưa (reload trang success không xoá lại lần nữa)
     cartCleared?: boolean;
 }

@@ -17,6 +17,7 @@ import {
 } from "./cartApi";
 import { savePendingCheckout } from "./checkoutStorage";
 import { trackEvent } from "@/lib/analytics";
+import { trackMetaEvent } from "@/lib/metaPixel";
 
 export interface CartLine {
   productId: string;
@@ -145,7 +146,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       errorCode,
       has: (productId) => items.some((item) => item.productId === productId),
       add: async (productId, quantity = 1) => {
-        if (await run(() => addCartItem(locale, productId, quantity))) trackEvent("add_to_cart", productId);
+        if (await run(() => addCartItem(locale, productId, quantity))) {
+          trackEvent("add_to_cart", productId);
+          trackMetaEvent("AddToCart", { content_ids: [productId], content_type: "product", num_items: quantity });
+        }
       },
       remove: async (productId) => {
         await run(() => removeCartItem(locale, productId));
@@ -173,8 +177,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
         try {
           const session = await createCheckoutSession(locale, input);
           // Lưu lại để trang /checkout/success hiện mã đơn và xoá giỏ
-          savePendingCheckout({ orderId: session.orderId, email: input.email });
+          const contentIds = items.map((item) => item.productId);
+          savePendingCheckout({
+            orderId: session.orderId,
+            email: input.email,
+            value: cart?.subtotal.amount,
+            contentIds,
+          });
           trackEvent("begin_checkout");
+          trackMetaEvent("InitiateCheckout", {
+            content_ids: contentIds,
+            content_type: "product",
+            num_items: cart?.itemCount,
+            value: cart?.subtotal.amount,
+            currency: "JPY",
+          });
           // Chuyển sang trang thanh toán Stripe; kết quả thanh toán do webhook xác nhận
           window.location.assign(session.checkoutUrl);
         } catch (error) {

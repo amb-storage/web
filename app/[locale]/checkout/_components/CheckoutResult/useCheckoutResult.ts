@@ -3,6 +3,7 @@
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import gsap from "gsap";
 import { useCart } from "@/components/Cart/useCart";
+import { trackMetaEvent } from "@/lib/metaPixel";
 import {
     parsePendingCheckout,
     readPendingCheckoutRaw,
@@ -42,10 +43,22 @@ export function useCheckoutResult(status: CheckoutResultStatus) {
     const orderId = checkout?.orderId;
     const email = checkout?.email;
     const cartCleared = checkout?.cartCleared;
+    const value = checkout?.value;
+    // Chuỗi JSON để làm dependency ổn định (mảng parse lại mỗi lần render)
+    const contentIdsKey = JSON.stringify(checkout?.contentIds ?? []);
     useEffect(() => {
         if (status !== "success" || !hydrated || !orderId || !email || cartCleared) return;
-        void clear().then(() => savePendingCheckout({ orderId, email, cartCleared: true }));
-    }, [cartCleared, clear, email, hydrated, orderId, status]);
+        const contentIds = JSON.parse(contentIdsKey) as string[];
+        // Purchase gửi đúng 1 lần cho mỗi đơn (cùng lúc xoá giỏ); eventID = mã đơn để Meta bỏ trùng
+        trackMetaEvent(
+            "Purchase",
+            { content_ids: contentIds, content_type: "product", value: value ?? 0, currency: "JPY" },
+            orderId,
+        );
+        void clear().then(() =>
+            savePendingCheckout({ orderId, email, value, contentIds, cartCleared: true }),
+        );
+    }, [cartCleared, clear, contentIdsKey, email, hydrated, orderId, status, value]);
 
     // Huỷ thanh toán: giữ nguyên giỏ để khách thanh toán lại, chỉ bỏ đơn đang chờ
     useEffect(() => {

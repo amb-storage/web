@@ -11,6 +11,7 @@ import RelatedProducts from "./_components/RelatedProducts/RelatedProducts";
 import ProductMiliTalk from "./_components/ProductMiliTalk/ProductMiliTalk";
 import { RecentlyViewedTracker } from "../../_components/RecentlyViewedSection/RecentlyViewedTracker";
 import TrackEvent from "@/components/Analytics/TrackEvent/TrackEvent";
+import MetaEvent from "@/components/Analytics/MetaEvent/MetaEvent";
 import { storefrontRepository } from "@/lib/storefront/api-storefront";
 import type { Locale } from "@/lib/storefront";
 
@@ -91,6 +92,16 @@ export default async function ProductDetailPage({
             />
             <RecentlyViewedTracker productId={product.id} />
             <TrackEvent name="view_product" title={product.slug} />
+            <MetaEvent
+                name="ViewContent"
+                params={{
+                    content_ids: [product.id],
+                    content_name: product.name,
+                    content_type: "product",
+                    value: product.price.amount,
+                    currency: "JPY",
+                }}
+            />
             {/* Breadcrumb */}
             <nav className="flex gap-2 whitespace-nowrap px-6 py-4 text-xs leading-4 tracking-[0.24px] text-black/80 md:mx-2 md:my-4">
                 <Link href="/" className="underline">
